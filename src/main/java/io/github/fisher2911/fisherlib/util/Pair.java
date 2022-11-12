@@ -1,5 +1,5 @@
 /*
- *     Kingdoms Plugin
+ *     FisherLib
  *     Copyright (C) 2022  Fisher2911
  *
  *     This program is free software: you can redistribute it and/or modify

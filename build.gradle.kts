@@ -6,8 +6,6 @@ plugins {
 
 group = "io.github.fisher2911"
 version = "1.0.0-beta"
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -43,6 +41,12 @@ publishing {
             from(components["java"])
             artifact(tasks["shadowJar"])
         }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

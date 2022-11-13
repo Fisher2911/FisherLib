@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.1"
+    id("maven-publish")
 }
 
 group = "io.github.fisher2911"
@@ -32,6 +33,15 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.1.2")
 //    implementation("com.zaxxer:HikariCP:3.3.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(tasks["shadowJar"])
+        }
+    }
 }
 
 tasks {

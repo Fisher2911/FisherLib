@@ -189,6 +189,8 @@ public class MessageHandler extends Config {
     }
 
     private void loadMessages(Collection<Message> messageKeys) {
+        final Collection<Message> all = Message.values();
+        all.addAll(messageKeys);
         final File file = this.path.toFile();
         final boolean exists = file.exists();
         if (!exists) {
@@ -204,7 +206,7 @@ public class MessageHandler extends Config {
                 .build();
         try {
             final ConfigurationNode source = loader.load();
-            for (Message message : messageKeys) {
+            for (Message message : all) {
                 final String messagePath = message.getConfigPath();
                 if (!source.hasChild(messagePath)) {
                     source.node(messagePath).set(message.toString());

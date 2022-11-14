@@ -18,10 +18,18 @@
 
 package io.github.fisher2911.fisherlib.message;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public record Message(String path) {
 
+    private static final List<Message> messages = new ArrayList<>();
+
     public static Message path(final String path) {
-        return new Message(path);
+        final Message message = new Message(path);
+        messages.add(message);
+        return message;
     }
 
     public static final Message ADMIN_COMMAND_HELP_HEADER = path("admin-command-help-header");
@@ -38,6 +46,10 @@ public record Message(String path) {
     public static final Message BANK_NO_PERMISSION = path("bank-no-permission");
     public static final Message BANK_NOT_ENOUGH_FUNDS = path("bank-not-enough-funds");
     public static final Message BANK_NOT_LARGE_ENOUGH = path("bank-not-large-enough");
+
+    public static Collection<Message> values() {
+        return new ArrayList<>(messages);
+    }
 
     public String getConfigPath() {
         return this.path.toLowerCase().replace("_", "-");

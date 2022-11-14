@@ -166,6 +166,10 @@ public class MessageHandler extends Config {
         sendMessage(sender, MINI_MESSAGE.deserialize(value));
     }
 
+    public void sendMessage(CommandSender sender, String message) {
+        sendMessage(sender, MINI_MESSAGE.deserialize(message));
+    }
+
     public void sendMessage(CommandSender sender, Component component) {
         final Audience audience = this.audiences.sender(sender);
         audience.sendMessage(component);

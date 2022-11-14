@@ -22,8 +22,10 @@ import io.github.fisher2911.fisherlib.gui.AbstractGuiManager;
 import io.github.fisher2911.fisherlib.listener.GlobalListener;
 import io.github.fisher2911.fisherlib.message.MessageHandler;
 import io.github.fisher2911.fisherlib.placeholder.Placeholders;
+import io.github.fisher2911.fisherlib.update.UpdateChecker;
 import io.github.fisher2911.fisherlib.user.CoreUser;
 import io.github.fisher2911.fisherlib.user.CoreUserManager;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -37,6 +39,18 @@ public final class FisherLib extends FishPlugin<CoreUser, FisherLib> {
         this.messageHandler = MessageHandler.createInstance(this, this.placeholders);
         this.messageHandler.load(List.of());
         this.placeholders = new Placeholders() {};
+        new UpdateChecker(this, 106260).getVersion(version -> {
+            if (!this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                this.messageHandler.sendMessage(
+                        Bukkit.getConsoleSender(),
+                        "<red>[FisherLib] You are running an outdated version of FisherLib! " +
+                                "The latest version is <gold>" + version + " <reset><red>and you are running <gold> " +
+                                this.getDescription().getVersion() + "<reset><red>!<newline>" +
+                                "<aqua>Click here for the latest version: <click:open_url:https://www.spigotmc.org/resources/fisherlib.106260/>" +
+                                "https://www.spigotmc.org/resources/fisherlib.106260/</click>"
+                );
+            }
+        });
     }
 
     @Override

@@ -45,7 +45,7 @@ public abstract class CoreListener {
             final Class<? extends Event> eventClass = (Class<? extends Event>) parameter;
             this.globalListener.register(eventClass, e -> {
                 try {
-                    method.invoke(e);
+                    method.invoke(this, e);
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     ex.printStackTrace();
                 }

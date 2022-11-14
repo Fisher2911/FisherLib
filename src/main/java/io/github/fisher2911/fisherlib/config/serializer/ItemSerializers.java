@@ -16,22 +16,23 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.fisher2911.fisherlib;
+package io.github.fisher2911.fisherlib.config.serializer;
 
-import io.github.fisher2911.fisherlib.gui.AbstractGuiManager;
-import io.github.fisher2911.fisherlib.listener.GlobalListener;
-import io.github.fisher2911.fisherlib.message.MessageHandler;
-import io.github.fisher2911.fisherlib.placeholder.Placeholders;
+import io.github.fisher2911.fisherlib.FishPlugin;
+import io.github.fisher2911.fisherlib.config.condition.ConditionSerializer;
 import io.github.fisher2911.fisherlib.user.CoreUser;
-import io.github.fisher2911.fisherlib.user.CoreUserManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class FishPlugin<T extends CoreUser, Z extends FishPlugin<T, Z>> extends JavaPlugin {
+public record ItemSerializers<T extends CoreUser, Z extends FishPlugin<T, Z>>(
+        GuiItemSerializer<T, Z> guiItemSerializer,
+        ClickActionSerializer<T, Z> clickActionSerializer,
+        ConditionSerializer<T, Z> conditionSerializer
+) {
 
-    public abstract MessageHandler getMessageHandler();
-    public abstract GlobalListener getGlobalListener();
-    public abstract Placeholders getPlaceholders();
-    public abstract AbstractGuiManager<T, Z> getGuiManager();
-    public abstract CoreUserManager<T> getUserManager();
+    public static <T extends CoreUser, Z extends FishPlugin<T, Z>> ItemSerializers of(
+            GuiItemSerializer<T, Z> guiItemSerializer,
+            ClickActionSerializer<T, Z> clickActionSerializer,
+            ConditionSerializer<T, Z> conditionSerializer) {
+        return new ItemSerializers<>(guiItemSerializer, clickActionSerializer, conditionSerializer);
+    }
 
 }

@@ -29,7 +29,7 @@ import org.bukkit.inventory.InventoryView;
 
 public class GuiListener extends CoreListener {
 
-    public GuiListener(FishPlugin<?> plugin) {
+    public GuiListener(FishPlugin<?, ?> plugin) {
         super(plugin);
     }
 

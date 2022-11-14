@@ -76,6 +76,14 @@ public abstract class NumberUpgrades<T extends Number> implements Upgrades<T> {
         return this.displayName;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public Expression getMoneyPriceExpression() {
+        return moneyPriceExpression;
+    }
+
     public static final String DOUBLE_UPGRADE_TYPE = "double";
     public static final String INT_UPGRADE_TYPE = "int";
 

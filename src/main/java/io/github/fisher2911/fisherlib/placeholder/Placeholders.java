@@ -31,7 +31,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public abstract class Placeholders {
 
-    private final MapOfMaps<Class<?>, Placeholder, Function<Object, Object>> placeholders = new MapOfMaps<>(new HashMap<>(), HashMap::new);
+    protected final MapOfMaps<Class<?>, Placeholder, Function<Object, Object>> placeholders = new MapOfMaps<>(new HashMap<>(), HashMap::new);
 
     private static final DecimalFormat POSITION_FORMAT = new DecimalFormat("#.0");
 
@@ -41,15 +41,15 @@ public abstract class Placeholders {
         this.put(CoreUser.class, Placeholder.USER_UUID, u -> castAndParseUser(u, CoreUser::getMoney));
     }
 
-    private Object castAndParseUser(Object o, Function<CoreUser, Object> parse) {
+    protected Object castAndParseUser(Object o, Function<CoreUser, Object> parse) {
         return castAndParse(CoreUser.class, o, parse);
     }
 
-    private <T> Object castAndParse(Class<T> clazz, Object o, Function<T, Object> parse) {
+    protected <T> Object castAndParse(Class<T> clazz, Object o, Function<T, Object> parse) {
         return parse.apply(clazz.cast(o));
     }
 
-    private <T> void put(Class<T> clazz, Placeholder placeholder, Function<Object, Object> parse) {
+    protected <T> void put(Class<T> clazz, Placeholder placeholder, Function<Object, Object> parse) {
         this.placeholders.put(clazz, placeholder, parse);
     }
 
@@ -60,7 +60,7 @@ public abstract class Placeholders {
         return s;
     }
 
-    private String replaceInterfaces(String s, Object o, Class<?> clazz) {
+    protected String replaceInterfaces(String s, Object o, Class<?> clazz) {
         for (Class<?> i : clazz.getInterfaces()) {
             final var map = placeholders.get(i);
             if (map == null) continue;
@@ -73,7 +73,7 @@ public abstract class Placeholders {
         return s;
     }
 
-    private String replaceSuperClasses(String s, Object o) {
+    protected String replaceSuperClasses(String s, Object o) {
         var superClass = o.getClass();
         Map<Placeholder, Function<Object, Object>> map = null;
         while (superClass != null && (map == null || map.isEmpty())) {
@@ -92,7 +92,7 @@ public abstract class Placeholders {
         return s;
     }
 
-    private static String replace(String original, String key, Object value) {
+    protected static String replace(String original, String key, Object value) {
         if (value instanceof Component component) {
             return original.replace(key, MessageHandler.MINI_MESSAGE.serialize(component));
         }
@@ -105,10 +105,10 @@ public abstract class Placeholders {
 
     public static class Builder {
 
-        private final Placeholders placeholders;
-        private String current;
+        protected final Placeholders placeholders;
+        protected String current;
 
-        private Builder(Placeholders placeholders, String current) {
+        protected Builder(Placeholders placeholders, String current) {
             this.placeholders = placeholders;
             this.current = current;
         }

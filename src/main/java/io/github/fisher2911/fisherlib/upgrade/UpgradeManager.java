@@ -20,6 +20,7 @@ package io.github.fisher2911.fisherlib.upgrade;
 
 import io.github.fisher2911.fisherlib.FishPlugin;
 import io.github.fisher2911.fisherlib.config.Config;
+import io.github.fisher2911.fisherlib.user.CoreUser;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -30,22 +31,22 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
-public abstract class UpgradeManager<Z> extends Config {
+public abstract class UpgradeManager<Z, U extends CoreUser> extends Config {
 
-    public UpgradeManager(FishPlugin<?> plugin, String... path) {
+    public UpgradeManager(FishPlugin<?, ?> plugin, String... path) {
         super(plugin, path);
     }
 
-    protected UpgradeHolder<Z> upgradeHolder;
+    protected UpgradeHolder<Z, U> upgradeHolder;
 
-    public UpgradeHolder<Z> getUpgradeHolder() {
+    public UpgradeHolder<Z, U> getUpgradeHolder() {
         return upgradeHolder;
     }
 
     protected static final String UPGRADE_TYPE = "type";
-    protected final Map<String, BiConsumer<ConfigurationNode, UpgradeManager<Z>>> typeUpgradeLoaders = new HashMap<>();
+    protected final Map<String, BiConsumer<ConfigurationNode, UpgradeManager<Z, U>>> typeUpgradeLoaders = new HashMap<>();
 
-    public void addLoader(String type, BiConsumer<ConfigurationNode, UpgradeManager<Z>> loader) {
+    public void addLoader(String type, BiConsumer<ConfigurationNode, UpgradeManager<Z, U>> loader) {
         this.typeUpgradeLoaders.put(type, loader);
     }
 
@@ -53,7 +54,7 @@ public abstract class UpgradeManager<Z> extends Config {
         this.upgradeHolder.addUpgrade(upgrades);
     }
 
-    public void register(EntryUpgrades<?, Z> entryUpgrades) {
+    public void register(EntryUpgrades<?, Z, U> entryUpgrades) {
         this.upgradeHolder.addEntryUpgrade(entryUpgrades);
     }
 
@@ -80,7 +81,7 @@ public abstract class UpgradeManager<Z> extends Config {
                 builder().
                 path(this.path).
                 build();
-        this.upgradeHolder = new UpgradeHolder<Z>(new HashMap<>(), new HashMap<>(), new ArrayList<>());
+        this.upgradeHolder = new UpgradeHolder<Z, U>(new HashMap<>(), new HashMap<>(), new ArrayList<>());
         try {
             final var source = loader.load();
             final var upgradesNode = source.node(UPGRADES);

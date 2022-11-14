@@ -20,9 +20,9 @@ package io.github.fisher2911.fisherlib.placeholder;
 
 public class Placeholder {
 
-    public static final Placeholder USER_NAME = new Placeholder("user_name");
-    public static final Placeholder USER_UUID = new Placeholder("user_uuid");
-    public static final Placeholder USER_BALANCE = new Placeholder("user_balance");
+    public static final Placeholder USER_NAME = fromString("user_name");
+    public static final Placeholder USER_UUID = fromString("user_uuid");
+    public static final Placeholder USER_BALANCE = fromString("user_balance");
 
     private final String placeholder;
 
@@ -36,9 +36,14 @@ public class Placeholder {
 
     public static Placeholder fromString(String name) {
         if (name.isBlank()) throw new IllegalArgumentException("Name cannot be blank: " + name);
-        final String prepend = name.charAt(0) == '%' ? "%" : "";
-        final String append = name.charAt(name.length() - 1) == '%' ? "%" : "";
+        final String prepend = name.charAt(0) == '%' ? "" : "%";
+        final String append = name.charAt(name.length() - 1) == '%' ? "" : "%";
         return new Placeholder(prepend + name.replace(" ", "_") + append);
+    }
+
+    @Override
+    public String toString() {
+        return this.placeholder;
     }
 
 }

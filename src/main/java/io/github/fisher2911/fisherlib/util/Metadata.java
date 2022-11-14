@@ -58,7 +58,7 @@ public class Metadata {
                 }
             });
         }
-        newMap.putAll(metadata.get());
+//        newMap.putAll(metadata.get());
         return new Metadata(newMap);
     }
 

@@ -18,40 +18,25 @@
 
 package io.github.fisher2911.fisherlib;
 
-import io.github.fisher2911.fisherlib.gui.Gui;
-import io.github.fisher2911.fisherlib.gui.GuiManager;
-import io.github.fisher2911.fisherlib.gui.GuiOpener;
+import io.github.fisher2911.fisherlib.gui.AbstractGuiManager;
 import io.github.fisher2911.fisherlib.listener.GlobalListener;
 import io.github.fisher2911.fisherlib.message.MessageHandler;
 import io.github.fisher2911.fisherlib.placeholder.Placeholders;
 import io.github.fisher2911.fisherlib.user.CoreUser;
 import io.github.fisher2911.fisherlib.user.CoreUserManager;
-import io.github.fisher2911.fisherlib.user.CoreUserManagerImpl;
 
-import java.util.HashMap;
 import java.util.List;
 
-public final class FisherLib extends FishPlugin<CoreUser> {
+public final class FisherLib extends FishPlugin<CoreUser, FisherLib> {
 
     private MessageHandler messageHandler;
-    private GlobalListener globalListener;
     private Placeholders placeholders;
-    private GuiManager guiManager;
-    private CoreUserManager<CoreUser> userManager;
 
     @Override
     public void onEnable() {
-        this.messageHandler = MessageHandler.getInstance(this);
+        this.messageHandler = MessageHandler.createInstance(this, this.placeholders);
         this.messageHandler.load(List.of());
-        this.globalListener = new GlobalListener(this);
         this.placeholders = new Placeholders() {};
-        this.guiManager = new GuiManager(this) {
-            @Override
-            protected void openHandler(GuiOpener guiOpener, Gui.Builder builder, CoreUser coreUser) {
-                guiOpener.open(coreUser);
-            }
-        };
-        this.userManager = new CoreUserManagerImpl<>(new HashMap<>());
     }
 
     @Override
@@ -66,7 +51,7 @@ public final class FisherLib extends FishPlugin<CoreUser> {
 
     @Override
     public GlobalListener getGlobalListener() {
-        return this.globalListener;
+        return null;
     }
 
     @Override
@@ -75,13 +60,13 @@ public final class FisherLib extends FishPlugin<CoreUser> {
     }
 
     @Override
-    public GuiManager getGuiManager() {
-        return this.guiManager;
+    public AbstractGuiManager getGuiManager() {
+        return null;
     }
 
     @Override
     public CoreUserManager<CoreUser> getUserManager() {
-        return this.userManager;
+        return null;
     }
 
 }

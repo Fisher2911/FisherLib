@@ -24,10 +24,10 @@ import java.nio.file.Path;
 
 public abstract class Config {
 
-    protected final FishPlugin<?> plugin;
+    protected final FishPlugin<?, ?> plugin;
     protected final Path path;
 
-    public Config(FishPlugin<?> plugin, String... path) {
+    public Config(FishPlugin<?, ?> plugin, String... path) {
         this.plugin = plugin;
         if (path.length == 0) throw new IllegalArgumentException("No file path provided");
         final String first = path[0];

@@ -19,6 +19,7 @@
 package io.github.fisher2911.fisherlib.upgrade;
 
 import io.github.fisher2911.fisherlib.economy.Price;
+import io.github.fisher2911.fisherlib.user.CoreUser;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -26,13 +27,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
-public class UpgradeHolder<Z> {
+public class UpgradeHolder<Z, U extends CoreUser> {
 
     private final List<String> upgradeIdOrder;
     private final Map<String, Upgrades<?>> upgradesMap;
-    private final Map<String, EntryUpgrades<?, Z>> entryUpgrades;
+    private final Map<String, EntryUpgrades<?, Z, U>> entryUpgrades;
 
-    public UpgradeHolder(Map<String, Upgrades<?>> upgradesMap, Map<String, EntryUpgrades<?, Z>> entryUpgrades, List<String> upgradeIdOrder) {
+    public UpgradeHolder(Map<String, Upgrades<?>> upgradesMap, Map<String, EntryUpgrades<?, Z, U>> entryUpgrades, List<String> upgradeIdOrder) {
         this.upgradeIdOrder = upgradeIdOrder;
         this.upgradesMap = upgradesMap;
         this.entryUpgrades = entryUpgrades;
@@ -43,7 +44,7 @@ public class UpgradeHolder<Z> {
         this.upgradeIdOrder.add(upgrades.getId());
     }
 
-    public void addEntryUpgrade(EntryUpgrades<?, Z> entryUpgrades) {
+    public void addEntryUpgrade(EntryUpgrades<?, Z, U> entryUpgrades) {
         this.entryUpgrades.put(entryUpgrades.getId(), entryUpgrades);
         this.upgradeIdOrder.add(entryUpgrades.getId());
     }
@@ -53,7 +54,7 @@ public class UpgradeHolder<Z> {
     }
 
     @Nullable
-    public <T, U extends Upgrades<T>> U getUpgrades(String id, Class<U> clazz) {
+    public <T, X extends Upgrades<T>> X getUpgrades(String id, Class<X> clazz) {
         Object o = this.upgradesMap.get(id);
         if (o == null) {
             o = this.entryUpgrades.get(id);
@@ -84,13 +85,13 @@ public class UpgradeHolder<Z> {
         return upgrades.getPriceAtLevel(level);
     }
 
-    public void handleEntry(Consumer<EntryUpgrades<?, Z>> consumer) {
-        for (EntryUpgrades<?, Z> entryUpgrades : this.entryUpgrades.values()) {
+    public void handleEntry(Consumer<EntryUpgrades<?, Z, U>> consumer) {
+        for (EntryUpgrades<?, Z, U> entryUpgrades : this.entryUpgrades.values()) {
             consumer.accept(entryUpgrades);
         }
     }
 
-    public Map<String, EntryUpgrades<?, Z>> getEntryUpgrades() {
+    public Map<String, EntryUpgrades<?, Z, U>> getEntryUpgrades() {
         return entryUpgrades;
     }
 

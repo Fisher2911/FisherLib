@@ -16,20 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.fisher2911.fisherlib.upgrade;
+package io.github.fisher2911.fisherlib.util.function;
 
+public interface QuadFunction<T, U, V, W, R> {
 
-import io.github.fisher2911.fisherlib.user.CoreUser;
-
-public interface EntryUpgrades<T, Z, U extends CoreUser> extends Upgrades<T> {
-
-    void onEnter(Z entering, U user, int level);
-
-    void onLeave(Z leaving, U user, int level);
-
-    boolean appliesTo(Z z, U user);
-
-    boolean appliesToSelf();
-
+    R apply(T t, U u, V v, W w);
 
 }

@@ -33,30 +33,36 @@ import java.util.function.BiFunction;
 
 public abstract class BaseGuiItem {
 
-    protected final FishPlugin<?> plugin;
+    protected final FishPlugin<?, ?> plugin;
     protected final BaseItemBuilder itemBuilder;
     protected final List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders;
     protected final Metadata metadata;
 
-    public BaseGuiItem(FishPlugin<?> plugin, BaseItemBuilder itemBuilder, Metadata metadata, List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders) {
+    public BaseGuiItem(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder, Metadata metadata, List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders) {
         this.plugin = plugin;
         this.itemBuilder = itemBuilder;
         this.metadata = metadata;
         this.placeholders = placeholders;
     }
 
-    public abstract BaseGuiItem withItem(FishPlugin<?> plugin, BaseItemBuilder item);
-    public abstract BaseGuiItem withItem(FishPlugin<?> plugin, ItemStack item);
+    public abstract BaseGuiItem withItem(FishPlugin<?, ?> plugin, BaseItemBuilder item);
+
+    public abstract BaseGuiItem withItem(FishPlugin<?, ?> plugin, ItemStack item);
+
     public abstract void handleClick(InventoryEventWrapper<InventoryClickEvent> wrapper);
+
     public abstract void handleDrag(InventoryEventWrapper<InventoryDragEvent> event);
 
     public ItemStack getItemStack(BaseGui gui, Object... placeholders) {
-        if (placeholders.length == 0) return this.itemBuilder.build(this.plugin.getPlaceholders(), this.getPlaceholdersAsArray(this.metadata));
-        if (this.placeholders.size() == 0) return this.itemBuilder.build(
-                this.plugin.getPlaceholders(),
-                GuiKey.toPlaceholders(
-                this.metadata.copyWith(gui.getMetadata(), false)
-        ).toArray());
+        if (placeholders.length == 0) {
+            return this.itemBuilder.build(this.plugin.getPlaceholders(), this.getPlaceholdersAsArray(this.metadata));
+        }
+        if (this.placeholders.size() == 0) {
+            return this.itemBuilder.build(
+                    this.plugin.getPlaceholders(),
+                    GuiKey.toPlaceholders(this.metadata.copyWith(gui.getMetadata(), false)).toArray()
+            );
+        }
         return this.itemBuilder.build(this.plugin.getPlaceholders(), ArrayUtil.combine(this.getPlaceholdersAsArray(metadata), placeholders));
     }
 

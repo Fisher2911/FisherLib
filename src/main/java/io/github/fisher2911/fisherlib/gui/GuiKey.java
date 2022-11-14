@@ -71,7 +71,7 @@ public class GuiKey {
         return DEFAULTS;
     }
 
-    public static GuiKey key(FishPlugin<?> plugin, String id, boolean checkDefaultFirst) {
+    public static GuiKey key(FishPlugin<?, ?> plugin, String id, boolean checkDefaultFirst) {
         if (checkDefaultFirst) {
             final GuiKey key = DEFAULTS.get(id);
             if (key != null) {
@@ -124,6 +124,14 @@ public class GuiKey {
         final List<Object> placeholders = new ArrayList<>();
         placeholderMap.forEach((key, accumulator) -> accumulator.accept(metadata, placeholders));
         return placeholders;
+    }
+
+    @Override
+    public String toString() {
+        return "GuiKey{" +
+                "plugin=" + plugin.getName() +
+                ", id='" + id + '\'' +
+                '}';
     }
 
     @Override

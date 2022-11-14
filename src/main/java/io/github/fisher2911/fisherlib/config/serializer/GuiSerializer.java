@@ -43,33 +43,40 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class GuiSerializer {
+public class GuiSerializer<T extends CoreUser, Z extends FishPlugin<T, Z>> {
 
-    private static final String ID_PATH = "id";
-    private static final String TITLE_PATH = "title";
-    private static final String ROWS_PATH = "rows";
-    private static final String BORDER_ITEMS_PATH = "border";
-    private static final String ITEMS_PATH = "items";
-    private static final boolean CANCEL_CLICKS_PATH = true;
-    private static final String REQUIRED_METADATA_PATH = "required-metadata";
-    private static final String REPEAT_ON_ALL_PAGES_PATH = "repeat-on-all-pages";
+    public static final String ID_PATH = "id";
+    public static final String TITLE_PATH = "title";
+    public static final String ROWS_PATH = "rows";
+    public static final String BORDER_ITEMS_PATH = "border";
+    public static final String ITEMS_PATH = "items";
+    public static final boolean CANCEL_CLICKS_PATH = true;
+    public static final String REQUIRED_METADATA_PATH = "required-metadata";
+    public static final String REPEAT_ON_ALL_PAGES_PATH = "repeat-on-all-pages";
 
-    private static final String GUI_FILLERS_PATH = "gui-fillers";
+    public static final String GUI_FILLERS_PATH = "gui-fillers";
 
-    private static final Map<String, BiFunction<FishPlugin<?>, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>>> guiFillerLoaders = new HashMap<>();
+    protected final Map<String, BiFunction<Z, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>>> guiFillerLoaders = new HashMap<>();
 
-    public static void registerGuiFillerLoader(
+    protected final ItemSerializers<T, Z> itemSerializers;
+
+    public GuiSerializer(ItemSerializers<T, Z> itemSerializers) {
+        this.itemSerializers = itemSerializers;
+        this.registerGuiFillerLoader(GuiFillerType.UPGRADES, this::loadUpgradesFillers);
+    }
+
+    public void registerGuiFillerLoader(
             final String id,
-            final BiFunction<FishPlugin<?>, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>> loader
+            final BiFunction<Z, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>> loader
     ) {
-        guiFillerLoaders.put(id.toUpperCase(Locale.ROOT), loader);
+        this.guiFillerLoaders.put(id.toUpperCase(Locale.ROOT), loader);
     }
 
-    static {
-        registerGuiFillerLoader(GuiFillerType.UPGRADES, GuiSerializer::loadUpgradesFillers);
-    }
-
-    public static GuiOpener deserialize(FishPlugin<?> plugin, ConfigurationNode source, TriConsumer<GuiOpener, Gui.Builder, CoreUser> openConsumer) throws SerializationException {
+    public GuiOpener<T> deserialize(
+            Z plugin,
+            ConfigurationNode source,
+            TriConsumer<GuiOpener<T>, Gui.Builder, T> openConsumer
+    ) throws SerializationException {
         final String id = source.node(ID_PATH).getString();
         final String title = source.node(TITLE_PATH).getString("Kingdoms");
         final int rows = source.node(ROWS_PATH).getInt();
@@ -77,7 +84,7 @@ public class GuiSerializer {
         final var borderNode = source.node(BORDER_ITEMS_PATH);
         final List<ConditionalItem> borders = new ArrayList<>();
         for (var entry : borderNode.childrenMap().entrySet()) {
-            borders.add(GuiItemSerializer.INSTANCE.deserialize(plugin, entry.getValue()));
+            borders.add(this.itemSerializers.guiItemSerializer().deserialize(plugin, this.itemSerializers, entry.getValue()));
         }
         final Set<Integer> repeatOnAllPagesSlots = new HashSet<>();
         final var itemsNode = source.node(ITEMS_PATH);
@@ -88,7 +95,7 @@ public class GuiSerializer {
             }
             final boolean repeatOnAllPages = entry.getValue().node(REPEAT_ON_ALL_PAGES_PATH).getBoolean();
             if (repeatOnAllPages) repeatOnAllPagesSlots.add(slot);
-            items.put(slot, GuiItemSerializer.INSTANCE.deserialize(plugin, entry.getValue()));
+            items.put(slot, this.itemSerializers.guiItemSerializer().deserialize(plugin, this.itemSerializers, entry.getValue()));
         }
 
         final var guiFillersNode = source.node(GUI_FILLERS_PATH);
@@ -96,7 +103,7 @@ public class GuiSerializer {
         for (var entry : guiFillersNode.childrenMap().entrySet()) {
             if (!(entry.getKey() instanceof final String typeStr)) continue;
             final String fillerType = typeStr.toUpperCase();
-            final BiFunction<FishPlugin<?>, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>> loader = guiFillerLoaders.get(fillerType);
+            final BiFunction<Z, ConfigurationNode, Function<BaseGui, List<ConditionalItem>>> loader = this.guiFillerLoaders.get(fillerType);
             if (loader == null) continue;
             guiFillers.add(loader.apply(plugin, entry.getValue()));
         }
@@ -104,10 +111,10 @@ public class GuiSerializer {
         final List<GuiKey> requiredMetaData = source.node(REQUIRED_METADATA_PATH)
                 .getList(String.class, new ArrayList<>())
                 .stream()
-                .map(s -> GuiKey.key(plugin, s, true))
+                .map(s -> GuiKey.key(plugin, s.toLowerCase(), true))
                 .toList();
 
-        return new GuiOpener(
+        return new GuiOpener<>(
                 plugin,
                 id,
                 Gui.builder(plugin, id)
@@ -123,16 +130,19 @@ public class GuiSerializer {
         );
     }
 
-    private static Function<BaseGui, List<ConditionalItem>> loadUpgradesFillers(FishPlugin<?> plugin, ConfigurationNode source) {
+    private Function<BaseGui, List<ConditionalItem>> loadUpgradesFillers(
+            Z plugin,
+            ConfigurationNode source
+    ) {
         // stupid checked exceptions
         try {
-            final ConditionalItem filler = GuiItemSerializer.INSTANCE.deserialize(plugin, source);
-            final ConditionalItem maxLevelItem = GuiItemSerializer.INSTANCE.deserialize(plugin, source.node(GuiItemSerializer.MAX_LEVEL_ITEM_PATH));
+            final ConditionalItem filler = this.itemSerializers.guiItemSerializer().deserialize(plugin, this.itemSerializers, source);
+            final ConditionalItem maxLevelItem = this.itemSerializers.guiItemSerializer().deserialize(plugin, this.itemSerializers, source.node(GuiItemSerializer.MAX_LEVEL_ITEM_PATH));
             return gui -> {
-                final Upgradeable<?> upgradeable = gui.getMetadata(GuiKey.UPGRADEABLE, Upgradeable.class);
+                final Upgradeable<?, ?> upgradeable = gui.getMetadata(GuiKey.UPGRADEABLE, Upgradeable.class);
                 if (upgradeable == null) return new ArrayList<>();
                 final List<ConditionalItem> items = new ArrayList<>();
-                final UpgradeHolder<?> upgradeHolder = upgradeable.getUpgradeHolder();
+                final UpgradeHolder<?, ?> upgradeHolder = upgradeable.getUpgradeHolder();
                 for (String id : upgradeHolder.getUpgradeIdOrder()) {
                     final Upgrades<?> upgrades = upgradeHolder.getUpgrades(id);
                     final Integer level = upgradeable.getUpgradeLevel(id);
@@ -143,7 +153,7 @@ public class GuiSerializer {
                     } else {
                         builder = ConditionalItem.builder(filler);
                     }
-                    GuiItemSerializer.applyUpgradesItemData(builder, id, maxLevelItem);
+                    this.itemSerializers.guiItemSerializer().applyUpgradesItemData(builder, id, maxLevelItem);
                     items.add(builder.build());
                 }
                 return items;

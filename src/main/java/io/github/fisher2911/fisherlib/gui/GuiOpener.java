@@ -29,15 +29,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-public class GuiOpener {
+@SuppressWarnings("unused")
+public class GuiOpener<T extends CoreUser> {
 
-    private final FishPlugin<?> plugin;
-    private final String id;
-    private final Gui.Builder builder;
-    private final List<GuiKey> requiredMetadata;
-    private final TriConsumer<GuiOpener, Gui.Builder, CoreUser> openConsumer;
+    private final FishPlugin<?, ?> plugin;
+    protected final String id;
+    protected final Gui.Builder builder;
+    protected final List<GuiKey> requiredMetadata;
+    protected final TriConsumer<GuiOpener<T>, Gui.Builder, T> openConsumer;
 
-    public GuiOpener(FishPlugin<?> plugin, String id, Gui.Builder builder, List<GuiKey> requiredMetadata, TriConsumer<GuiOpener, Gui.Builder, CoreUser> openConsumer) {
+    public GuiOpener(FishPlugin<?, ?> plugin, String id, Gui.Builder builder, List<GuiKey> requiredMetadata, TriConsumer<GuiOpener<T>, Gui.Builder, T> openConsumer) {
         this.plugin = plugin;
         this.id = id;
         this.builder = builder;
@@ -66,7 +67,7 @@ public class GuiOpener {
 //            GuiKeys.USER_KINGDOM_WRAPPER, (builder, user, kingdom) -> builder.metadata(GuiKeys.USER_KINGDOM_WRAPPER, new UserKingdomWrapper(user, kingdom), false)*/
 //    );
 
-    public void open(CoreUser user, Map<Object, Object> metadata, Set<Object> keysToOverwrite) {
+    public void open(T user, Map<Object, Object> metadata, Set<Object> keysToOverwrite) {
         final Gui.Builder copy = this.builder.copy().metadata(metadata, true);
         for (Object key : keysToOverwrite) {
             final Object o = metadata.get(key);
@@ -90,11 +91,16 @@ public class GuiOpener {
 //                .execute();
     }
 
-    public void open(CoreUser user) {
+    public void open(T user) {
         this.open(user, Map.of(), Set.of());
     }
 
     public String getId() {
         return id;
     }
+
+    public List<GuiKey> getRequiredMetadata() {
+        return requiredMetadata;
+    }
+
 }

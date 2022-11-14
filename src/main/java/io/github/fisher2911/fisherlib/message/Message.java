@@ -40,7 +40,7 @@ public record Message(String path) {
     public static final Message BANK_NOT_LARGE_ENOUGH = path("bank-not-large-enough");
 
     public String getConfigPath() {
-        return this.toString().toLowerCase().replace("_", "-");
+        return this.path.toLowerCase().replace("_", "-");
     }
 
 }

@@ -35,12 +35,12 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public abstract class BaseCommand<T extends CoreUser> {
+public abstract class BaseCommand<T extends CoreUser, Z extends FishPlugin<T, Z>, C extends BaseCommand<T, Z, C>> {
 
-    protected final FishPlugin<?> plugin;
+    protected final Z plugin;
     protected final CoreUserManager<T> userManager;
     @Nullable
-    protected final BaseCommand<T> parent;
+    protected final C parent;
     protected final String name;
     @Nullable
     protected final String dynamicArgs;
@@ -49,26 +49,25 @@ public abstract class BaseCommand<T extends CoreUser> {
     protected final CommandSenderType senderType;
     protected final int minArgs;
     protected final int maxArgs;
-    protected final Map<String, BaseCommand<T>> subCommands;
+    protected final Map<String, C> subCommands;
     protected final List<CommandHelp> commandHelp;
     protected final BaseSettings settings;
     protected final MessageHandler messageHandler;
 
     public BaseCommand(
-            FishPlugin<?> plugin,
-            CoreUserManager<T> userManager,
-            @Nullable BaseCommand<T> parent,
+            Z plugin,
+            @Nullable C parent,
             String name,
             @Nullable String dynamicArgs,
             @Nullable String permission,
             CommandSenderType senderType,
             int minArgs,
             int maxArgs,
-            Map<String, BaseCommand<T>> subCommands,
+            Map<String, C> subCommands,
             BaseSettings settings
     ) {
         this.plugin = plugin;
-        this.userManager = userManager;
+        this.userManager = plugin.getUserManager();
         this.parent = parent;
         this.name = name;
         this.dynamicArgs = dynamicArgs;
@@ -83,18 +82,17 @@ public abstract class BaseCommand<T extends CoreUser> {
     }
 
     public BaseCommand(
-            FishPlugin<?> plugin,
-            CoreUserManager<T> userManager,
-            @Nullable BaseCommand<T> parent,
+            Z plugin,
+            @Nullable C parent,
             String name,
             @Nullable String permission,
             CommandSenderType senderType,
             int minArgs,
             int maxArgs,
-            Map<String, BaseCommand<T>> subCommands,
+            Map<String, C> subCommands,
             BaseSettings settings
     ) {
-        this(plugin, userManager, parent, name, null, permission, senderType, minArgs, maxArgs, subCommands, settings);
+        this(plugin, parent, name, null, permission, senderType, minArgs, maxArgs, subCommands, settings);
     }
 
     public void handleArgs(CommandSender sender, String[] args, String[] previousArgs) {
@@ -122,7 +120,7 @@ public abstract class BaseCommand<T extends CoreUser> {
             return;
         }
         final String first = args[0];
-        final BaseCommand<T> subCommand = this.subCommands.get(first.toLowerCase());
+        final C subCommand = this.subCommands.get(first.toLowerCase());
         if (subCommand != null) {
             final String[] newArgs = this.getNewArgs(args);
             subCommand.handleArgs(sender, newArgs, newPrevious);
@@ -133,14 +131,14 @@ public abstract class BaseCommand<T extends CoreUser> {
 
     public abstract void execute(T user, String[] args, String[] previousArgs);
 
-    public void addSubCommand(BaseCommand<T> command, boolean updateHelp) {
+    public void addSubCommand(C command, boolean updateHelp) {
         this.subCommands.put(command.name, command);
         if (updateHelp) {
             this.setHelpCommands();
         }
     }
 
-    public void addSubCommand(BaseCommand<T> command) {
+    public void addSubCommand(C command) {
         this.addSubCommand(command, false);
     }
 
@@ -163,13 +161,13 @@ public abstract class BaseCommand<T extends CoreUser> {
             return tabs;
         }
         final String first = args[0];
-        final BaseCommand<T> subCommand = this.subCommands.get(first.toLowerCase());
+        final C subCommand = this.subCommands.get(first.toLowerCase());
         if (subCommand != null) {
             final String[] newArgs = this.getNewArgs(args);
             return subCommand.getTabs(user, newArgs, newPrevious, defaultTabIsNull);
         }
         final String previous = previousArgs.length > 0 ? previousArgs[previousArgs.length - 1] : "";
-        for (BaseCommand<T> command : this.subCommands.values()) {
+        for (C command : this.subCommands.values()) {
             if (!command.name.equalsIgnoreCase(previous) && command.name.startsWith(first.toLowerCase())) {
                 tabs.add(command.name);
             }
@@ -218,7 +216,7 @@ public abstract class BaseCommand<T extends CoreUser> {
 
     protected List<CommandHelp> getHelp() {
         final List<CommandHelp> help = new ArrayList<>();
-        for (BaseCommand<T> command : this.subCommands.values()) {
+        for (C command : this.subCommands.values()) {
             help.addAll(command.getHelp());
         }
         if (this.subCommands.isEmpty()) {
@@ -230,7 +228,7 @@ public abstract class BaseCommand<T extends CoreUser> {
     private List<CommandHelp> getHelpList() {
         final List<CommandHelp> help = new ArrayList<>();
         final StringBuilder builder = new StringBuilder();
-        BaseCommand<T> parent = this;
+        C parent = (C) this;
         while (parent != null) {
             if (parent.dynamicArgs != null) {
                 help.add(this.getHelp(new StringBuilder(parent.dynamicArgs)));
@@ -244,7 +242,7 @@ public abstract class BaseCommand<T extends CoreUser> {
     }
 
     private CommandHelp getHelp(StringBuilder builder) {
-        BaseCommand<T> parent = this;
+        C parent = (C) this;
         while (parent != null) {
             builder.insert(0, parent.name + " ");
             parent = parent.parent;

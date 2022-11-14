@@ -27,10 +27,10 @@ import java.lang.reflect.Method;
 
 public abstract class CoreListener {
 
-    protected final FishPlugin<?> plugin;
+    protected final FishPlugin<?, ?> plugin;
     protected final GlobalListener globalListener;
 
-    public CoreListener(FishPlugin<?> plugin) {
+    public CoreListener(FishPlugin<?, ?> plugin) {
         this.plugin = plugin;
         this.globalListener = this.plugin.getGlobalListener();
     }

@@ -32,53 +32,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class GuiManager {
+@SuppressWarnings("unused")
+public abstract class AbstractGuiManager<T extends CoreUser, Z extends FishPlugin<T, Z>> {
 
-    public static final String MAIN_GUI = "main";
-    public static final String PERMISSIONS_GUI = "permissions";
-    public static final String ROLES_GUI = "roles";
-    public static final String UPGRADES_GUI = "upgrades";
-    public static final String MEMBERS_GUI = "members";
+    protected final Path guiFolder;
 
-    private static final List<String> DEFAULT_FILES = List.of(
-            "chunk-permissions.yml",
-            "permissions.yml",
-            "main-menu.yml",
-            "roles-menu.yml",
-            "upgrades.yml",
-            "members.yml",
-            "set-member-role.yml"
-    );
+    protected final Z plugin;
+    protected final List<String> defaultFiles;
+    protected final Map<String, GuiOpener<T>> guiMap;
+    protected final GuiSerializer<T, Z> guiSerializer;
 
-    private final Path guiFolder;
-
-    private final FishPlugin<?> plugin;
-    private final Map<String, GuiOpener> guiMap;
-
-    public GuiManager(FishPlugin<?> plugin) {
+    public AbstractGuiManager(Z plugin, List<String> defaultFiles, GuiSerializer<T, Z> guiSerializer) {
         this.plugin = plugin;
         this.guiMap = new HashMap<>();
+        this.defaultFiles = defaultFiles;
         this.guiFolder = this.plugin.getDataFolder().toPath().resolve("guis");
+        this.guiSerializer = guiSerializer;
     }
 
-    public void open(String gui, CoreUser user) {
-        final GuiOpener opener = this.guiMap.get(gui);
+    public void open(String gui, T user) {
+        final GuiOpener<T> opener = this.guiMap.get(gui);
         if (opener == null) return;
         opener.open(user);
     }
 
-    public void open(String gui, CoreUser user, Map<Object, Object> metadata, Set<Object> keysToOverwrite) {
-        final GuiOpener opener = this.guiMap.get(gui);
+    public void open(String gui, T user, Map<Object, Object> metadata, Set<Object> keysToOverwrite) {
+        final GuiOpener<T> opener = this.guiMap.get(gui);
         if (opener == null) return;
         opener.open(user, metadata, keysToOverwrite);
     }
 
     @Nullable
-    public GuiOpener getGuiOpener(String gui) {
+    public GuiOpener<T> getGuiOpener(String gui) {
         return this.guiMap.get(gui);
     }
 
-    public void addGuiOpener(GuiOpener opener) {
+    public void addGuiOpener(GuiOpener<T> opener) {
         this.guiMap.put(opener.getId(), opener);
     }
 
@@ -105,7 +94,7 @@ public abstract class GuiManager {
         this.load();
     }
 
-    protected abstract void openHandler(GuiOpener guiOpener, Gui.Builder builder, CoreUser coreUser);
+    protected abstract void openHandler(GuiOpener<T> guiOpener, Gui.Builder builder, T user);
 
     private void loadFile(File file) {
         final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
@@ -113,7 +102,7 @@ public abstract class GuiManager {
                 .build();
         try {
             final var source = loader.load();
-            final GuiOpener opener = GuiSerializer.deserialize(this.plugin, source, this::openHandler);
+            final GuiOpener<T> opener = this.guiSerializer.deserialize(this.plugin, source, this::openHandler);
             this.guiMap.put(opener.getId(), opener);
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,7 +113,7 @@ public abstract class GuiManager {
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        for (final String file : DEFAULT_FILES) {
+        for (final String file : this.defaultFiles) {
             final Path path = this.guiFolder.resolve(file);
             if (!path.toFile().exists()) {
                 this.plugin.saveResource("guis/" + file, false);

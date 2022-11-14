@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 public abstract class BaseGui implements InventoryHolder {
 
-    private final FishPlugin<?> plugin;
+    private final FishPlugin<?, ?> plugin;
     protected final String id;
     protected final String name;
     protected final int rows;
@@ -60,7 +60,7 @@ public abstract class BaseGui implements InventoryHolder {
     protected final Map<Integer, BaseGuiItem> currentInventoryItems;
 
     public BaseGui(
-            FishPlugin<?> plugin,
+            FishPlugin<?, ?> plugin,
             String id,
             String name,
             int rows,
@@ -93,7 +93,7 @@ public abstract class BaseGui implements InventoryHolder {
     }
 
     public BaseGui(
-            FishPlugin<?> plugin,
+            FishPlugin<?, ?> plugin,
             String id,
             String name,
             int rows,
@@ -106,7 +106,7 @@ public abstract class BaseGui implements InventoryHolder {
         this(plugin, id, name, rows, guiItemsMap, repeatPageSlots, metadata, filler, border);
     }
 
-    public FishPlugin<?> getPlugin() {
+    public FishPlugin<?, ?> getPlugin() {
         return plugin;
     }
 

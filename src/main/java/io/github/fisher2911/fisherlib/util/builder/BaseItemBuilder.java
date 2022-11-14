@@ -127,7 +127,7 @@ public class BaseItemBuilder {
         itemMeta.setDisplayName(MessageHandler.serialize(placeholders.apply(name, parsePlaceholders)));
         final List<String> lore = itemMeta.getLore();
         if (lore != null) {
-            itemMeta.setLore(this.buildLore(lore, placeholders));
+            itemMeta.setLore(this.buildLore(lore, placeholders, parsePlaceholders));
         }
         itemStack.setItemMeta(itemMeta);
         return itemStack;

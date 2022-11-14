@@ -20,17 +20,17 @@ package io.github.fisher2911.fisherlib.config.serializer;
 
 import io.github.fisher2911.fisherlib.FishPlugin;
 import io.github.fisher2911.fisherlib.command.CommandSenderType;
+import io.github.fisher2911.fisherlib.gui.AbstractGuiManager;
 import io.github.fisher2911.fisherlib.gui.BaseGui;
 import io.github.fisher2911.fisherlib.gui.BaseGuiItem;
 import io.github.fisher2911.fisherlib.gui.ClickAction;
 import io.github.fisher2911.fisherlib.gui.ConditionalItem;
 import io.github.fisher2911.fisherlib.gui.GuiKey;
-import io.github.fisher2911.fisherlib.gui.GuiManager;
 import io.github.fisher2911.fisherlib.gui.wrapper.InventoryEventWrapper;
 import io.github.fisher2911.fisherlib.user.CoreUser;
 import io.github.fisher2911.fisherlib.user.CoreUserManager;
 import io.github.fisher2911.fisherlib.util.EnumUtil;
-import io.github.fisher2911.fisherlib.util.function.TriFunction;
+import io.github.fisher2911.fisherlib.util.function.QuadFunction;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,41 +46,41 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ClickActionSerializer {
+public class ClickActionSerializer<T extends CoreUser, Z extends FishPlugin<T, Z>> {
 
-    private static final Map<String, TriFunction<FishPlugin<?>, ConfigurationNode, Set<ClickType>, Consumer<InventoryEventWrapper<InventoryClickEvent>>>> clickActionLoaders =
+    private final Map<String, QuadFunction<Z, ItemSerializers<T, Z>, ConfigurationNode, Set<ClickType>, Consumer<InventoryEventWrapper<InventoryClickEvent>>>> clickActionLoaders =
             new HashMap<>();
 
-    public static void registerLoader(String clickAction, TriFunction<FishPlugin<?>, ConfigurationNode, Set<ClickType>, Consumer<InventoryEventWrapper<InventoryClickEvent>>> loader) {
-        clickActionLoaders.put(clickAction, loader);
+    public void registerLoader(String clickAction, QuadFunction<Z, ItemSerializers<T, Z>, ConfigurationNode, Set<ClickType>, Consumer<InventoryEventWrapper<InventoryClickEvent>>> loader) {
+        this.clickActionLoaders.put(clickAction, loader);
     }
 
-    static {
-        registerLoader(ClickAction.NEXT_PAGE, ClickActionSerializer::loadNextPage);
-        registerLoader(ClickAction.PREVIOUS_PAGE, ClickActionSerializer::loadPreviousPage);
-        registerLoader(ClickAction.PLAYER_COMMAND, ClickActionSerializer::loadPlayerCommand);
-        registerLoader(ClickAction.CONSOLE_COMMAND, ClickActionSerializer::loadConsoleCommand);
-        registerLoader(ClickAction.OPEN_MENU, ClickActionSerializer::loadOpenMenu);
-        registerLoader(ClickAction.INCREASE_UPGRADE_LEVEL, ClickActionSerializer::loadIncreaseLevel);
-        registerLoader(ClickAction.SET_ITEMS, ClickActionSerializer::loadSetItems);
-        registerLoader(ClickAction.SET_ITEM, ClickActionSerializer::loadSetItem);
-        registerLoader(ClickAction.CLOSE_MENU, ClickActionSerializer::loadCloseMenu);
-        registerLoader(ClickAction.SEND_DATA, ClickActionSerializer::loadSendData);
-        registerLoader(ClickAction.PREVIOUS_GUI, ClickActionSerializer::loadPreviousGui);
+    public ClickActionSerializer() {
+        this.registerLoader(ClickAction.NEXT_PAGE, this::loadNextPage);
+        this.registerLoader(ClickAction.PREVIOUS_PAGE, this::loadPreviousPage);
+        this.registerLoader(ClickAction.PLAYER_COMMAND, this::loadPlayerCommand);
+        this.registerLoader(ClickAction.CONSOLE_COMMAND, this::loadConsoleCommand);
+        this.registerLoader(ClickAction.OPEN_MENU, this::loadOpenMenu);
+        this.registerLoader(ClickAction.INCREASE_UPGRADE_LEVEL, this::loadIncreaseLevel);
+        this.registerLoader(ClickAction.SET_ITEMS, this::loadSetItems);
+        this.registerLoader(ClickAction.SET_ITEM, this::loadSetItem);
+        this.registerLoader(ClickAction.CLOSE_MENU, this::loadCloseMenu);
+        this.registerLoader(ClickAction.SEND_DATA, this::loadSendData);
+        this.registerLoader(ClickAction.PREVIOUS_GUI, this::loadPreviousGui);
     }
 
-    private static final String CLICK_TYPES_PATH = "click-types";
-    private static final String COMMAND_PATH = "command";
-    private static final String MENU_PATH = "menu";
-    private static final String RESET_DELAY_PATH = "duration";
+    public static final String CLICK_TYPES_PATH = "click-types";
+    public static final String COMMAND_PATH = "command";
+    public static final String MENU_PATH = "menu";
+    public static final String RESET_DELAY_PATH = "duration";
 
-    public static List<Consumer<InventoryEventWrapper<InventoryClickEvent>>> deserializeAll(FishPlugin<?> plugin, ConfigurationNode source) throws SerializationException {
+    public List<Consumer<InventoryEventWrapper<InventoryClickEvent>>> deserializeAll(Z plugin, ItemSerializers<T, Z> serializers, ConfigurationNode source) throws SerializationException {
         final List<Consumer<InventoryEventWrapper<InventoryClickEvent>>> actions = new ArrayList<>();
         for (var actionsEntry : source.childrenMap().entrySet()) {
             final var node = actionsEntry.getValue();
             for (var entry : node.childrenMap().entrySet()) {
                 if (!(entry.getKey() instanceof final String action)) continue;
-                final var consumer = deserialize(plugin, node.node(action), action.toUpperCase(Locale.ROOT));
+                final var consumer = this.deserialize(plugin, serializers, node.node(action), action.toUpperCase(Locale.ROOT));
                 if (consumer == null) continue;
                 actions.add(consumer);
             }
@@ -88,8 +88,9 @@ public class ClickActionSerializer {
         return actions;
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> deserialize(
-            FishPlugin<?> plugin,
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> deserialize(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
             ConfigurationNode source,
             String actionType
     ) throws SerializationException {
@@ -98,14 +99,19 @@ public class ClickActionSerializer {
                 .map(s -> EnumUtil.valueOf(ClickType.class, s))
                 .filter(clickType -> clickType != null)
                 .collect(Collectors.toSet());
-        final var loader = clickActionLoaders.get(actionType);
+        final var loader = this.clickActionLoaders.get(actionType);
         if (loader == null) {
             throw new SerializationException("No loader for click action: " + actionType);
         }
-        return loader.apply(plugin, source, clickTypes);
+        return loader.apply(plugin, serializers, source, clickTypes);
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadNextPage(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadNextPage(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -114,7 +120,12 @@ public class ClickActionSerializer {
         };
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPreviousPage(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPreviousPage(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -123,7 +134,7 @@ public class ClickActionSerializer {
         };
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadCommand(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes, CommandSenderType type) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadCommand(Z plugin, ConfigurationNode source, Set<ClickType> clickTypes, CommandSenderType type) {
         if (type == CommandSenderType.ANY) throw new IllegalArgumentException("Command sender type cannot be ANY");
         final String command = source.node(COMMAND_PATH).getString();
         if (command == null) throw new IllegalArgumentException("Command cannot be null");
@@ -140,18 +151,33 @@ public class ClickActionSerializer {
         };
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPlayerCommand(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
-        return loadCommand(plugin, source, clickTypes, CommandSenderType.PLAYER);
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPlayerCommand(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
+        return this.loadCommand(plugin, source, clickTypes, CommandSenderType.PLAYER);
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadConsoleCommand(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
-        return loadCommand(plugin, source, clickTypes, CommandSenderType.CONSOLE);
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadConsoleCommand(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
+        return this.loadCommand(plugin, source, clickTypes, CommandSenderType.CONSOLE);
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadOpenMenu(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadOpenMenu(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
         final String menu = source.node(MENU_PATH).getString();
         if (menu == null) throw new IllegalArgumentException("Menu cannot be null");
-        final GuiManager guiManager = plugin.getGuiManager();
+        final AbstractGuiManager<T, Z> guiManager = plugin.getGuiManager();
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -172,24 +198,28 @@ public class ClickActionSerializer {
                 final ConditionalItem conditionalItem = gui.getItem(event.getSlot());
                 if (keys != null) {
                     for (String key : keys) {
-//                        final GuiKey guiKey = EnumUtil.valueOf(GuiKey.class, key);
                         GuiKey guiKey = GuiKey.defaults().get(key);
                         if (guiKey == null) guiKey = GuiKey.key(plugin, key);
+
                         Object toSend = item.getMetadata(guiKey);
-                        if (toSend == null) {
-                            if (conditionalItem == null) continue;
+                        if (conditionalItem != null) {
                             toSend = conditionalItem.getMetadata(guiKey);
-                            if (toSend == null) continue;
                         }
+                        if (toSend == null) continue;
                         metadata.put(guiKey, toSend);
                     }
                 }
             }
-            guiManager.open(menu, wrapper.gui().getMetadata(GuiKey.USER, CoreUser.class), metadata, metadata.keySet());
+            guiManager.open(menu, (T) wrapper.gui().getMetadata(GuiKey.USER, CoreUser.class), metadata, metadata.keySet());
         };
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadIncreaseLevel(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadIncreaseLevel(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -203,7 +233,12 @@ public class ClickActionSerializer {
         };
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadCloseMenu(FishPlugin<?> plugin, ConfigurationNode source, Set<ClickType> clickTypes) {
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadCloseMenu(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
+            ConfigurationNode source,
+            Set<ClickType> clickTypes
+    ) {
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -214,8 +249,9 @@ public class ClickActionSerializer {
 
     private static final String ITEMS_PATH = "items";
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSetItems(
-            FishPlugin<?> plugin,
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSetItems(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
             ConfigurationNode source,
             Set<ClickType> clickTypes
     ) {
@@ -225,7 +261,7 @@ public class ClickActionSerializer {
             final int duration = source.node(RESET_DELAY_PATH).getInt(-1);
             for (var entry : source.node(ITEMS_PATH).childrenMap().entrySet()) {
                 if (!(entry.getKey() instanceof final Integer slot)) continue;
-                final ConditionalItem item = GuiItemSerializer.INSTANCE.deserialize(plugin, entry.getValue());
+                final ConditionalItem item = serializers.guiItemSerializer().deserialize(plugin, serializers, entry.getValue());
                 if (item == null) continue;
                 items.put(slot, item);
             }
@@ -254,15 +290,16 @@ public class ClickActionSerializer {
 
     private static final String ITEM_PATH = "item";
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSetItem(
-            FishPlugin<?> plugin,
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSetItem(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
             ConfigurationNode source,
             Set<ClickType> clickTypes
     ) {
         // stupid checked exceptions not working with lambdas
         try {
             final int duration = source.node(RESET_DELAY_PATH).getInt(-1);
-            final ConditionalItem item = GuiItemSerializer.INSTANCE.deserialize(plugin, source/*.node(ITEM_PATH)*/);
+            final ConditionalItem item = serializers.guiItemSerializer().deserialize(plugin, serializers, source/*.node(ITEM_PATH)*/);
             if (item == null) throw new SerializationException("Item cannot be null");
             return wrapper -> {
                 final var event = wrapper.event();
@@ -290,17 +327,15 @@ public class ClickActionSerializer {
 
     private static final String DATA_PATH = "data";
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSendData(
-            FishPlugin<?> plugin,
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadSendData(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
             ConfigurationNode source,
             Set<ClickType> clickTypes
     ) {
         // stupid checked exceptions not working with lambdas
         try {
-            final List<String> keys = source.node(DATA_PATH).getList(String.class, new ArrayList<>())
-                    .stream()
-                    .map(String::toUpperCase).
-                    collect(Collectors.toList());
+            final List<String> keys = new ArrayList<>(source.node(DATA_PATH).getList(String.class, new ArrayList<>()));
             return wrapper -> {
                 final var event = wrapper.event();
                 event.setCancelled(true);
@@ -315,12 +350,13 @@ public class ClickActionSerializer {
         }
     }
 
-    private static Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPreviousGui(
-            FishPlugin<?> plugin,
+    private Consumer<InventoryEventWrapper<InventoryClickEvent>> loadPreviousGui(
+            Z plugin,
+            ItemSerializers<T, Z> serializers,
             ConfigurationNode source,
             Set<ClickType> clickTypes
     ) {
-        final CoreUserManager<?> userManager = plugin.getUserManager();
+        final CoreUserManager<T> userManager = plugin.getUserManager();
         return wrapper -> {
             final var event = wrapper.event();
             event.setCancelled(true);
@@ -329,10 +365,10 @@ public class ClickActionSerializer {
             if (previousGuis == null || previousGuis.isEmpty()) return;
             final String previousGui = previousGuis.remove(previousGuis.size() - 1);
             if (previousGui == null) return;
-            final CoreUser user = userManager.forceGet(event.getWhoClicked().getUniqueId());
+            final T user = userManager.forceGet(event.getWhoClicked().getUniqueId());
             if (user == null) return;
             plugin.getGuiManager().open(previousGui, user, Map.of(GuiKey.PREVIOUS_MENU_ID, previousGuis), Set.of());
         };
     }
-    
+
 }

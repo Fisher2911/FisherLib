@@ -48,7 +48,7 @@ public class Gui extends BaseGui {
     protected final Consumer<InventoryEventWrapper<InventoryOpenEvent>> openHandler;
 
     private Gui(
-            FishPlugin<?> plugin,
+            FishPlugin<?, ?> plugin,
             String id,
             String name,
             int rows,
@@ -124,13 +124,13 @@ public class Gui extends BaseGui {
         handler.accept(wrapper);
     }
 
-    public static Builder builder(FishPlugin<?> plugin, String id) {
+    public static Builder builder(FishPlugin<?, ?> plugin, String id) {
         return new Builder(plugin, id);
     }
 
     public static class Builder {
 
-        private final FishPlugin<?> plugin;
+        private final FishPlugin<?, ?> plugin;
         private final String id;
         private String name = "";
         private int rows = 1;
@@ -144,12 +144,12 @@ public class Gui extends BaseGui {
         private final List<Function<BaseGui, List<ConditionalItem>>> filler = new ArrayList<>();
         private final List<ConditionalItem> border = new ArrayList<>();
 
-        private Builder(FishPlugin<?> plugin, String id) {
+        private Builder(FishPlugin<?, ?> plugin, String id) {
             this.plugin = plugin;
             this.id = id;
         }
 
-        private static Builder builder(FishPlugin<?> plugin, String id) {
+        private static Builder builder(FishPlugin<?, ?> plugin, String id) {
             return new Builder(plugin, id);
         }
 

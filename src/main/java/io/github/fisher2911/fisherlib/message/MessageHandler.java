@@ -75,17 +75,17 @@ public class MessageHandler extends Config {
     private final BukkitAudiences audiences;
     private final Placeholders placeholders;
 
-    private MessageHandler(FishPlugin<?> plugin, Placeholders placeholders, String... path) {
+    private MessageHandler(FishPlugin<?, ?> plugin, Placeholders placeholders, String... path) {
         super(plugin, path);
         this.audiences = BukkitAudiences.create(this.plugin);
         this.placeholders = placeholders;
     }
 
-    public static MessageHandler createInstance(FishPlugin<?> plugin, Placeholders placeholders) {
+    public static MessageHandler createInstance(FishPlugin<?, ?> plugin, Placeholders placeholders) {
         return registry.computeIfAbsent(plugin.getClass(), aClass -> new MessageHandler(plugin, placeholders, FILE_NAME));
     }
 
-    public static MessageHandler getInstance(FishPlugin<?> plugin) {
+    public static MessageHandler getInstance(FishPlugin<?, ?> plugin) {
         return registry.get(plugin.getClass());
     }
 
@@ -175,7 +175,7 @@ public class MessageHandler extends Config {
         return MINI_MESSAGE.deserialize(this.placeholders.apply(s, placeholders));
     }
 
-    private String getMessage(Message message) {
+    public String getMessage(Message message) {
         return this.messages.get(message);
     }
 

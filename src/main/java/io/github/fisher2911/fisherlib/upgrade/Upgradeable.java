@@ -23,9 +23,9 @@ import io.github.fisher2911.fisherlib.user.CoreUser;
 import io.github.fisher2911.fisherlib.util.collections.DirtyMap;
 import org.jetbrains.annotations.Nullable;
 
-public interface Upgradeable<Z> {
+public interface Upgradeable<U extends CoreUser, Z> {
 
-    UpgradeHolder<Z> getUpgradeHolder();
+    UpgradeHolder<Z, U> getUpgradeHolder();
 
     void setUpgradeLevel(String id, int level);
 
@@ -38,6 +38,6 @@ public interface Upgradeable<Z> {
 
     DirtyMap<String, Integer> getUpgradeLevels();
 
-    void tryLevelUpUpgrade(CoreUser user, Upgrades<?> upgrades);
+    void tryLevelUpUpgrade(U user, Upgrades<?> upgrades);
 
 }

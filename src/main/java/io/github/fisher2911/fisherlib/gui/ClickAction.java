@@ -20,17 +20,17 @@ package io.github.fisher2911.fisherlib.gui;
 
 public class ClickAction {
 
-    public static final String SWAP_VALUE = "swap_value";
-    public static final String NEXT_PAGE = "next_page";
-    public static final String PREVIOUS_PAGE = "previous_page";
-    public static final String SET_ITEMS = "set_items";
-    public static final String SET_ITEM = "set_item";
-    public static final String OPEN_MENU = "open_menu";
-    public static final String CLOSE_MENU = "close_menu";
-    public static final String PLAYER_COMMAND = "player_command";
-    public static final String CONSOLE_COMMAND = "console_command";
-    public static final String INCREASE_UPGRADE_LEVEL = "increase_upgrade_level";
-    public static final String SEND_DATA = "send_data";
-    public static final String PREVIOUS_GUI = "previous_gui";
+    public static final String SWAP_VALUE = "SWAP_VALUE";
+    public static final String NEXT_PAGE = "NEXT_PAGE";
+    public static final String PREVIOUS_PAGE = "PREVIOUS_PAGE";
+    public static final String SET_ITEMS = "SET_ITEMS";
+    public static final String SET_ITEM = "SET_ITEM";
+    public static final String OPEN_MENU = "OPEN_MENU";
+    public static final String CLOSE_MENU = "CLOSE_MENU";
+    public static final String PLAYER_COMMAND = "PLAYER_COMMAND";
+    public static final String CONSOLE_COMMAND = "CONSOLE_COMMAND";
+    public static final String INCREASE_UPGRADE_LEVEL = "INCREASE_UPGRADE_LEVEL";
+    public static final String SEND_DATA = "SEND_DATA";
+    public static final String PREVIOUS_GUI = "PREVIOUS_GUI";
 
 }

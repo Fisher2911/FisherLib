@@ -31,10 +31,10 @@ import java.util.function.Consumer;
 
 public class GlobalListener implements Listener {
 
-    private final FishPlugin<?> plugin;
+    private final FishPlugin<?, ?> plugin;
     private final MapOfMaps<Class<? extends Event>, EventPriority, RegisteredListener> listeners;
 
-    public GlobalListener(FishPlugin<?> plugin) {
+    public GlobalListener(FishPlugin<?, ?> plugin) {
         this.plugin = plugin;
         this.listeners = new MapOfMaps<>(new HashMap<>(), HashMap::new);
     }

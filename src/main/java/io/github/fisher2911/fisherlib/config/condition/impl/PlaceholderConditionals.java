@@ -23,18 +23,19 @@ import io.github.fisher2911.fisherlib.config.condition.ConditionOperation;
 import io.github.fisher2911.fisherlib.config.condition.MetadataPredicate;
 import io.github.fisher2911.fisherlib.gui.GuiKey;
 import io.github.fisher2911.fisherlib.util.Metadata;
+import org.bukkit.Bukkit;
 
 import java.util.Map;
 import java.util.function.Function;
 
 public class PlaceholderConditionals implements MetadataPredicate {
 
-    private final FishPlugin<?> plugin;
+    private final FishPlugin<?, ?> plugin;
     private final String toParse;
     private final ConditionOperation operation;
     private final String value;
 
-    public PlaceholderConditionals(FishPlugin<?> plugin, String toParse, ConditionOperation operation, String value) {
+    public PlaceholderConditionals(FishPlugin<?, ?> plugin, String toParse, ConditionOperation operation, String value) {
         this.plugin = plugin;
         this.toParse = toParse;
         this.operation = operation;
@@ -73,7 +74,7 @@ public class PlaceholderConditionals implements MetadataPredicate {
             '<', o -> (o == '=') ? ConditionOperation.LESS_THAN_OR_EQUALS : ConditionOperation.LESS_THAN
     );
 
-    public static PlaceholderConditionals parse(FishPlugin<?> plugin, String string) {
+    public static PlaceholderConditionals parse(FishPlugin<?, ?> plugin, String string) {
         final char[] chars = string.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             final char previous = i > 0 ? chars[i - 1] : ' ';

@@ -30,15 +30,15 @@ import java.util.function.Supplier;
 @SuppressWarnings({"unchecked", "unused"})
 public class TaskChain<T, R> {
 
-    private final FishPlugin<?> plugin;
+    private final FishPlugin<?, ?> plugin;
     private final Queue<Task> queue;
 
-    private TaskChain(FishPlugin<?> plugin, Queue<Task> queue) {
+    private TaskChain(FishPlugin<?, ?> plugin, Queue<Task> queue) {
         this.plugin = plugin;
         this.queue = queue;
     }
 
-    public static <T, R> TaskChain<T, R> create(FishPlugin<?> plugin) {
+    public static <T, R> TaskChain<T, R> create(FishPlugin<?, ?> plugin) {
         return new TaskChain<>(plugin, new ArrayDeque<>());
     }
 

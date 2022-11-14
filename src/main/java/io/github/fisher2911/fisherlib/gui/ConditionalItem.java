@@ -32,12 +32,12 @@ import java.util.function.BiFunction;
 
 public class ConditionalItem {
 
-    private final FishPlugin<?> plugin;
+    private final FishPlugin<?, ?> plugin;
     private final Metadata metadata;
     private final List<ItemConditional> conditionalItems;
     protected final List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders;
 
-    protected ConditionalItem(FishPlugin<?> plugin, Metadata metadata, List<ItemConditional> conditionalItems, List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders) {
+    protected ConditionalItem(FishPlugin<?, ?> plugin, Metadata metadata, List<ItemConditional> conditionalItems, List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders) {
         this.plugin = plugin;
         this.metadata = metadata;
         this.conditionalItems = conditionalItems;
@@ -80,7 +80,7 @@ public class ConditionalItem {
         return new SimpleConditionalItem(item);
     }
 
-    public static Builder builder(FishPlugin<?> plugin) {
+    public static Builder builder(FishPlugin<?, ?> plugin) {
         return new Builder(plugin);
     }
 
@@ -97,12 +97,12 @@ public class ConditionalItem {
 
     public static class Builder {
 
-        protected final FishPlugin<?> plugin;
+        protected final FishPlugin<?, ?> plugin;
         protected final Metadata metadata;
         protected final List<ItemConditional> conditionalItems;
         protected final List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders;
 
-        protected Builder(FishPlugin<?> plugin) {
+        protected Builder(FishPlugin<?, ?> plugin) {
             this.plugin = plugin;
             this.metadata = new Metadata(new HashMap<>());
             this.conditionalItems = new ArrayList<>();

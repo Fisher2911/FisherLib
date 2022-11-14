@@ -22,7 +22,7 @@ import io.github.fisher2911.fisherlib.FishPlugin;
 
 public abstract class BaseSettings extends Config {
 
-    public BaseSettings(FishPlugin<?> plugin, String... path) {
+    public BaseSettings(FishPlugin<?, ?> plugin, String... path) {
         super(plugin, path);
     }
 

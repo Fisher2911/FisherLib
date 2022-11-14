@@ -44,7 +44,7 @@ public class GuiItem extends BaseGuiItem {
     private final Consumer<InventoryEventWrapper<InventoryDragEvent>> dragHandler;
 
     public GuiItem(
-            FishPlugin<?> plugin,
+            FishPlugin<?, ?> plugin,
             BaseItemBuilder itemBuilder,
             Metadata metadata,
             @Nullable Consumer<InventoryEventWrapper<InventoryClickEvent>> clickHandler,
@@ -57,12 +57,12 @@ public class GuiItem extends BaseGuiItem {
     }
 
     @Override
-    public BaseGuiItem withItem(FishPlugin<?> plugin, BaseItemBuilder item) {
+    public BaseGuiItem withItem(FishPlugin<?, ?> plugin, BaseItemBuilder item) {
         return new GuiItem(plugin, item, this.metadata.copy(), this.clickHandler, this.dragHandler, this.placeholders);
     }
 
     @Override
-    public BaseGuiItem withItem(FishPlugin<?> plugin, ItemStack item) {
+    public BaseGuiItem withItem(FishPlugin<?, ?> plugin, ItemStack item) {
         return this.withItem(plugin, BaseItemBuilder.from(item));
     }
 
@@ -78,11 +78,11 @@ public class GuiItem extends BaseGuiItem {
         this.dragHandler.accept(event);
     }
 
-    public static GuiItem nextPage(FishPlugin<?> plugin, BaseItemBuilder itemBuilder, Collection<ClickType> clickTypes) {
+    public static GuiItem nextPage(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder, Collection<ClickType> clickTypes) {
         return new GuiItem(plugin, itemBuilder, new Metadata(new HashMap<>()), nextPageWrapper(clickTypes), null, new ArrayList<>());
     }
 
-    public static GuiItem nextPage(FishPlugin<?> plugin, BaseItemBuilder itemBuilder) {
+    public static GuiItem nextPage(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder) {
         return nextPage(plugin, itemBuilder, List.of(ClickType.values()));
     }
 
@@ -93,11 +93,11 @@ public class GuiItem extends BaseGuiItem {
         };
     }
 
-    public static GuiItem previousPage(FishPlugin<?> plugin, BaseItemBuilder itemBuilder, Collection<ClickType> clickTypes) {
+    public static GuiItem previousPage(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder, Collection<ClickType> clickTypes) {
         return new GuiItem(plugin, itemBuilder, new Metadata(new HashMap<>()), previousPageWrapper(clickTypes), null, new ArrayList<>());
     }
 
-    public static GuiItem previousPage(FishPlugin<?> plugin, BaseItemBuilder itemBuilder) {
+    public static GuiItem previousPage(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder) {
         return previousPage(plugin, itemBuilder, List.of(ClickType.values()));
     }
 
@@ -123,11 +123,11 @@ public class GuiItem extends BaseGuiItem {
         return new GuiItem(this.plugin, this.itemBuilder, this.metadata.copy(), this.clickHandler, this.dragHandler, this.placeholders);
     }
 
-    public static BaseGuiItem air(FishPlugin<?> plugin) {
+    public static BaseGuiItem air(FishPlugin<?, ?> plugin) {
         return new GuiItem(plugin, BaseItemBuilder.from(Material.AIR), Metadata.empty(), InventoryEventWrapper::cancel, InventoryEventWrapper::cancel, new ArrayList<>());
     }
 
-    public static Builder builder(FishPlugin<?> plugin, BaseItemBuilder itemBuilder) {
+    public static Builder builder(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder) {
         return Builder.of(plugin, itemBuilder);
     }
 
@@ -141,7 +141,7 @@ public class GuiItem extends BaseGuiItem {
 
     public static class Builder {
 
-        private final FishPlugin<?> plugin;
+        private final FishPlugin<?, ?> plugin;
         private final BaseItemBuilder itemBuilder;
         private final Metadata metadata = new Metadata(new HashMap<>());
         private Consumer<InventoryEventWrapper<InventoryClickEvent>> clickHandler;
@@ -149,7 +149,7 @@ public class GuiItem extends BaseGuiItem {
         private Consumer<InventoryEventWrapper<InventoryDragEvent>> dragHandler;
         private final List<BiFunction<BaseGui, BaseGuiItem, Object>> placeholders = new ArrayList<>();
 
-        private Builder(FishPlugin<?> plugin, BaseItemBuilder itemBuilder) {
+        private Builder(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder) {
             this.plugin = plugin;
             this.itemBuilder = itemBuilder;
         }
@@ -174,7 +174,7 @@ public class GuiItem extends BaseGuiItem {
             }
         }
 
-        private static Builder of(FishPlugin<?> plugin, BaseItemBuilder itemBuilder) {
+        private static Builder of(FishPlugin<?, ?> plugin, BaseItemBuilder itemBuilder) {
             return new Builder(plugin, itemBuilder);
         }
 

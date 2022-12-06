@@ -26,9 +26,11 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
@@ -100,6 +102,12 @@ public class BaseItemBuilder {
         for (final Map.Entry<Enchantment, Integer> entry : enchants.entrySet()) {
             this.enchant(entry.getKey(), entry.getValue());
         }
+        return (T) this;
+    }
+
+    public <T extends BaseItemBuilder> T pdc(Consumer<PersistentDataContainer> consumer) {
+        if (this.itemMeta == null) return (T) this;
+        consumer.accept(this.itemMeta.getPersistentDataContainer());
         return (T) this;
     }
 

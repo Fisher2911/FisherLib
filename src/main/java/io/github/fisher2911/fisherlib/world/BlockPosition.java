@@ -18,12 +18,12 @@
 
 package io.github.fisher2911.fisherlib.world;
 
-import javax.xml.stream.Location;
+import org.bukkit.Location;
 
 public record BlockPosition(int x, int y, int z) {
 
-    BlockPosition fromLocation(Location location) {
-        return new BlockPosition(x, y, z);
+    public static BlockPosition fromLocation(Location location) {
+        return new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public BlockPosition add(int x, int y, int z) {

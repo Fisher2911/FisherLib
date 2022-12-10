@@ -44,8 +44,16 @@ public record Position(double x, double y, double z, float yaw, float pitch) {
         return new Position(this.x + x, this.y + y, this.z + z);
     }
 
+    public Position add(Position position) {
+        return this.add(position.x(), position.y(), position.z());
+    }
+
     public Position subtract(double x, double y, double z) {
         return this.add(-x, -y, -z);
+    }
+
+    public Position subtract(Position position) {
+        return this.subtract(position.x(), position.y(), position.z());
     }
 
     public Position multiply(double x, double y, double z) {

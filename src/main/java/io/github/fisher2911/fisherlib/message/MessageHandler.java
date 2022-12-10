@@ -31,6 +31,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,6 +42,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,18 +54,18 @@ public class MessageHandler extends Config {
     private static final String FILE_NAME = "messages.yml";
 
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-        public static final MiniMessage SAFE_MINI_MESSAGE = MiniMessage.builder()
+    public static final MiniMessage SAFE_MINI_MESSAGE = MiniMessage.builder()
             .tags(TagResolver.resolver(
-                StandardTags.decorations(),
-                StandardTags.clickEvent(),
-                StandardTags.insertion(),
-                StandardTags.hoverEvent(),
-                StandardTags.font(),
-                StandardTags.keybind(),
-                StandardTags.newline(),
-                StandardTags.selector(),
-                StandardTags.transition(),
-                StandardTags.translatable()
+                    StandardTags.decorations(),
+                    StandardTags.clickEvent(),
+                    StandardTags.insertion(),
+                    StandardTags.hoverEvent(),
+                    StandardTags.font(),
+                    StandardTags.keybind(),
+                    StandardTags.newline(),
+                    StandardTags.selector(),
+                    StandardTags.transition(),
+                    StandardTags.translatable()
             ))
             .build();
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder()
@@ -173,6 +175,32 @@ public class MessageHandler extends Config {
     public void sendMessage(CommandSender sender, Component component) {
         final Audience audience = this.audiences.sender(sender);
         audience.sendMessage(component);
+    }
+
+    public void sendTitle(CoreUser user, String title, String subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        final Player player = user.getPlayer();
+        if (player == null) return;
+        this.sendTitle(player, title, subtitle, fadeInTicks, stayTicks, fadeOutTicks);
+    }
+
+    public void sendTitle(CommandSender sender, String title, String subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        final Audience audience = this.audiences.sender(sender);
+        audience.showTitle(Title.title(
+                MINI_MESSAGE.deserialize(title),
+                MINI_MESSAGE.deserialize(subtitle),
+                Title.Times.times(Duration.ofMillis(fadeInTicks * 50L), Duration.ofMillis(stayTicks * 50L), Duration.ofMillis(fadeOutTicks * 50L))
+        ));
+    }
+
+    public void sendActionBar(CoreUser user, String message) {
+        final Player player = user.getPlayer();
+        if (player == null) return;
+        this.sendActionBar(player, message);
+    }
+
+    public void sendActionBar(CommandSender sender, String message) {
+        final Audience audience = this.audiences.sender(sender);
+        audience.sendActionBar(MINI_MESSAGE.deserialize(message));
     }
 
     public Component deserialize(String s, Object... placeholders) {

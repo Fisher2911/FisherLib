@@ -146,7 +146,6 @@ public abstract class BaseCommand<T extends CoreUser, Z extends FishPlugin<T, Z>
     public List<String> getTabs(T user, String[] args, String[] previousArgs, boolean defaultTabIsNull) {
         final List<String> tabs = new ArrayList<>();
         if (this.permission != null && !user.hasPermission(this.permission)) {
-            this.messageHandler.sendMessage(user, Message.NO_COMMAND_PERMISSION);
             if (defaultTabIsNull) return null;
             return tabs;
         }
@@ -165,6 +164,10 @@ public abstract class BaseCommand<T extends CoreUser, Z extends FishPlugin<T, Z>
         if (subCommand != null) {
             final String[] newArgs = this.getNewArgs(args);
             return subCommand.getTabs(user, newArgs, newPrevious, defaultTabIsNull);
+        }
+        if (args.length != 1) {
+            if (defaultTabIsNull) return null;
+            return tabs;
         }
         final String previous = previousArgs.length > 0 ? previousArgs[previousArgs.length - 1] : "";
         for (C command : this.subCommands.values()) {

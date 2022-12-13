@@ -24,8 +24,10 @@ import io.github.fisher2911.fisherlib.placeholder.Placeholders;
 import io.github.fisher2911.fisherlib.user.CoreConsoleUser;
 import io.github.fisher2911.fisherlib.user.CoreUser;
 import io.github.fisher2911.fisherlib.user.UserGroup;
+import io.github.fisher2911.fisherlib.world.Position;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -201,6 +203,28 @@ public class MessageHandler extends Config {
     public void sendActionBar(CommandSender sender, String message) {
         final Audience audience = this.audiences.sender(sender);
         audience.sendActionBar(MINI_MESSAGE.deserialize(message));
+    }
+
+    public void playSound(CoreUser user, Sound sound) {
+        final Player player = user.getPlayer();
+        if (player == null) return;
+        this.playSound(player, sound);
+    }
+
+    public void playSound(CoreUser user, Sound sound, Position origin) {
+        final Player player = user.getPlayer();
+        if (player == null) return;
+        this.playSound(player, sound, origin);
+    }
+
+    public void playSound(CommandSender sender, Sound sound) {
+        final Audience audience = this.audiences.sender(sender);
+        audience.playSound(sound);
+    }
+
+    public void playSound(CommandSender sender, Sound sound, Position origin) {
+        final Audience audience = this.audiences.sender(sender);
+        audience.playSound(sound, origin.x(), origin.y(), origin.z());
     }
 
     public Component deserialize(String s, Object... placeholders) {

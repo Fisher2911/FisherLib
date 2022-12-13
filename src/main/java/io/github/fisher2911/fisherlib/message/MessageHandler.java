@@ -93,6 +93,10 @@ public class MessageHandler extends Config {
         return registry.get(plugin.getClass());
     }
 
+    public MessageHandler getInstance(Class<? extends FishPlugin<?, ?>> clazz) {
+        return registry.get(clazz);
+    }
+
     public static String serialize(String s) {
         return LEGACY_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE.deserialize(s));
     }

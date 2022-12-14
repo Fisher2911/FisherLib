@@ -93,7 +93,7 @@ public class MessageHandler extends Config {
         return registry.get(plugin.getClass());
     }
 
-    public MessageHandler getInstance(Class<? extends FishPlugin<?, ?>> clazz) {
+    public static MessageHandler getInstance(Class<? extends FishPlugin<?, ?>> clazz) {
         return registry.get(clazz);
     }
 

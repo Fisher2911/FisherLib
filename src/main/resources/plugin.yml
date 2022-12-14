@@ -1,5 +1,5 @@
 name: FisherLib
-version: '1.0.7-beta'
+version: '1.0.8-beta'
 main: io.github.fisher2911.fisherlib.FisherLib
 api-version: 1.16
 authors: [ Fisher2911 ]

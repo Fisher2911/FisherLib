@@ -26,6 +26,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -90,6 +92,24 @@ public class ItemSerializer implements TypeSerializer<BaseItemBuilder> {
 
     @Override
     public void serialize(Type type, @Nullable BaseItemBuilder obj, ConfigurationNode node) throws SerializationException {
-
+        if (obj == null) return;
+        final ItemStack itemStack = obj.build();
+        node.node(MATERIAL).set(itemStack.getType().toString());
+        node.node(AMOUNT).set(itemStack.getAmount());
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) return;
+        node.node(NAME).set(itemMeta.getDisplayName());
+        node.node(LORE).set(itemMeta.getLore());
+        final Map<Enchantment, Integer> enchantments = itemMeta.getEnchants();
+        for (final Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+            final ConfigurationNode enchantmentNode = node.node(ENCHANTMENTS).appendListNode();
+            enchantmentNode.node(ENCHANTMENT).set(entry.getKey().getKey().getKey());
+            enchantmentNode.node(LEVEL).set(entry.getValue());
+        }
+        final List<ItemFlag> itemFlags = new ArrayList<>(itemMeta.getItemFlags());
+        node.node(ITEM_FLAGS).set(itemFlags.stream().map(Enum::toString).toList());
+        node.node(GLOW).set(BaseItemBuilder.isGlowing(itemStack));
+        if (!(obj instanceof final SkullBuilder skullBuilder)) return;
+        node.node(HEAD_OWNER).set(skullBuilder.getOwnerUUIDPlaceholder());
     }
 }

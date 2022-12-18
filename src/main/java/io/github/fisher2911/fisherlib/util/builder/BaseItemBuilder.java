@@ -36,6 +36,14 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class BaseItemBuilder {
 
+    public static boolean isGlowing(ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            return false;
+        }
+        return itemMeta.hasEnchant(Enchantment.LUCK);
+    }
+
     protected Material material;
     protected int amount;
     protected ItemMeta itemMeta;

@@ -81,4 +81,9 @@ public class SkullBuilder extends BaseItemBuilder {
         builder.itemMeta = this.itemMeta.clone();
         return (T) builder;
     }
+
+    public String getOwnerUUIDPlaceholder() {
+        return ownerUUIDPlaceholder;
+    }
+
 }

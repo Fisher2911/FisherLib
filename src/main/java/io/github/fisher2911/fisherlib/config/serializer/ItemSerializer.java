@@ -31,7 +31,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ItemSerializer implements TypeSerializer<BaseItemBuilder> {
+public class ItemSerializer implements SavedTypeSerializer<BaseItemBuilder> {
 
     public static final ItemSerializer INSTANCE = new ItemSerializer();
 
@@ -112,4 +111,10 @@ public class ItemSerializer implements TypeSerializer<BaseItemBuilder> {
         if (!(obj instanceof final SkullBuilder skullBuilder)) return;
         node.node(HEAD_OWNER).set(skullBuilder.getOwnerUUIDPlaceholder());
     }
+
+    @Override
+    public Class<BaseItemBuilder> getType() {
+        return BaseItemBuilder.class;
+    }
+
 }

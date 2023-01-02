@@ -22,11 +22,10 @@ import io.github.fisher2911.fisherlib.world.Position;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 
-public class PositionSerializer implements TypeSerializer<Position> {
+public class PositionSerializer implements SavedTypeSerializer<Position> {
 
     public static final PositionSerializer INSTANCE = new PositionSerializer();
 
@@ -56,6 +55,11 @@ public class PositionSerializer implements TypeSerializer<Position> {
         node.node(Z_FIELD).set(obj.z());
         node.node(YAW_FIELD).set(obj.yaw());
         node.node(PITCH_FIELD).set(obj.pitch());
+    }
+
+    @Override
+    public Class<Position> getType() {
+        return Position.class;
     }
 
 }

@@ -23,13 +23,12 @@ import io.github.fisher2911.fisherlib.world.WorldPosition;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.UUID;
 
-public class WorldPositionSerializer implements TypeSerializer<WorldPosition> {
+public class WorldPositionSerializer implements SavedTypeSerializer<WorldPosition> {
 
     public static final WorldPositionSerializer INSTANCE = new WorldPositionSerializer();
 
@@ -49,6 +48,11 @@ public class WorldPositionSerializer implements TypeSerializer<WorldPosition> {
         if (obj == null) return;
         PositionSerializer.INSTANCE.serialize(type, obj.position(), node);
         node.node(WORLD_FIELD).set(obj.world().toString());
+    }
+
+    @Override
+    public Class<WorldPosition> getType() {
+        return WorldPosition.class;
     }
 
 }

@@ -23,7 +23,7 @@ import io.github.fisher2911.common.metadata.Metadata;
 import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.common.timer.Timeable;
 import io.github.fisher2911.gui.event.GUIEvent;
-import io.github.fisher2911.gui.util.Observable;
+import io.github.fisher2911.common.util.Observable;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;

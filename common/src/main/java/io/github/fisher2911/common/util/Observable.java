@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.fisher2911.gui.util;
+package io.github.fisher2911.common.util;
 
 import java.util.List;
 import java.util.function.Consumer;

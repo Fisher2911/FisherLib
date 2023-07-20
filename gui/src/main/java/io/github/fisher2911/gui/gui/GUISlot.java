@@ -18,7 +18,7 @@
 
 package io.github.fisher2911.gui.gui;
 
-import io.github.fisher2911.gui.util.ServerVersion;
+import io.github.fisher2911.common.util.ServerVersion;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

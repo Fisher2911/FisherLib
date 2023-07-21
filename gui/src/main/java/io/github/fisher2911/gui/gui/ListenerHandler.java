@@ -27,38 +27,38 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public interface ListenerHandler<P extends JavaPlugin> {
+@SuppressWarnings({"unchecked", "unused"})
+public interface ListenerHandler {
 
-    <T extends InventoryEvent, G extends GUIEvent<T, P>> void handle(G event, Class<G> clazz);
+    <T extends InventoryEvent, G extends GUIEvent<T>> void handle(G event, Class<G> clazz);
 
-    class Builder<P extends JavaPlugin, B extends Builder<P, B>> {
+    class Builder<B extends Builder<B>> {
 
-        protected final Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners;
+        protected final Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners;
 
         protected Builder() {
             this.listeners = new HashMap<>();
         }
 
-        public B listenClick(Consumer<GUIClickEvent<P>> consumer) {
+        public B listenClick(Consumer<GUIClickEvent> consumer) {
             return this.listenClick(consumer, false);
         }
 
-        public B listenClick(Consumer<GUIClickEvent<P>> consumer, boolean append) {
+        public B listenClick(Consumer<GUIClickEvent> consumer, boolean append) {
             this.listen(GUIClickEvent.class, consumer, append);
             return (B) this;
         }
 
-        public B listenDrag(Consumer<GUIDragEvent<P>> consumer) {
+        public B listenDrag(Consumer<GUIDragEvent> consumer) {
             return this.listenDrag(consumer, false);
         }
 
-        public B listenDrag(Consumer<GUIDragEvent<P>> consumer, boolean append) {
+        public B listenDrag(Consumer<GUIDragEvent> consumer, boolean append) {
             this.listen(GUIDragEvent.class, consumer, append);
             return (B) this;
         }
@@ -104,7 +104,7 @@ public interface ListenerHandler<P extends JavaPlugin> {
             return (B) this;
         }
 
-        protected <T extends InventoryEvent, G extends GUIEvent<T, P>> void listen(Class<?> clazz, Consumer<G> consumer, boolean append) {
+        protected <T extends InventoryEvent, G extends GUIEvent<T>> void listen(Class<?> clazz, Consumer<G> consumer, boolean append) {
             if (!GUIEvent.class.isAssignableFrom(clazz)) throw new IllegalArgumentException("Class must be a subclass of GUIEvent: " + clazz.getName());
             final Class<? extends G> castedClass = (Class<? extends G>) clazz;
             if (append) {

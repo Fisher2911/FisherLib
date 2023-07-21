@@ -27,23 +27,23 @@ import io.github.fisher2911.gui.gui.pattern.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ChestGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class ChestGUI extends GUI {
 
     private final int rows;
 
     private ChestGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             int rows,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.CHEST, metadata, patterns);
         this.rows = rows;
@@ -69,24 +69,24 @@ public class ChestGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.of(this.rows * 9 - 1);
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, ChestGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, ChestGUI> {
 
         private int rows = 1;
 
         protected Builder() {
         }
 
-        public Builder<P> rows(int rows) {
+        public Builder rows(int rows) {
             this.rows = rows;
             return this;
         }
 
-        public ChestGUI<P> build() {
-            return new ChestGUI<>(this.title, this.guiItems, this.listeners, this.rows, this.metadata, this.patterns);
+        public ChestGUI build() {
+            return new ChestGUI(this.title, this.guiItems, this.listeners, this.rows, this.metadata, this.patterns);
         }
 
     }

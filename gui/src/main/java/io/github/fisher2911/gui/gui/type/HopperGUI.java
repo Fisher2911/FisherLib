@@ -28,20 +28,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HopperGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class HopperGUI extends GUI {
 
     private HopperGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.HOPPER, metadata, patterns);
     }
@@ -65,17 +65,17 @@ public class HopperGUI<P extends JavaPlugin> extends GUI<P> {
         return NEXT_PAGE_SLOT;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, HopperGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, HopperGUI> {
 
         protected Builder() {
         }
 
-        public HopperGUI<P> build() {
-            return new HopperGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public HopperGUI build() {
+            return new HopperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

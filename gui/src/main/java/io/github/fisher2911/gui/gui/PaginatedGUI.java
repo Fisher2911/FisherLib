@@ -36,27 +36,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class PaginatedGUI extends GUI {
 
-    private final P plugin;
-    private final GUIManager<P> guiManager;
-    private final List<GUI<P>> pages;
+    private final JavaPlugin plugin;
+    private final GUIManager guiManager;
+    private final List<GUI> pages;
     private int currentPage;
     private boolean switchingPages;
 
     public PaginatedGUI(
-            P plugin,
-            GUIManager<P> guiManager,
+            GUIManager guiManager,
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Type type,
             Metadata metadata,
-            List<Pattern<P>> patterns,
-            List<GUI<P>> pages
+            List<Pattern> patterns,
+            List<GUI> pages
     ) {
         super(title, guiItems, listeners, type, metadata, patterns);
-        this.plugin = plugin;
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.guiManager = guiManager;
         this.pages = pages;
         this.pages.forEach(page -> page.setOwner(this.plugin, this));
@@ -67,7 +67,7 @@ public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
 
     @Override
     protected Inventory createInventory(String title) {
-        final GUI<P> page = this.getCurrentGUI();
+        final GUI page = this.getCurrentGUI();
         this.inventory = page.createInventory(title);
         return this.inventory;
     }
@@ -92,19 +92,19 @@ public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
         this.openGUIS(viewers);
     }
 
-    public GUI<P> getCurrentGUI() {
+    public GUI getCurrentGUI() {
         return this.pages.get(this.currentPage);
     }
 
     private void refillGUIItems() {
         this.clearItems();
-        final GUI<P> gui = this.getCurrentGUI();
+        final GUI gui = this.getCurrentGUI();
         gui.getGUIItems().forEach(this::setItem);
     }
 
     private void openGUIS(Collection<Player> viewers) {
         this.switchingPages = true;
-        final GUI<P> gui = this.getCurrentGUI();
+        final GUI gui = this.getCurrentGUI();
         gui.populate();
         this.refillGUIItems();
         viewers.forEach(player -> this.guiManager.openPaginatedGUI(this, viewers));
@@ -127,7 +127,7 @@ public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
         super.populate(placeholders, parsedPlaceholders);
     }
 
-    public int getPageIndex(GUI<P> gui) {
+    public int getPageIndex(GUI gui) {
         return this.pages.indexOf(gui);
     }
 
@@ -149,8 +149,8 @@ public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
         return this.switchingPages;
     }
 
-    public static <P extends JavaPlugin> PaginatedGUI.Builder<P> builder(P plugin, GUIManager<P> guiManager) {
-        return new PaginatedGUI.Builder<>(plugin, guiManager, new ArrayList<>());
+    public static  PaginatedGUI.Builder builder(GUIManager guiManager) {
+        return new PaginatedGUI.Builder(guiManager, new ArrayList<>());
     }
 
     @Override
@@ -164,41 +164,38 @@ public class PaginatedGUI<P extends JavaPlugin> extends GUI<P> {
     }
 
     @Unmodifiable
-    public List<GUI<P>> getPages() {
+    public List<GUI> getPages() {
         return Collections.unmodifiableList(this.pages);
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<PaginatedGUI.Builder<P>, PaginatedGUI<P>, P> {
+    public static class Builder extends GUI.Builder<PaginatedGUI.Builder, PaginatedGUI> {
 
-        private final P plugin;
-        private final GUIManager<P> guiManager;
-        private final List<GUI<P>> pages;
+        private final GUIManager guiManager;
+        private final List<GUI> pages;
 
-        private Builder(P plugin, GUIManager<P> guiManager, List<GUI<P>> pages) {
-            this.plugin = plugin;
+        private Builder(GUIManager guiManager, List<GUI> pages) {
             this.guiManager = guiManager;
             this.pages = pages;
         }
 
-        public PaginatedGUI.Builder<P> addPage(GUI<P> page) {
+        public PaginatedGUI.Builder addPage(GUI page) {
             this.pages.add(page);
             return this;
         }
 
-        public PaginatedGUI.Builder<P> addPages(List<GUI<P>> pages) {
+        public PaginatedGUI.Builder addPages(List<GUI> pages) {
             this.pages.addAll(pages);
             return this;
         }
 
-        public PaginatedGUI.Builder<P> pagePatterns(List<Pattern<P>> patterns) {
+        public PaginatedGUI.Builder pagePatterns(List<Pattern> patterns) {
             this.pages.forEach(page -> page.addPatterns(patterns));
             return this;
         }
 
         @Override
-        public PaginatedGUI<P> build() {
-            return new PaginatedGUI<>(
-                    this.plugin,
+        public PaginatedGUI build() {
+            return new PaginatedGUI(
                     this.guiManager,
                     this.title,
                     this.guiItems,

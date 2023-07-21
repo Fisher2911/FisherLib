@@ -24,21 +24,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class GUIEvent<T extends InventoryEvent, P extends JavaPlugin> extends Event implements Cancellable {
+public abstract class GUIEvent<T extends InventoryEvent> extends Event implements Cancellable {
 
-    private GUIManager<P> guiManager;
-    private final GUI<P> gui;
+    private GUIManager guiManager;
+    private final GUI gui;
     private final Player player;
     private boolean cancelled;
     private final T bukkitEvent;
 
-    public GUIEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, T bukkitEvent) {
+    public GUIEvent(GUIManager guiManager, GUI gui, Player player, T bukkitEvent) {
         this(guiManager, gui, player, bukkitEvent, false);
     }
 
-    public GUIEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, T bukkitEvent, boolean async) {
+    public GUIEvent(GUIManager guiManager, GUI gui, Player player, T bukkitEvent, boolean async) {
         super(async);
         this.guiManager = guiManager;
         this.gui = gui;
@@ -46,11 +45,11 @@ public abstract class GUIEvent<T extends InventoryEvent, P extends JavaPlugin> e
         this.bukkitEvent = bukkitEvent;
     }
 
-    public GUIManager<P> getGuiManager() {
+    public GUIManager getGuiManager() {
         return this.guiManager;
     }
 
-    public GUI<P> getGUI() {
+    public GUI getGUI() {
         return this.gui;
     }
 

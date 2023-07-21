@@ -43,23 +43,24 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class GUIManager<P extends JavaPlugin> implements Listener {
+@SuppressWarnings("unused")
+public class GUIManager implements Listener {
 
-    private final P plugin;
-    private final Map<UUID, GUI<P>> guiViewers;
+    private final JavaPlugin plugin;
+    private final Map<UUID, GUI> guiViewers;
 
-    public GUIManager(P plugin, Map<UUID, GUI<P>> guiViewers) {
-        this.plugin = plugin;
+    public GUIManager(Map<UUID, GUI> guiViewers) {
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.guiViewers = guiViewers;
     }
 
 
-    public void openGUI(GUI<P> gui, Player player) {
+    public void openGUI(GUI gui, Player player) {
         this.openGUI(gui, List.of(player));
     }
 
-    public void openGUI(GUI<P> gui, Collection<Player> players) {
-        if (gui instanceof final PaginatedGUI<P> paginatedGUI) {
+    public void openGUI(GUI gui, Collection<Player> players) {
+        if (gui instanceof final PaginatedGUI paginatedGUI) {
             this.openPaginatedGUI(paginatedGUI, players);
             return;
         }
@@ -69,43 +70,43 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
         gui.open(players);
     }
 
-    public void openPaginatedGUI(PaginatedGUI<P> paginatedGUI, Player player) {
+    public void openPaginatedGUI(PaginatedGUI paginatedGUI, Player player) {
         this.openPaginatedGUI(paginatedGUI, List.of(player));
     }
 
-    public void openPaginatedGUI(PaginatedGUI<P> paginatedGUI, Collection<Player> players) {
+    public void openPaginatedGUI(PaginatedGUI paginatedGUI, Collection<Player> players) {
         players.forEach(player -> this.guiViewers.put(player.getUniqueId(), paginatedGUI));
         this.openGUI(paginatedGUI.getCurrentGUI(), players);
     }
 
-    public P getPlugin() {
+    public JavaPlugin getPlugin() {
         return this.plugin;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onOpen(InventoryOpenEvent event) {
         if (!(event.getPlayer() instanceof final Player player)) return;
-        final GUI<P> gui = this.getCurrentGUI(player);
+        final GUI gui = this.getCurrentGUI(player);
         if (gui == null) return;
-        final GUIOpenEvent<P> guiOpenEvent = new GUIOpenEvent<>(this, gui, player, event);
+        final GUIOpenEvent guiOpenEvent = new GUIOpenEvent(this, gui, player, event);
         gui.handle(guiOpenEvent, GUIOpenEvent.class);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof final Player player)) return;
-        final GUI<P> gui = this.getCurrentGUI(player);
+        final GUI gui = this.getCurrentGUI(player);
         if (gui == null) return;
-        final GUICloseEvent<P> guiCloseEvent = new GUICloseEvent<>(this, gui, player, event);
+        final GUICloseEvent guiCloseEvent = new GUICloseEvent(this, gui, player, event);
         gui.handle(guiCloseEvent, GUICloseEvent.class);
         if (guiCloseEvent.isCancelled()) {
             Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> gui.open(player), 1);
             return;
         }
-        if (this.guiViewers.get(player.getUniqueId()) instanceof final PaginatedGUI<P> paginatedGUI) {
+        if (this.guiViewers.get(player.getUniqueId()) instanceof final PaginatedGUI paginatedGUI) {
             if (paginatedGUI.isSwitchingPages()) return;
             paginatedGUI.removeViewer(player);
-            for (final GUI<P> page : paginatedGUI.getPages()) {
+            for (final GUI page : paginatedGUI.getPages()) {
                 this.tryCloseGUI(page);
             }
         }
@@ -114,9 +115,9 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
         this.tryCloseGUI(gui);
     }
 
-    private void tryCloseGUI(GUI<P> gui) {
+    private void tryCloseGUI(GUI gui) {
         if (!gui.getViewers().isEmpty()) return;
-        final GUITimer<P, ? extends GUI<P>> timer = gui.getTimer();
+        final GUITimer<? extends GUI> timer = gui.getTimer();
         if (timer == null) return;
         timer.stop();
     }
@@ -124,7 +125,7 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof final Player player)) return;
-        final GUI<P> gui = this.getCurrentGUI(player);
+        final GUI gui = this.getCurrentGUI(player);
         if (gui == null) return;
         final GUISlot slot;
         if (event.getView().getTopInventory().equals(event.getClickedInventory())) {
@@ -132,9 +133,9 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
         } else {
             slot = null;
         }
-        final GUIClickEvent<P> guiClickEvent = new GUIClickEvent<>(this, gui, player, slot, event);
+        final GUIClickEvent guiClickEvent = new GUIClickEvent(this, gui, player, slot, event);
         gui.handle(guiClickEvent, GUIClickEvent.class);
-        final GUIItem<P> guiItem = gui.getItem(slot);
+        final GUIItem guiItem = gui.getItem(slot);
         if (guiItem == null) return;
         guiItem.handle(guiClickEvent, GUIClickEvent.class);
     }
@@ -142,10 +143,10 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onDrag(InventoryDragEvent event) {
         if (!(event.getWhoClicked() instanceof final Player player)) return;
-        final GUI<P> gui = this.getCurrentGUI(player);
+        final GUI gui = this.getCurrentGUI(player);
         if (gui == null) return;
         final Inventory inventory = event.getInventory();
-        final GUIDragEvent<P> guiDragEvent = new GUIDragEvent<>(
+        final GUIDragEvent guiDragEvent = new GUIDragEvent(
                 this,
                 gui,
                 player,
@@ -159,7 +160,7 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
                                 slot = null;
                             }
                             if (slot == null) return null;
-                            return Map.entry(slot, GUIItem.<P>builder(entry.getValue()).build());
+                            return Map.entry(slot, GUIItem.builder(entry.getValue()).build());
                         })
                         .filter(entry -> entry != null)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
@@ -242,9 +243,9 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
         };
     }
 
-    private @Nullable GUI<P> getCurrentGUI(Player player) {
-        final GUI<P> gui = this.guiViewers.get(player.getUniqueId());
-        if (gui instanceof final PaginatedGUI<P> paginatedGUI) {
+    private @Nullable GUI getCurrentGUI(Player player) {
+        final GUI gui = this.guiViewers.get(player.getUniqueId());
+        if (gui instanceof final PaginatedGUI paginatedGUI) {
             return paginatedGUI.getCurrentGUI();
         }
         return gui;
@@ -253,7 +254,7 @@ public class GUIManager<P extends JavaPlugin> implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        final GUI<P> gui = this.guiViewers.remove(player);
+        final GUI gui = this.guiViewers.remove(player.getUniqueId());
         if (gui == null) return;
         gui.removeViewer(player);
     }

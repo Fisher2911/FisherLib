@@ -28,54 +28,54 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class SmithingGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class SmithingGUI extends GUI {
 
     private SmithingGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.SMITHING_TABLE, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getTemplate() {
+    public @Nullable GUIItem getTemplate() {
         return this.getItem(GUISlot.SmithingTable.TEMPLATE);
     }
 
-    public void setTemplate(GUIItem<P> template) {
+    public void setTemplate(GUIItem template) {
         this.setItem(GUISlot.SmithingTable.TEMPLATE, template);
     }
 
-    public @Nullable GUIItem<P> setBaseItem() {
+    public @Nullable GUIItem setBaseItem() {
         return this.getItem(GUISlot.SmithingTable.BASE_ITEM);
     }
 
-    public void setBaseItem(GUIItem<P> baseItem) {
+    public void setBaseItem(GUIItem baseItem) {
         this.setItem(GUISlot.SmithingTable.BASE_ITEM, baseItem);
     }
 
-    public @Nullable GUIItem<P> getAdditionalItem() {
+    public @Nullable GUIItem getAdditionalItem() {
         return this.getItem(GUISlot.SmithingTable.ADDITIONAL_ITEM);
     }
 
-    public void setAdditionalItem(GUIItem<P> additionalItem) {
+    public void setAdditionalItem(GUIItem additionalItem) {
         this.setItem(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.SmithingTable.RESULT);
     }
 
-    public void setResult(GUIItem<P> result) {
+    public void setResult(GUIItem result) {
         this.setItem(GUISlot.SmithingTable.RESULT, result);
     }
 
@@ -95,36 +95,36 @@ public class SmithingGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.SmithingTable.ADDITIONAL_ITEM;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, SmithingGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, SmithingGUI> {
 
         protected Builder() {}
 
-        public Builder<P> template(GUIItem<P> template) {
+        public Builder template(GUIItem template) {
             this.guiItems.put(GUISlot.SmithingTable.TEMPLATE, template);
             return this;
         }
 
-        public Builder<P> baseItem(GUIItem<P> baseItem) {
+        public Builder baseItem(GUIItem baseItem) {
             this.guiItems.put(GUISlot.SmithingTable.BASE_ITEM, baseItem);
             return this;
         }
 
-        public Builder<P> additionalItem(GUIItem<P> additionalItem) {
+        public Builder additionalItem(GUIItem additionalItem) {
             this.guiItems.put(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> result) {
+        public Builder result(GUIItem result) {
             this.guiItems.put(GUISlot.SmithingTable.RESULT, result);
             return this;
         }
 
-        public SmithingGUI<P> build() {
-            return new SmithingGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public SmithingGUI build() {
+            return new SmithingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

@@ -28,46 +28,46 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class GrindstoneGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class GrindstoneGUI extends GUI {
 
     private GrindstoneGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.GRINDSTONE, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getFirstItem() {
+    public @Nullable GUIItem getFirstItem() {
         return this.getItem(GUISlot.Grindstone.FIRST);
     }
 
-    public void setFirstItem(GUIItem<P> item) {
+    public void setFirstItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.FIRST, item);
     }
 
-    public @Nullable GUIItem<P> getSecondItem() {
+    public @Nullable GUIItem getSecondItem() {
         return this.getItem(GUISlot.Grindstone.SECOND);
     }
 
-    public void setSecondItem(GUIItem<P> item) {
+    public void setSecondItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.SECOND, item);
     }
 
-    public @Nullable GUIItem<P> getResultItem() {
+    public @Nullable GUIItem getResultItem() {
         return this.getItem(GUISlot.Grindstone.RESULT);
     }
 
-    public void setResultItem(GUIItem<P> item) {
+    public void setResultItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.RESULT, item);
     }
 
@@ -87,32 +87,32 @@ public class GrindstoneGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Grindstone.SECOND;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, GrindstoneGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, GrindstoneGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> firstItem(GUIItem<P> item) {
+        public Builder firstItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.FIRST, item);
             return this;
         }
 
-        public Builder<P> secondItem(GUIItem<P> item) {
+        public Builder secondItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.SECOND, item);
             return this;
         }
 
-        public Builder<P> resultItem(GUIItem<P> item) {
+        public Builder resultItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.RESULT, item);
             return this;
         }
 
-        public GrindstoneGUI<P> build() {
-            return new GrindstoneGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public GrindstoneGUI build() {
+            return new GrindstoneGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

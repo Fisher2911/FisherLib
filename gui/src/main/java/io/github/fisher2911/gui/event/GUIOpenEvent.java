@@ -23,18 +23,17 @@ import io.github.fisher2911.gui.gui.GUIManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class GUIOpenEvent<P extends JavaPlugin> extends GUIEvent<InventoryOpenEvent, P> {
+public class GUIOpenEvent extends GUIEvent<InventoryOpenEvent> {
 
     private static final HandlerList handlers = new HandlerList();
 
-    public GUIOpenEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, InventoryOpenEvent bukkitEvent) {
+    public GUIOpenEvent(GUIManager guiManager, GUI gui, Player player, InventoryOpenEvent bukkitEvent) {
         super(guiManager, gui, player, bukkitEvent);
     }
 
-    public GUIOpenEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, InventoryOpenEvent bukkitEvent, boolean async) {
+    public GUIOpenEvent(GUIManager guiManager, GUI gui, Player player, InventoryOpenEvent bukkitEvent, boolean async) {
         super(guiManager, gui, player, bukkitEvent, async);
     }
 

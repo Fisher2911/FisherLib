@@ -29,12 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class TestPlugin extends JavaPlugin implements Listener {
 
-    private GUIManager<TestPlugin> guiManager;
+    private GUIManager guiManager;
 
     @Override
     public void onEnable() {
-        this.guiManager = new GUIManager<>(
-                this,
+        this.guiManager = new GUIManager(
                 new ConcurrentHashMap<>()
         );
         this.getServer().getPluginManager().registerEvents(this, this);
@@ -54,19 +53,19 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 .name(ChatColor.RED + "Previous Page");
         final ItemBuilder nextPageItem = ItemBuilder.from(Material.ARROW)
                 .name(ChatColor.RED + "Next Page");
-        final Pattern<TestPlugin> pattern = Pattern.borderPattern(
+        final Pattern pattern = Pattern.borderPattern(
                 this,
                 List.of(
-                        GUIItem.<TestPlugin>builder(ItemBuilder.from(Material.BLUE_STAINED_GLASS_PANE)
+                        GUIItem.builder(ItemBuilder.from(Material.BLUE_STAINED_GLASS_PANE)
                                         .name(ChatColor.RED + "Border Item").build())
                                 .build(),
-                        GUIItem.<TestPlugin>builder(ItemBuilder.from(Material.RED_STAINED_GLASS_PANE)
+                        GUIItem.builder(ItemBuilder.from(Material.RED_STAINED_GLASS_PANE)
                                         .name(ChatColor.RED + "Border Item").build())
                                 .build(),
-                        GUIItem.<TestPlugin>builder(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE)
+                        GUIItem.builder(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE)
                                         .name(ChatColor.RED + "Border Item").build())
                                 .build(),
-                        GUIItem.<TestPlugin>builder(ItemBuilder.from(Material.PURPLE_STAINED_GLASS_PANE)
+                        GUIItem.builder(ItemBuilder.from(Material.PURPLE_STAINED_GLASS_PANE)
                                         .name(ChatColor.RED + "Border Item").build())
                                 .build()
                 ),
@@ -84,7 +83,7 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         final ItemBuilder dropperItemBuilder = ItemBuilder.from(Material.ENCHANTED_GOLDEN_APPLE)
                 .name(ChatColor.GREEN + "{player_name_0}'s Golden Apple")
                 .flag(ItemFlag.HIDE_ENCHANTS);
-        final GUIItem<TestPlugin> guiItem = GUIItem.<TestPlugin>builder(newItemBuilder)
+        final GUIItem guiItem = GUIItem.builder(newItemBuilder)
                 .listenClick(e -> {
                     final double randomHealth = Math.min(Math.max(1, Math.random() * 21), 20);
                     player.setHealth(randomHealth);
@@ -94,7 +93,7 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                     gui.update(item, placeholders, player, player);
                 })
                 .build();
-        final GUIItem<TestPlugin> hopperItem = GUIItem.<TestPlugin>builder(hopperItemBuilder)
+        final GUIItem hopperItem = GUIItem.builder(hopperItemBuilder)
                 .listenClick(e -> player.sendMessage("You clicked the gold ingot"))
                 .timer((item, gui) -> {
                     item.setItemBuilder(item.getItemBuilder().name(ChatColor.GREEN + "Health Tracker - {player_name_0}")
@@ -110,10 +109,10 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                     gui.update(item, placeholders, player, player);
                 })
                 .build();
-        final GUIItem<TestPlugin> dropperItem = GUIItem.<TestPlugin>builder(dropperItemBuilder)
+        final GUIItem dropperItem = GUIItem.builder(dropperItemBuilder)
                 .listenClick(e -> player.sendMessage("You clicked the enchanted golden apple!"))
                 .build();
-        final ChestGUI<TestPlugin> gui = GUI.<TestPlugin>chestBuilder()
+        final ChestGUI gui = GUI.chestBuilder()
                 .title("Test GUI")
                 .rows(6)
                 .guiItems(Map.of(GUISlot.of(10), guiItem))
@@ -122,14 +121,14 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 .cancelTopInventoryClick()
                 .cancelTopInventoryDrag()
                 .build();
-        final HopperGUI<TestPlugin> hopperGUI = GUI.<TestPlugin>hopperBuilder()
+        final HopperGUI hopperGUI = GUI.hopperBuilder()
                 .title("Test Hopper GUI")
                 .guiItems(Map.of(GUISlot.of(3), hopperItem))
                 .listenClick(e -> player.sendMessage("You clicked the hopper GUI!"))
                 .cancelTopInventoryClick()
                 .cancelTopInventoryDrag()
                 .build();
-        final DropperGUI<TestPlugin> dropperGUI = GUI.<TestPlugin>dropperBuilder()
+        final DropperGUI dropperGUI = GUI.dropperBuilder()
                 .title("Test Hopper GUI")
                 .guiItems(Map.of(GUISlot.of(4), dropperItem))
                 .addPatterns(List.of(pattern))
@@ -138,18 +137,18 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 .cancelTopInventoryDrag()
                 .build();
         final BukkitTimerExecutor executor = BukkitTimerExecutor.sync(this, this.getServer().getScheduler());
-        final GUITimer<TestPlugin, ChestGUI<TestPlugin>> timer = new GUITimer<>(
+        final GUITimer<ChestGUI> timer = new GUITimer<>(
                 t -> executor,
                 20,
                 20,
                 gui
         );
-        final PaginatedGUI<TestPlugin> paginated = GUI.paginatedBuilder(this, this.guiManager)
+        final PaginatedGUI paginated = GUI.paginatedBuilder(this.guiManager)
                 .addPages(List.of(gui, dropperGUI, hopperGUI))
                 .pagePatterns(List.of(Pattern.paginatedPattern(
                         this,
-                        GUIItem.<TestPlugin>builder(previousPageItem).build(),
-                        GUIItem.<TestPlugin>builder(nextPageItem).build(),
+                        GUIItem.builder(previousPageItem).build(),
+                        GUIItem.builder(nextPageItem).build(),
                         0
                 )))
                 .build();

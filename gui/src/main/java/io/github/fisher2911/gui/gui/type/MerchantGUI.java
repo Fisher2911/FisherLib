@@ -29,7 +29,6 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MerchantRecipe;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -39,31 +38,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MerchantGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class MerchantGUI extends GUI {
 
     private final List<MerchantRecipe> trades;
 
     private MerchantGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             List<MerchantRecipe> trades,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.MERCHANT, metadata, patterns);
         this.trades = trades;
     }
 
-    public @Nullable GUIItem<P> getFirst() {
+    public @Nullable GUIItem getFirst() {
         return this.getItem(GUISlot.Merchant.FIRST);
     }
 
-    public @Nullable GUIItem<P> getSecond() {
+    public @Nullable GUIItem getSecond() {
         return this.getItem(GUISlot.Merchant.SECOND);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Merchant.RESULT);
     }
 
@@ -108,11 +108,11 @@ public class MerchantGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Merchant.SECOND;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, MerchantGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, MerchantGUI> {
 
         private final List<MerchantRecipe> recipes;
 
@@ -120,28 +120,28 @@ public class MerchantGUI<P extends JavaPlugin> extends GUI<P> {
             this.recipes = new ArrayList<>();
         }
 
-        public Builder<P> first(GUIItem<P> item) {
+        public Builder first(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.FIRST, item);
             return this;
         }
 
-        public Builder<P> second(GUIItem<P> item) {
+        public Builder second(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.SECOND, item);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> item) {
+        public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.RESULT, item);
             return this;
         }
 
-        public Builder<P> trade(MerchantRecipe recipe) {
+        public Builder trade(MerchantRecipe recipe) {
             this.recipes.add(recipe);
             return this;
         }
 
-        public MerchantGUI<P> build() {
-            return new MerchantGUI<>(this.title, this.guiItems, this.listeners, this.recipes, this.metadata, this.patterns);
+        public MerchantGUI build() {
+            return new MerchantGUI(this.title, this.guiItems, this.listeners, this.recipes, this.metadata, this.patterns);
         }
 
     }

@@ -19,13 +19,12 @@
 package io.github.fisher2911.gui.event;
 
 import io.github.fisher2911.gui.gui.GUI;
+import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUIManager;
 import io.github.fisher2911.gui.gui.GUISlot;
-import io.github.fisher2911.gui.gui.GUIItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -33,18 +32,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class GUIDragEvent<P extends JavaPlugin> extends GUIEvent<InventoryDragEvent, P> {
+public class GUIDragEvent extends GUIEvent<InventoryDragEvent> {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private final @Unmodifiable Map<GUISlot, GUIItem<P>> addedItems;
+    private final @Unmodifiable Map<GUISlot, GUIItem> addedItems;
     private final @Unmodifiable Set<GUISlot> containerSlots;
 
     public GUIDragEvent(
-            GUIManager<P> guiManager,
-            GUI<P> gui,
+            GUIManager guiManager,
+            GUI gui,
             Player player,
-            Map<GUISlot, GUIItem<P>> addedItems,
+            Map<GUISlot, GUIItem> addedItems,
             Set<GUISlot> containerSlots,
             InventoryDragEvent bukkitEvent
     ) {
@@ -52,10 +51,10 @@ public class GUIDragEvent<P extends JavaPlugin> extends GUIEvent<InventoryDragEv
     }
 
     public GUIDragEvent(
-            GUIManager<P> guiManager,
-            GUI<P> gui,
+            GUIManager guiManager,
+            GUI gui,
             Player player,
-            Map<GUISlot, GUIItem<P>> addedItems,
+            Map<GUISlot, GUIItem> addedItems,
             Set<GUISlot> containerSlots,
             InventoryDragEvent bukkitEvent,
             boolean async
@@ -66,7 +65,7 @@ public class GUIDragEvent<P extends JavaPlugin> extends GUIEvent<InventoryDragEv
     }
 
 
-    public @Unmodifiable Map<GUISlot, GUIItem<P>> getAddedItems() {
+    public @Unmodifiable Map<GUISlot, GUIItem> getAddedItems() {
         return this.addedItems;
     }
 

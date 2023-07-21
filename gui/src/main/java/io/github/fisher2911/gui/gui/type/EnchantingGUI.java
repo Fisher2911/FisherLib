@@ -28,38 +28,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EnchantingGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class EnchantingGUI extends GUI {
 
     private EnchantingGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.ENCHANTING, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getItem() {
+    public @Nullable GUIItem getItem() {
         return this.getItem(GUISlot.EnchantingTable.ITEM);
     }
 
-    public void setItem(GUIItem<P> item) {
+    public void setItem(GUIItem item) {
         this.setItem(GUISlot.EnchantingTable.ITEM, item);
     }
 
-    public @Nullable GUIItem<P> getLapisItem() {
+    public @Nullable GUIItem getLapisItem() {
         return this.getItem(GUISlot.EnchantingTable.LAPIS);
     }
 
-    public void setLapisItem(GUIItem<P> item) {
+    public void setLapisItem(GUIItem item) {
         this.setItem(GUISlot.EnchantingTable.LAPIS, item);
     }
 
@@ -69,8 +69,8 @@ public class EnchantingGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -83,21 +83,21 @@ public class EnchantingGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.EnchantingTable.LAPIS;
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, EnchantingGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, EnchantingGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> item(GUIItem<P> item) {
+        public Builder item(GUIItem item) {
             return this.set(GUISlot.EnchantingTable.ITEM, item);
         }
 
-        public Builder<P> lapis(GUIItem<P> item) {
+        public Builder lapis(GUIItem item) {
             return this.set(GUISlot.EnchantingTable.LAPIS, item);
         }
 
-        public EnchantingGUI<P> build() {
-            return new EnchantingGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public EnchantingGUI build() {
+            return new EnchantingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

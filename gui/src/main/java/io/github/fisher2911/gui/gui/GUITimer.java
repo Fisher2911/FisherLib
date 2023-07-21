@@ -20,21 +20,21 @@ package io.github.fisher2911.gui.gui;
 
 import io.github.fisher2911.common.timer.TimerExecutor;
 import io.github.fisher2911.common.timer.TimerImpl;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class GUITimer<P extends JavaPlugin, G extends GUI<P>> extends TimerImpl<GUITimer<P, G>> {
+@SuppressWarnings("unused")
+public class GUITimer<G extends GUI> extends TimerImpl<GUITimer<G>> {
 
-    private final GUI<P> gui;
+    private final GUI gui;
 
     public GUITimer(
-            Function<GUITimer<P, G>, TimerExecutor> function,
+            Function<GUITimer<G>, TimerExecutor> function,
             int delay,
             int period,
-            GUI<P> gui
+            GUI gui
     ) {
         super(t -> {
             gui.tick(null);
@@ -44,11 +44,11 @@ public class GUITimer<P extends JavaPlugin, G extends GUI<P>> extends TimerImpl<
     }
 
     public GUITimer(
-            Function<GUITimer<P, G>, TimerExecutor> function,
-            @Nullable Predicate<GUITimer<P, G>> cancelPredicate,
+            Function<GUITimer<G>, TimerExecutor> function,
+            @Nullable Predicate<GUITimer<G>> cancelPredicate,
             int delay,
             int period,
-            GUI<P> gui
+            GUI gui
     ) {
         super(t -> {
             gui.tick(null);
@@ -57,7 +57,7 @@ public class GUITimer<P extends JavaPlugin, G extends GUI<P>> extends TimerImpl<
         this.gui = gui;
     }
 
-    public GUI<P> getGui() {
+    public GUI getGui() {
         return this.gui;
     }
 

@@ -28,54 +28,54 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class LoomGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class LoomGUI extends GUI {
 
     private LoomGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.LOOM, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getBanner() {
+    public @Nullable GUIItem getBanner() {
         return this.getItem(GUISlot.Loom.BANNER);
     }
 
-    public void setBanner(GUIItem<P> banner) {
+    public void setBanner(GUIItem banner) {
         this.setItem(GUISlot.Loom.BANNER, banner);
     }
 
-    public @Nullable GUIItem<P> getDye() {
+    public @Nullable GUIItem getDye() {
         return this.getItem(GUISlot.Loom.DYE);
     }
 
-    public void setDye(GUIItem<P> dye) {
+    public void setDye(GUIItem dye) {
         this.setItem(GUISlot.Loom.DYE, dye);
     }
 
-    public @Nullable GUIItem<P> getPattern() {
+    public @Nullable GUIItem getPattern() {
         return this.getItem(GUISlot.Loom.PATTERN);
     }
 
-    public void setPattern(GUIItem<P> pattern) {
+    public void setPattern(GUIItem pattern) {
         this.setItem(GUISlot.Loom.PATTERN, pattern);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Loom.RESULT);
     }
 
-    public void setResult(GUIItem<P> result) {
+    public void setResult(GUIItem result) {
         this.setItem(GUISlot.Loom.RESULT, result);
     }
 
@@ -95,37 +95,37 @@ public class LoomGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Loom.PATTERN;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, LoomGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, LoomGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> banner(GUIItem<P> banner) {
+        public Builder banner(GUIItem banner) {
             this.guiItems.put(GUISlot.Loom.BANNER, banner);
             return this;
         }
 
-        public Builder<P> dye(GUIItem<P> dye) {
+        public Builder dye(GUIItem dye) {
             this.guiItems.put(GUISlot.Loom.DYE, dye);
             return this;
         }
 
-        public Builder<P> pattern(GUIItem<P> pattern) {
+        public Builder pattern(GUIItem pattern) {
             this.guiItems.put(GUISlot.Loom.PATTERN, pattern);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> result) {
+        public Builder result(GUIItem result) {
             this.guiItems.put(GUISlot.Loom.RESULT, result);
             return this;
         }
 
-        public LoomGUI<P> build() {
-            return new LoomGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public LoomGUI build() {
+            return new LoomGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

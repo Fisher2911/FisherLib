@@ -28,21 +28,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class PotionGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class PotionGUI extends GUI {
 
     private PotionGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.BREWING_STAND, metadata, patterns);
     }
@@ -53,43 +53,43 @@ public class PotionGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
-    public void setFuel(GUIItem<P> item) {
+    public void setFuel(GUIItem item) {
         this.setItem(GUISlot.Potion.FUEL, item);
     }
 
-    public void setIngredient(GUIItem<P> item) {
+    public void setIngredient(GUIItem item) {
         this.setItem(GUISlot.Potion.FUEL, item);
     }
 
-    public void setZero(GUIItem<P> item) {
+    public void setZero(GUIItem item) {
         this.setItem(GUISlot.Potion.ZERO, item);
     }
 
-    public void setOne(GUIItem<P> item) {
+    public void setOne(GUIItem item) {
         this.setItem(GUISlot.Potion.ONE, item);
     }
 
-    public void setTwo(GUIItem<P> item) {
+    public void setTwo(GUIItem item) {
         this.setItem(GUISlot.Potion.TWO, item);
     }
 
-    public @Nullable GUIItem<P> getFuel() {
+    public @Nullable GUIItem getFuel() {
         return this.getItem(GUISlot.Potion.FUEL);
     }
 
-    public @Nullable GUIItem<P> getIngredient() {
+    public @Nullable GUIItem getIngredient() {
         return this.getItem(GUISlot.Potion.INGREDIENT);
     }
 
-    public @Nullable GUIItem<P> getZero() {
+    public @Nullable GUIItem getZero() {
         return this.getItem(GUISlot.Potion.ZERO);
     }
 
-    public @Nullable GUIItem<P> getOne() {
+    public @Nullable GUIItem getOne() {
         return this.getItem(GUISlot.Potion.ONE);
     }
 
-    public @Nullable GUIItem<P> getTwo() {
+    public @Nullable GUIItem getTwo() {
         return this.getItem(GUISlot.Potion.TWO);
     }
 
@@ -103,43 +103,43 @@ public class PotionGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Potion.TWO;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, PotionGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, PotionGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> fuel(GUIItem<P> item) {
+        public Builder fuel(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.FUEL, item);
             return this;
         }
 
-        public Builder<P> ingredient(GUIItem<P> item) {
+        public Builder ingredient(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.INGREDIENT, item);
             return this;
         }
 
-        public Builder<P> zero(GUIItem<P> item) {
+        public Builder zero(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.ZERO, item);
             return this;
         }
 
-        public Builder<P> one(GUIItem<P> item) {
+        public Builder one(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.ONE, item);
             return this;
         }
 
-        public Builder<P> two(GUIItem<P> item) {
+        public Builder two(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.TWO, item);
             return this;
         }
 
         @Override
-        public PotionGUI<P> build() {
-            return new PotionGUI<>(
+        public PotionGUI build() {
+            return new PotionGUI(
                     this.title,
                     this.guiItems,
                     this.listeners,

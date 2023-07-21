@@ -28,38 +28,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class StonecutterGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class StonecutterGUI extends GUI {
 
     private StonecutterGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.STONECUTTER, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getInput() {
+    public @Nullable GUIItem getInput() {
         return this.getItem(GUISlot.Stonecutter.INPUT);
     }
 
-    public void setInput(GUIItem<P> item) {
+    public void setInput(GUIItem item) {
         this.setItem(GUISlot.Stonecutter.INPUT, item);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Stonecutter.RESULT);
     }
 
-    public void setResult(GUIItem<P> item) {
+    public void setResult(GUIItem item) {
         this.setItem(GUISlot.Stonecutter.RESULT, item);
     }
 
@@ -79,26 +79,26 @@ public class StonecutterGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Stonecutter.RESULT;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, StonecutterGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, StonecutterGUI> {
 
         protected Builder() {}
 
-        public Builder<P> input(GUIItem<P> item) {
+        public Builder input(GUIItem item) {
             this.guiItems.put(GUISlot.Stonecutter.INPUT, item);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> item) {
+        public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Stonecutter.RESULT, item);
             return this;
         }
 
-        public StonecutterGUI<P> build() {
-            return new StonecutterGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public StonecutterGUI build() {
+            return new StonecutterGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

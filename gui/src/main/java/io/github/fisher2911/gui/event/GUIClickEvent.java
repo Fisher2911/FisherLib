@@ -18,27 +18,26 @@
 
 package io.github.fisher2911.gui.event;
 
-import io.github.fisher2911.gui.gui.GUIManager;
 import io.github.fisher2911.gui.gui.GUI;
-import io.github.fisher2911.gui.gui.GUISlot;
 import io.github.fisher2911.gui.gui.GUIItem;
+import io.github.fisher2911.gui.gui.GUIManager;
+import io.github.fisher2911.gui.gui.GUISlot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GUIClickEvent<P extends JavaPlugin> extends GUIEvent<InventoryClickEvent, P> {
+public class GUIClickEvent extends GUIEvent<InventoryClickEvent> {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final @Nullable GUISlot slot;
-    private final @Nullable GUIItem<P> item;
+    private final @Nullable GUIItem item;
 
     public GUIClickEvent(
-            GUIManager<P> guiManager,
-            GUI<P> gui,
+            GUIManager guiManager,
+            GUI gui,
             Player player,
             @Nullable GUISlot slot,
             InventoryClickEvent bukkitEvent
@@ -52,7 +51,7 @@ public class GUIClickEvent<P extends JavaPlugin> extends GUIEvent<InventoryClick
         }
     }
 
-    public GUIClickEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, InventoryClickEvent bukkitEvent, boolean async, @Nullable GUISlot slot) {
+    public GUIClickEvent(GUIManager guiManager, GUI gui, Player player, InventoryClickEvent bukkitEvent, boolean async, @Nullable GUISlot slot) {
         super(guiManager, gui, player, bukkitEvent, async);
         this.slot = slot;
         if (this.slot != null) {
@@ -66,7 +65,7 @@ public class GUIClickEvent<P extends JavaPlugin> extends GUIEvent<InventoryClick
         return this.slot;
     }
 
-    public @Nullable GUIItem<P> getItem() {
+    public @Nullable GUIItem getItem() {
         return this.item;
     }
 

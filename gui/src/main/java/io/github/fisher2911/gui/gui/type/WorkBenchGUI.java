@@ -28,30 +28,30 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class WorkBenchGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class WorkBenchGUI extends GUI {
 
     private WorkBenchGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.WORK_BENCH, metadata, patterns);
     }
 
-    public void setResult(GUIItem<P> guiItem) {
+    public void setResult(GUIItem guiItem) {
         this.setItem(GUISlot.WorkBench.RESULT, guiItem);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.WorkBench.RESULT);
     }
 
@@ -71,21 +71,21 @@ public class WorkBenchGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.WorkBench.RESULT;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, WorkBenchGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, WorkBenchGUI> {
 
         protected Builder() {}
 
-        public Builder<P> result(GUIItem<P> guiItem) {
+        public Builder result(GUIItem guiItem) {
             this.guiItems.put(GUISlot.WorkBench.RESULT, guiItem);
             return this;
         }
 
-        public WorkBenchGUI<P> build() {
-            return new WorkBenchGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public WorkBenchGUI build() {
+            return new WorkBenchGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

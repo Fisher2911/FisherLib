@@ -28,46 +28,46 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class AnvilGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class AnvilGUI extends GUI {
 
     private AnvilGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.ANVIL, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getFirst() {
+    public @Nullable GUIItem getFirst() {
         return this.getItem(GUISlot.Anvil.FIRST);
     }
 
-    public void setFirst(GUIItem<P> item) {
+    public void setFirst(GUIItem item) {
         this.setItem(GUISlot.Anvil.FIRST, item);
     }
 
-    public @Nullable GUIItem<P> getSecond() {
+    public @Nullable GUIItem getSecond() {
         return this.getItem(GUISlot.Anvil.SECOND);
     }
 
-    public void setSecond(GUIItem<P> item) {
+    public void setSecond(GUIItem item) {
         this.setItem(GUISlot.Anvil.SECOND, item);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Anvil.RESULT);
     }
 
-    public void setResult(GUIItem<P> item) {
+    public void setResult(GUIItem item) {
         this.setItem(GUISlot.Anvil.RESULT, item);
     }
 
@@ -87,32 +87,32 @@ public class AnvilGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Anvil.SECOND;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, AnvilGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, AnvilGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> first(GUIItem<P> item) {
+        public Builder first(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.FIRST, item);
             return this;
         }
 
-        public Builder<P> second(GUIItem<P> item) {
+        public Builder second(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.SECOND, item);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> item) {
+        public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.RESULT, item);
             return this;
         }
 
-        public AnvilGUI<P> build() {
-            return new AnvilGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public AnvilGUI build() {
+            return new AnvilGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

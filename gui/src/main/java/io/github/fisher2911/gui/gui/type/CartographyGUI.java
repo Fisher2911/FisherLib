@@ -28,46 +28,46 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class CartographyGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class CartographyGUI extends GUI {
 
     private CartographyGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.CARTOGRAPHY, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getMapItem() {
+    public @Nullable GUIItem getMapItem() {
         return this.getItem(GUISlot.CartographyTable.MAP);
     }
 
-    public void setMapItem(GUIItem<P> item) {
+    public void setMapItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.MAP, item);
     }
 
-    public @Nullable GUIItem<P> getPaperItem() {
+    public @Nullable GUIItem getPaperItem() {
         return this.getItem(GUISlot.CartographyTable.PAPER);
     }
 
-    public void setPaperItem(GUIItem<P> item) {
+    public void setPaperItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.PAPER, item);
     }
 
-    public @Nullable GUIItem<P> getOutputItem() {
+    public @Nullable GUIItem getOutputItem() {
         return this.getItem(GUISlot.CartographyTable.OUTPUT);
     }
 
-    public void setOutputItem(GUIItem<P> item) {
+    public void setOutputItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.OUTPUT, item);
     }
 
@@ -87,32 +87,32 @@ public class CartographyGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.CartographyTable.PAPER;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, CartographyGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, CartographyGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> mapItem(GUIItem<P> item) {
+        public Builder mapItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.MAP, item);
             return this;
         }
 
-        public Builder<P> paperItem(GUIItem<P> item) {
+        public Builder paperItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.PAPER, item);
             return this;
         }
 
-        public Builder<P> outputItem(GUIItem<P> item) {
+        public Builder outputItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.OUTPUT, item);
             return this;
         }
 
-        public CartographyGUI<P> build() {
-            return new CartographyGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public CartographyGUI build() {
+            return new CartographyGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

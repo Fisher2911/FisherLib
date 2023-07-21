@@ -28,30 +28,29 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class BeaconGUI<P extends JavaPlugin> extends GUI<P> {
+public class BeaconGUI extends GUI {
 
     private BeaconGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.BEACON, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getItem() {
+    public @Nullable GUIItem getItem() {
         return this.getItem(GUISlot.of(0));
     }
 
-    public void setItem(@Nullable GUIItem<P> item) {
+    public void setItem(@Nullable GUIItem item) {
         this.setItem(GUISlot.of(0), item);
     }
 
@@ -71,22 +70,22 @@ public class BeaconGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Number.ZERO;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, BeaconGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, BeaconGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> item(@Nullable GUIItem<P> item) {
+        public Builder item(@Nullable GUIItem item) {
             this.set(GUISlot.of(0), item);
             return this;
         }
 
-        public BeaconGUI<P> build() {
-            return new BeaconGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public BeaconGUI build() {
+            return new BeaconGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

@@ -29,14 +29,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BorderPattern<P extends JavaPlugin> implements Pattern<P> {
+public class BorderPattern implements Pattern {
 
-    private final List<GUIItem<P>> borders;
-    private final MetadataKey<? extends BorderPattern<P>> key;
+    private final List<GUIItem> borders;
+    private final MetadataKey<? extends BorderPattern> key;
     private final Metadata metadata;
     private final int priority;
 
-    protected BorderPattern(List<GUIItem<P>> borders, MetadataKey<? extends BorderPattern<P>> key, int priority) {
+    protected BorderPattern(List<GUIItem> borders, MetadataKey<? extends BorderPattern> key, int priority) {
         this.borders = borders;
         this.key = key;
         this.metadata = Metadata.mutableEmpty();
@@ -49,7 +49,7 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P> {
     }
 
     @Override
-    public void apply(GUI<P> gui) {
+    public void apply(GUI gui) {
         if (this.borders.isEmpty()) return;
         final Integer slotsPerRow = switch (gui.getType()) {
             case CHEST -> 9;
@@ -112,7 +112,7 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P> {
     }
 
     @Override
-    public MetadataKey<? extends BorderPattern<P>> getKey() {
+    public MetadataKey<? extends BorderPattern> getKey() {
         return this.key;
     }
 

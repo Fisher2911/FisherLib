@@ -28,46 +28,46 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FurnaceGUI<P extends JavaPlugin> extends GUI<P> {
+@SuppressWarnings("unused")
+public class FurnaceGUI extends GUI {
 
     private FurnaceGUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
         super(title, guiItems, listeners, Type.FURNACE, metadata, patterns);
     }
 
-    public @Nullable GUIItem<P> getSmelting() {
+    public @Nullable GUIItem getSmelting() {
         return this.getItem(GUISlot.Furnace.SMELTING);
     }
 
-    public void setSmelting(GUIItem<P> item) {
+    public void setSmelting(GUIItem item) {
         this.setItem(GUISlot.Furnace.SMELTING, item);
     }
 
-    public @Nullable GUIItem<P> getFuel() {
+    public @Nullable GUIItem getFuel() {
         return this.getItem(GUISlot.Furnace.FUEL);
     }
 
-    public void setFuel(GUIItem<P> item) {
+    public void setFuel(GUIItem item) {
         this.setItem(GUISlot.Furnace.FUEL, item);
     }
 
-    public @Nullable GUIItem<P> getResult() {
+    public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Furnace.RESULT);
     }
 
-    public void setResult(GUIItem<P> item) {
+    public void setResult(GUIItem item) {
         this.setItem(GUISlot.Furnace.RESULT, item);
     }
 
@@ -87,32 +87,32 @@ public class FurnaceGUI<P extends JavaPlugin> extends GUI<P> {
         return GUISlot.Furnace.FUEL;
     }
 
-    public static <P extends JavaPlugin> Builder<P> builder() {
-        return new Builder<>();
+    public static  Builder builder() {
+        return new Builder();
     }
 
-    public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, FurnaceGUI<P>, P> {
+    public static class Builder extends GUI.Builder<Builder, FurnaceGUI> {
 
         protected Builder() {
         }
 
-        public Builder<P> smelting(GUIItem<P> item) {
+        public Builder smelting(GUIItem item) {
             this.set(GUISlot.Furnace.SMELTING, item);
             return this;
         }
 
-        public Builder<P> fuel(GUIItem<P> item) {
+        public Builder fuel(GUIItem item) {
             this.set(GUISlot.Furnace.FUEL, item);
             return this;
         }
 
-        public Builder<P> result(GUIItem<P> item) {
+        public Builder result(GUIItem item) {
             this.set(GUISlot.Furnace.RESULT, item);
             return this;
         }
 
-        public FurnaceGUI<P> build() {
-            return new FurnaceGUI<>(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+        public FurnaceGUI build() {
+            return new FurnaceGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }

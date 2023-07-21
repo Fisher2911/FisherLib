@@ -23,18 +23,17 @@ import io.github.fisher2911.gui.gui.GUIManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class GUICloseEvent<P extends JavaPlugin> extends GUIEvent<InventoryCloseEvent, P> {
+public class GUICloseEvent extends GUIEvent<InventoryCloseEvent> {
 
     private static final HandlerList handlers = new HandlerList();
 
-    public GUICloseEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, InventoryCloseEvent bukkitEvent) {
+    public GUICloseEvent(GUIManager guiManager, GUI gui, Player player, InventoryCloseEvent bukkitEvent) {
         super(guiManager, gui, player, bukkitEvent);
     }
 
-    public GUICloseEvent(GUIManager<P> guiManager, GUI<P> gui, Player player, InventoryCloseEvent bukkitEvent, boolean async) {
+    public GUICloseEvent(GUIManager guiManager, GUI gui, Player player, InventoryCloseEvent bukkitEvent, boolean async) {
         super(guiManager, gui, player, bukkitEvent, async);
     }
 

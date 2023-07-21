@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public abstract class GUISlot {
 
     private static final ServerVersion SERVER_VERSION = ServerVersion.getServerVersion();

@@ -43,7 +43,6 @@ import io.github.fisher2911.gui.gui.type.PotionGUI;
 import io.github.fisher2911.gui.gui.type.SmithingGUI;
 import io.github.fisher2911.gui.gui.type.StonecutterGUI;
 import io.github.fisher2911.gui.gui.type.WorkBenchGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -64,30 +63,33 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, Timeable<Void>, Metadatable {
+@SuppressWarnings("unused")
+public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatable {
 
+    protected final JavaPlugin plugin;
     private String title;
-    private final Map<GUISlot, GUIItem<P>> guiItems;
-    private final Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners;
+    private final Map<GUISlot, GUIItem> guiItems;
+    private final Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners;
     private final Type type;
     protected final Metadata metadata;
     private final Set<Player> viewers;
-    protected @Nullable GUITimer<P, ? extends GUI<P>> timer;
+    protected @Nullable GUITimer<? extends GUI> timer;
     private @Nullable TimerExecutor timerExecutor;
     protected Inventory inventory;
     // order is important, earlier patterns take priority
-    private final List<Pattern<P>> patterns;
+    private final List<Pattern> patterns;
     private @Nullable Placeholders placeholders;
     private @Nullable Object[] placeholdersArgs;
 
     protected GUI(
             String title,
-            Map<GUISlot, GUIItem<P>> guiItems,
-            Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners,
+            Map<GUISlot, GUIItem> guiItems,
+            Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Type type,
             Metadata metadata,
-            List<Pattern<P>> patterns
+            List<Pattern> patterns
     ) {
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.title = title;
         this.guiItems = guiItems;
         this.guiItems.forEach((slot, item) -> {
@@ -104,33 +106,30 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
 
     private static final String PAGINATED_KEY = "paginated";
 
-    public @Nullable PaginatedGUI<P> getOwner(JavaPlugin plugin) {
+    public @Nullable PaginatedGUI getOwner(JavaPlugin plugin) {
         return this.metadata.get(this.getPaginatedGUIKey(plugin));
     }
 
-    public void setOwner(JavaPlugin plugin, PaginatedGUI<P> owner) {
-        this.metadata.set((MetadataKey<? super PaginatedGUI<P>>) this.getPaginatedGUIKey(plugin), owner);
+    public void setOwner(JavaPlugin plugin, PaginatedGUI owner) {
+        this.metadata.set(this.getPaginatedGUIKey(plugin), owner);
     }
 
-    public MetadataKey<? extends PaginatedGUI<P>> getPaginatedGUIKey(JavaPlugin plugin) {
-        return (MetadataKey<? extends PaginatedGUI<P>>) getGUIKey(plugin, PaginatedGUI.class);
+    private MetadataKey<PaginatedGUI> getPaginatedGUIKey(JavaPlugin plugin) {
+        return MetadataKey.of(new NamespacedKey(plugin, PAGINATED_KEY), PaginatedGUI.class);
     }
 
-    private <V extends PaginatedGUI<P>> MetadataKey<V> getGUIKey(JavaPlugin plugin, Class<V> clazz) {
-        return MetadataKey.of(new NamespacedKey(plugin, PAGINATED_KEY), clazz);
-    }
-
-    public void setTimer(GUITimer<P, ? extends GUI<P>> timer, TimerExecutor timerExecutor) {
+    public void setTimer(GUITimer<? extends GUI> timer, TimerExecutor timerExecutor) {
         this.timer = timer;
         this.timerExecutor = timerExecutor;
     }
 
-    public @Nullable GUITimer<P, ? extends GUI<P>> getTimer() {
+    public @Nullable GUITimer<? extends GUI> getTimer() {
         return this.timer;
     }
 
     @Override
-    public <T extends InventoryEvent, G extends GUIEvent<T, P>> void handle(G event, Class<G> clazz) {
+    @SuppressWarnings("unchecked")
+    public <T extends InventoryEvent, G extends GUIEvent<T>> void handle(G event, Class<G> clazz) {
         if (!this.listeners.containsKey(clazz)) return;
         final var consumer = (Consumer<G>) this.listeners.get(clazz);
         consumer.accept(event);
@@ -167,12 +166,12 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
     }
 
     public void update(GUISlot slot) {
-        final GUIItem<P> guiItem = this.getItem(slot);
+        final GUIItem guiItem = this.getItem(slot);
         if (guiItem == null) return;
         this.update(guiItem);
     }
 
-    public void update(GUIItem<P> item) {
+    public void update(GUIItem item) {
         if (this.placeholders != null && this.placeholdersArgs != null) {
             this.update(item, this.placeholders, this.placeholdersArgs);
             return;
@@ -180,16 +179,16 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         item.getSlot().setItem(this.getInventory(), item.getItemBuilder().build());
     }
 
-    public void update(GUIItem<P> item, Placeholders placeholders, Object... parsePlaceholders) {
+    public void update(GUIItem item, Placeholders placeholders, Object... parsePlaceholders) {
         item.getSlot().setItem(this.getInventory(placeholders, parsePlaceholders), item.getItemBuilder().build(placeholders, parsePlaceholders));
     }
 
-    private Map<GUISlot, GUIItem<P>> guiItems() {
+    private Map<GUISlot, GUIItem> guiItems() {
         return this.guiItems;
     }
 
     @Unmodifiable
-    public Map<GUISlot, GUIItem<P>> getGUIItems() {
+    public Map<GUISlot, GUIItem> getGUIItems() {
         return Collections.unmodifiableMap(this.guiItems);
     }
 
@@ -197,7 +196,7 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         this.guiItems.clear();
     }
 
-    public @Nullable GUIItem<P> getItem(GUISlot slot) {
+    public @Nullable GUIItem getItem(GUISlot slot) {
         return this.guiItems.get(slot);
     }
 
@@ -238,11 +237,11 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         players.forEach(this::open);
     }
 
-    public void setItem(int slot, GUIItem<P> guiItem) {
+    public void setItem(int slot, GUIItem guiItem) {
         this.setItem(GUISlot.of(slot), guiItem);
     }
 
-    public void setItem(GUISlot slot, GUIItem<P> guiItem) {
+    public void setItem(GUISlot slot, GUIItem guiItem) {
         if (this.placeholders != null && this.placeholdersArgs != null) {
             this.setItem(slot, guiItem, placeholders, this.placeholdersArgs);
             return;
@@ -252,29 +251,29 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         guiItem.observe(i -> this.update(guiItem));
     }
 
-    public void setItem(int slot, GUIItem<P> guiItem, Placeholders placeholders, Object... parsePlaceholders) {
+    public void setItem(int slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
         this.setItem(GUISlot.of(slot), guiItem, placeholders, parsePlaceholders);
     }
 
-    public void setItem(GUISlot slot, GUIItem<P> guiItem, Placeholders placeholders, Object... parsePlaceholders) {
+    public void setItem(GUISlot slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
         this.guiItems.put(slot, guiItem);
         guiItem.setSlot(slot);
         guiItem.observe(i -> this.update(guiItem, placeholders, parsePlaceholders));
     }
 
-    public void replaceItem(int slot, GUIItem<P> guiItem, Predicate<@Nullable GUIItem<P>> replacePredicate) {
+    public void replaceItem(int slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
         this.replaceItem(GUISlot.of(slot), guiItem, replacePredicate);
     }
 
-    public void replaceItem(GUISlot slot, GUIItem<P> guiItem, Predicate<@Nullable GUIItem<P>> replacePredicate) {
+    public void replaceItem(GUISlot slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
         if (!replacePredicate.test(this.getItem(slot))) return;
         this.setItem(slot, guiItem);
     }
 
     public void setItem(
             GUISlot slot,
-            GUIItem<P> guiItem,
-            Predicate<@Nullable GUIItem<P>> replacePredicate,
+            GUIItem guiItem,
+            Predicate<@Nullable GUIItem> replacePredicate,
             Placeholders placeholders,
             Object... parsePlaceholders
     ) {
@@ -312,12 +311,12 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         this.title = title;
     }
 
-    public void addPatterns(Collection<Pattern<P>> patterns) {
+    public void addPatterns(Collection<Pattern> patterns) {
         this.patterns.addAll(patterns);
         Collections.sort(this.patterns);
     }
 
-    public void addPattern(Pattern<P> pattern) {
+    public void addPattern(Pattern pattern) {
         this.patterns.add(pattern);
     }
 
@@ -347,76 +346,77 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
 
     }
 
-    public static <P extends JavaPlugin> AnvilGUI.Builder<P> anvilBuilder() {
+    public static  AnvilGUI.Builder anvilBuilder() {
         return AnvilGUI.builder();
     }
 
-    public static <P extends JavaPlugin> BeaconGUI.Builder<P> beaconBuilder() {
+    public static  BeaconGUI.Builder beaconBuilder() {
         return BeaconGUI.builder();
     }
 
-    public static <P extends JavaPlugin> CartographyGUI.Builder<P> cartographyBuilder() {
+    public static  CartographyGUI.Builder cartographyBuilder() {
         return CartographyGUI.builder();
     }
 
-    public static <P extends JavaPlugin> ChestGUI.Builder<P> chestBuilder() {
+    public static  ChestGUI.Builder chestBuilder() {
         return ChestGUI.builder();
     }
 
-    public static <P extends JavaPlugin> DropperGUI.Builder<P> dropperBuilder() {
+    public static  DropperGUI.Builder dropperBuilder() {
         return DropperGUI.builder();
     }
 
-    public static <P extends JavaPlugin> EnchantingGUI.Builder<P> enchantingBuilder() {
+    public static  EnchantingGUI.Builder enchantingBuilder() {
         return EnchantingGUI.builder();
     }
 
-    public static <P extends JavaPlugin> FurnaceGUI.Builder<P> furnaceBuilder() {
+    public static  FurnaceGUI.Builder furnaceBuilder() {
         return FurnaceGUI.builder();
     }
 
-    public static <P extends JavaPlugin> GrindstoneGUI.Builder<P> grindstoneBuilder() {
+    public static  GrindstoneGUI.Builder grindstoneBuilder() {
         return GrindstoneGUI.builder();
     }
 
-    public static <P extends JavaPlugin> HopperGUI.Builder<P> hopperBuilder() {
+    public static  HopperGUI.Builder hopperBuilder() {
         return HopperGUI.builder();
     }
 
-    public static <P extends JavaPlugin> LoomGUI.Builder<P> loomBuilder() {
+    public static  LoomGUI.Builder loomBuilder() {
         return LoomGUI.builder();
     }
 
-    public static <P extends JavaPlugin> MerchantGUI.Builder<P> merchantBuilder() {
+    public static  MerchantGUI.Builder merchantBuilder() {
         return MerchantGUI.builder();
     }
 
-    public static <P extends JavaPlugin> PotionGUI.Builder<P> potionBuilder() {
+    public static  PotionGUI.Builder potionBuilder() {
         return PotionGUI.builder();
     }
 
-    public static <P extends JavaPlugin> SmithingGUI.Builder<P> smithingBuilder() {
+    public static  SmithingGUI.Builder smithingBuilder() {
         return SmithingGUI.builder();
     }
 
-    public static <P extends JavaPlugin> StonecutterGUI.Builder<P> stonecutterBuilder() {
+    public static  StonecutterGUI.Builder stonecutterBuilder() {
         return StonecutterGUI.builder();
     }
 
-    public static <P extends JavaPlugin> WorkBenchGUI.Builder<P> workBenchBuilder() {
+    public static  WorkBenchGUI.Builder workBenchBuilder() {
         return WorkBenchGUI.builder();
     }
 
-    public static <P extends JavaPlugin> PaginatedGUI.Builder<P> paginatedBuilder(P plugin, GUIManager<P> guiManager) {
-        return PaginatedGUI.builder(plugin, guiManager);
+    public static PaginatedGUI.Builder paginatedBuilder(GUIManager guiManager) {
+        return PaginatedGUI.builder(guiManager);
     }
 
-    public static abstract class Builder<B extends Builder<B, G, P>, G extends GUI<P>, P extends JavaPlugin> extends ListenerHandler.Builder<P, B> {
+    @SuppressWarnings("unchecked")
+    public static abstract class Builder<B extends Builder<B, G>, G extends GUI> extends ListenerHandler.Builder<B> {
 
         protected String title;
-        protected Map<GUISlot, GUIItem<P>> guiItems;
+        protected Map<GUISlot, GUIItem> guiItems;
         protected Metadata metadata = Metadata.mutableEmpty();
-        protected List<Pattern<P>> patterns = new ArrayList<>();
+        protected List<Pattern> patterns = new ArrayList<>();
 
         protected Builder() {
             this.guiItems = new HashMap<>();
@@ -427,12 +427,12 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
             return (B) this;
         }
 
-        public B guiItems(Map<GUISlot, GUIItem<P>> guiItems) {
+        public B guiItems(Map<GUISlot, GUIItem> guiItems) {
             this.guiItems.putAll(guiItems);
             return (B) this;
         }
 
-        public B set(GUISlot slot, GUIItem<P> guiItem) {
+        public B set(GUISlot slot, GUIItem guiItem) {
             this.guiItems.put(slot, guiItem);
             return (B) this;
         }
@@ -442,26 +442,26 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
             return (B) this;
         }
 
-        public B addPatterns(List<Pattern<P>> patterns) {
+        public B addPatterns(List<Pattern> patterns) {
             this.patterns.addAll(patterns);
             return (B) this;
         }
 
-        public B listenClose(Consumer<GUICloseEvent<P>> consumer) {
+        public B listenClose(Consumer<GUICloseEvent> consumer) {
             this.listenClose(consumer, false);
             return (B) this;
         }
 
-        public B listenClose(Consumer<GUICloseEvent<P>> consumer, boolean append) {
+        public B listenClose(Consumer<GUICloseEvent> consumer, boolean append) {
             this.listen(GUICloseEvent.class, consumer, append);
             return (B) this;
         }
 
-        public B listenOpen(Consumer<GUIOpenEvent<P>> consumer) {
+        public B listenOpen(Consumer<GUIOpenEvent> consumer) {
             return this.listenOpen(consumer, false);
         }
 
-        public B listenOpen(Consumer<GUIOpenEvent<P>> consumer, boolean append) {
+        public B listenOpen(Consumer<GUIOpenEvent> consumer, boolean append) {
             this.listen(GUIOpenEvent.class, consumer, append);
             return (B) this;
         }

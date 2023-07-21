@@ -30,12 +30,12 @@ public class Placeholders {
 
     protected final MapOfMaps<Class<?>, Placeholder, Function<Object, Object>> placeholders = new MapOfMaps<>(new HashMap<>(), HashMap::new);
 
-    private static final DecimalFormat POSITION_FORMAT = new DecimalFormat("#.0");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.0");
 
     public void load() {
         this.put(Player.class, Placeholder.PLAYER_NAME, p -> castAndParsePlayer(p, Player::getName));
         this.put(Player.class, Placeholder.PLAYER_UUID, p -> castAndParsePlayer(p, Player::getUniqueId));
-        this.put(Player.class, Placeholder.PLAYER_HEALTH, p -> castAndParsePlayer(p, Player::getHealth));
+        this.put(Player.class, Placeholder.PLAYER_HEALTH, p -> castAndParsePlayer(p, player -> DECIMAL_FORMAT.format(player.getHealth())));
     }
 
     protected Object castAndParsePlayer(Object o, Function<Player, Object> parse) {

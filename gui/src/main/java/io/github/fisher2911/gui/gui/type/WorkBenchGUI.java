@@ -61,6 +61,16 @@ public class WorkBenchGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.of(1);
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.WorkBench.RESULT;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

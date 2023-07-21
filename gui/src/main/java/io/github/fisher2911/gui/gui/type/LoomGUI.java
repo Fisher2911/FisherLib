@@ -85,6 +85,16 @@ public class LoomGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.Loom.BANNER;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.Loom.PATTERN;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

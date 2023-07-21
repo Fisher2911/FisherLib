@@ -77,9 +77,20 @@ public class CartographyGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.CartographyTable.MAP;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.CartographyTable.PAPER;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }
+
     public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, CartographyGUI<P>, P> {
 
         protected Builder() {

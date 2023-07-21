@@ -49,4 +49,12 @@ public record MetadataKey<V>(NamespacedKey key, Class<V> valueType) {
         return Objects.hash(this.key);
     }
 
+    @Override
+    public String toString() {
+        return "MetadataKey{" +
+                "key=" + key +
+                ", valueType=" + valueType +
+                '}';
+    }
+
 }

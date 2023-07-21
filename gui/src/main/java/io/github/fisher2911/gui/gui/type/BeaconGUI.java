@@ -61,6 +61,16 @@ public class BeaconGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.Number.ZERO;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.Number.ZERO;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

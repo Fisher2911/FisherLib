@@ -77,6 +77,16 @@ public class GrindstoneGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.Grindstone.FIRST;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.Grindstone.SECOND;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

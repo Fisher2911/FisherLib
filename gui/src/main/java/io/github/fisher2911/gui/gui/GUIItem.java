@@ -64,6 +64,18 @@ public class GUIItem<P extends JavaPlugin> extends Observable<ItemBuilder> imple
         consumer.accept(event);
     }
 
+    public <T extends InventoryEvent, G extends GUIEvent<T, P>> void appendListener(Class<?> clazz, Consumer<G> consumer) {
+        if (!GUIEvent.class.isAssignableFrom(clazz))
+            throw new IllegalArgumentException("Class must be a subclass of GUIEvent: " + clazz.getName());
+        final Class<? extends G> castedClass = (Class<? extends G>) clazz;
+        final var oldConsumer = (Consumer<G>) this.listeners.get(clazz);
+        if (oldConsumer == null) {
+            this.listeners.put(castedClass, consumer);
+            return;
+        }
+        this.listeners.put(castedClass, oldConsumer.andThen(consumer));
+    }
+
     public ItemBuilder copyItemBuilder() {
         return this.itemBuilder.copy();
     }

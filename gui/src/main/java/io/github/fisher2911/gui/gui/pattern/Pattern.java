@@ -22,13 +22,17 @@ import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
+import io.github.fisher2911.gui.gui.GUISlot;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
-public interface Pattern<P extends JavaPlugin> extends Metadatable {
+public interface Pattern<P extends JavaPlugin> extends Metadatable, Comparable<Pattern<P>> {
 
     String PATTERN_KEY_NAME = "pattern";
 
@@ -37,12 +41,48 @@ public interface Pattern<P extends JavaPlugin> extends Metadatable {
     }
 
     static <P extends JavaPlugin> BorderPattern<P> borderPattern(
-            JavaPlugin plugin,
-            List<GUIItem<P>> borders
+            P plugin,
+            List<GUIItem<P>> borders,
+            int priority
     ) {
         return new BorderPattern<>(
                 borders,
-                (MetadataKey<? extends BorderPattern<P>>) getPatternKey(plugin, BorderPattern.class)
+                (MetadataKey<? extends BorderPattern<P>>) getPatternKey(plugin, BorderPattern.class),
+                priority
+        );
+    }
+
+    static <P extends JavaPlugin> PaginatedPattern<P> paginatedPattern(
+            JavaPlugin plugin,
+            @Nullable GUIItem<P> previousPageItem,
+            @Nullable GUIItem<P> nextPageItem,
+            Function<GUI<P>, GUISlot> previousPageItemSlotFunction,
+            Function<GUI<P>, GUISlot> nextPageItemSlotFunction,
+            int priority
+    ) {
+        return new PaginatedPattern<>(
+                plugin,
+                previousPageItem,
+                nextPageItem,
+                previousPageItemSlotFunction,
+                nextPageItemSlotFunction,
+                (MetadataKey<? extends PaginatedPattern<P>>) getPatternKey(plugin, PaginatedPattern.class),
+                priority
+        );
+    }
+
+    static <P extends JavaPlugin> PaginatedPattern<P> paginatedPattern(
+            JavaPlugin plugin,
+            @Nullable GUIItem<P> previousPageItem,
+            @Nullable GUIItem<P> nextPageItem,
+            int priority
+    ) {
+        return new PaginatedPattern<>(
+                plugin,
+                previousPageItem,
+                nextPageItem,
+                (MetadataKey<? extends PaginatedPattern<P>>) getPatternKey(plugin, PaginatedPattern.class),
+                priority
         );
     }
 
@@ -53,5 +93,13 @@ public interface Pattern<P extends JavaPlugin> extends Metadatable {
     void apply(GUI<P> gui);
 
     MetadataKey<? extends Pattern<P>> getKey();
+
+    // lower priority is applied first
+    int getPriority();
+
+    @Override
+    default int compareTo(@NotNull Pattern<P> o) {
+        return Integer.compare(getPriority(), o.getPriority());
+    }
 
 }

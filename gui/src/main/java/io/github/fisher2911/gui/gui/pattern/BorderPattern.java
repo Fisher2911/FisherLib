@@ -20,25 +20,27 @@ package io.github.fisher2911.gui.gui.pattern;
 
 import io.github.fisher2911.common.metadata.Metadata;
 import io.github.fisher2911.common.metadata.MetadataKey;
-import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUISlot;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BorderPattern<P extends JavaPlugin> implements Pattern<P>, Metadatable {
+public class BorderPattern<P extends JavaPlugin> implements Pattern<P> {
 
     private final List<GUIItem<P>> borders;
     private final MetadataKey<? extends BorderPattern<P>> key;
     private final Metadata metadata;
+    private final int priority;
 
-    protected BorderPattern(List<GUIItem<P>> borders, MetadataKey<? extends BorderPattern<P>> key) {
+    protected BorderPattern(List<GUIItem<P>> borders, MetadataKey<? extends BorderPattern<P>> key, int priority) {
         this.borders = borders;
         this.key = key;
         this.metadata = Metadata.mutableEmpty();
+        this.priority = priority;
     }
 
     @Override
@@ -49,15 +51,20 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P>, Metadata
     @Override
     public void apply(GUI<P> gui) {
         if (this.borders.isEmpty()) return;
-        if (gui.getType() != GUI.Type.CHEST) return;
+        final Integer slotsPerRow = switch (gui.getType()) {
+            case CHEST -> 9;
+            case DROPPER -> 3;
+            default -> null;
+        };
+        if (slotsPerRow == null) return;
         final int size = gui.getInventorySize();
-        final int rows = size / 9;
+        final int rows = size / slotsPerRow;
         int rowIndex = 0;
         int leftColIndex = 0;
         int rightColIndex = 0;
         for (int i = 0; i < rows; i++) {
             if (i == 0) {
-                for (int j = 0; j < 9; j++) {
+                for (int j = 0; j < slotsPerRow; j++) {
                     gui.replaceItem(
                             GUISlot.of(i + j),
                             this.borders.get(rowIndex),
@@ -70,14 +77,14 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P>, Metadata
                 continue;
             }
             gui.replaceItem(
-                    GUISlot.of((i + 1) * 9 - 1),
+                    GUISlot.of((i + 1) * slotsPerRow - 1),
                     this.borders.get(rightColIndex),
                     item -> Pattern.replacePredicate(item, this)
             );
             rightColIndex = getNextIndex(rightColIndex);
 
             gui.replaceItem(
-                    GUISlot.of(i * 9),
+                    GUISlot.of(i * slotsPerRow),
                     this.borders.get(leftColIndex),
                     item -> Pattern.replacePredicate(item, this)
             );
@@ -85,9 +92,9 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P>, Metadata
 
             if (i == rows - 1) {
                 rowIndex = leftColIndex;
-                for (int j = 1; j < 8; j++) {
+                for (int j = 1; j < slotsPerRow - 1; j++) {
                     gui.replaceItem(
-                            GUISlot.of(i * 9 + j),
+                            GUISlot.of(i * slotsPerRow + j),
                             this.borders.get(rowIndex),
                             item -> Pattern.replacePredicate(item, this)
                     );
@@ -107,6 +114,11 @@ public class BorderPattern<P extends JavaPlugin> implements Pattern<P>, Metadata
     @Override
     public MetadataKey<? extends BorderPattern<P>> getKey() {
         return this.key;
+    }
+
+    @Override
+    public int getPriority() {
+        return this.priority;
     }
 
 }

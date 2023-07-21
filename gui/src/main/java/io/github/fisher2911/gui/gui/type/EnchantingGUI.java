@@ -73,6 +73,16 @@ public class EnchantingGUI<P extends JavaPlugin> extends GUI<P> {
         return new Builder<>();
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.EnchantingTable.ITEM;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.EnchantingTable.LAPIS;
+    }
+
     public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, EnchantingGUI<P>, P> {
 
         protected Builder() {

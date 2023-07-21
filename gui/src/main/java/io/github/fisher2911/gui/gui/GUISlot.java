@@ -36,10 +36,19 @@ public abstract class GUISlot {
     public abstract void setItem(Inventory inventory, @Nullable ItemStack itemStack);
 
     public static GUISlot of(int slot) {
-        if (slot == 0) {
-            return Number.ZERO;
-        }
-        return new Number(slot);
+        return switch (slot) {
+            case 0 -> Number.ZERO;
+            case 1 -> Number.ONE;
+            case 2 -> Number.TWO;
+            case 3 -> Number.THREE;
+            case 4 -> Number.FOUR;
+            case 5 -> Number.FIVE;
+            case 6 -> Number.SIX;
+            case 7 -> Number.SEVEN;
+            case 8 -> Number.EIGHT;
+            case 9 -> Number.NINE;
+            default -> new Number(slot);
+        };
     }
 
     public static class Potion extends GUISlot {
@@ -624,6 +633,16 @@ public abstract class GUISlot {
     public static class Number extends GUISlot {
 
         public static final Number ZERO = new Number(0);
+        public static final Number ONE = new Number(1);
+        public static final Number TWO = new Number(2);
+        public static final Number THREE = new Number(3);
+        public static final Number FOUR = new Number(4);
+        public static final Number FIVE = new Number(5);
+        public static final Number SIX = new Number(6);
+        public static final Number SEVEN = new Number(7);
+        public static final Number EIGHT = new Number(8);
+        public static final Number NINE = new Number(9);
+
 
         private final int slot;
 

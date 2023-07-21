@@ -20,6 +20,7 @@ package io.github.fisher2911.common.timer;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -65,6 +66,7 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
     private final int period;
     private final AtomicInteger loopCount = new AtomicInteger(0);
     private boolean cancelled;
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
      *
@@ -99,12 +101,15 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
     @Override
     public void start(TimerExecutor executor) {
         this.cancelled = false;
+        if (this.running.get()) return;
+        this.running.set(true);
         this.doNextTask(executor);
     }
 
     private void doNextTask(TimerExecutor executor) {
         executor.executeLater(() -> {
             if (this.cancelled || this.cancelPredicate != null && this.cancelPredicate.test((T) this)) {
+                this.running.set(false);
                 return;
             }
             final TimerExecutor newExecutor = this.function.apply((T) this);

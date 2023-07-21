@@ -19,6 +19,7 @@
 package io.github.fisher2911.gui.gui;
 
 import io.github.fisher2911.common.metadata.Metadata;
+import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.common.placeholder.Placeholders;
 import io.github.fisher2911.common.timer.Timeable;
@@ -42,6 +43,8 @@ import io.github.fisher2911.gui.gui.type.PotionGUI;
 import io.github.fisher2911.gui.gui.type.SmithingGUI;
 import io.github.fisher2911.gui.gui.type.StonecutterGUI;
 import io.github.fisher2911.gui.gui.type.WorkBenchGUI;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
@@ -50,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +66,7 @@ import java.util.function.Predicate;
 
 public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, Timeable<Void>, Metadatable {
 
-    private final String title;
+    private String title;
     private final Map<GUISlot, GUIItem<P>> guiItems;
     private final Map<Class<? extends GUIEvent<? extends InventoryEvent, P>>, Consumer<? extends GUIEvent<? extends InventoryEvent, P>>> listeners;
     private final Type type;
@@ -73,6 +77,8 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
     protected Inventory inventory;
     // order is important, earlier patterns take priority
     private final List<Pattern<P>> patterns;
+    private @Nullable Placeholders placeholders;
+    private @Nullable Object[] placeholdersArgs;
 
     protected GUI(
             String title,
@@ -93,6 +99,25 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         this.viewers = new HashSet<>();
         this.metadata = metadata;
         this.patterns = patterns;
+        Collections.sort(this.patterns);
+    }
+
+    private static final String PAGINATED_KEY = "paginated";
+
+    public @Nullable PaginatedGUI<P> getOwner(JavaPlugin plugin) {
+        return this.metadata.get(this.getPaginatedGUIKey(plugin));
+    }
+
+    public void setOwner(JavaPlugin plugin, PaginatedGUI<P> owner) {
+        this.metadata.set((MetadataKey<? super PaginatedGUI<P>>) this.getPaginatedGUIKey(plugin), owner);
+    }
+
+    public MetadataKey<? extends PaginatedGUI<P>> getPaginatedGUIKey(JavaPlugin plugin) {
+        return (MetadataKey<? extends PaginatedGUI<P>>) getGUIKey(plugin, PaginatedGUI.class);
+    }
+
+    private <V extends PaginatedGUI<P>> MetadataKey<V> getGUIKey(JavaPlugin plugin, Class<V> clazz) {
+        return MetadataKey.of(new NamespacedKey(plugin, PAGINATED_KEY), clazz);
     }
 
     public void setTimer(GUITimer<P, ? extends GUI<P>> timer, TimerExecutor timerExecutor) {
@@ -112,12 +137,16 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
     }
 
     public void populate() {
+        if (this.placeholders != null && this.placeholdersArgs != null) {
+            this.populate(this.placeholders, this.placeholdersArgs);
+            return;
+        }
+        this.patterns.forEach(pattern -> pattern.apply(this));
         this.guiItems.forEach((slot, guiItem) -> slot.setItem(this.getInventory(), guiItem.getItemBuilder().build()));
         if (this.timer != null) {
             this.timer.stop();
             this.timer.start(this.timerExecutor);
         }
-        this.patterns.forEach(pattern -> pattern.apply(this));
     }
 
     public void populate(Placeholders placeholders, Object... parsePlaceholders) {
@@ -134,7 +163,7 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
 
     @Override
     public void tick(@Nullable Void v) {
-        this.getGuiItems().values().forEach(item -> item.tick(this));
+        this.guiItems().values().forEach(item -> item.tick(this));
     }
 
     public void update(GUISlot slot) {
@@ -144,6 +173,10 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
     }
 
     public void update(GUIItem<P> item) {
+        if (this.placeholders != null && this.placeholdersArgs != null) {
+            this.update(item, this.placeholders, this.placeholdersArgs);
+            return;
+        }
         item.getSlot().setItem(this.getInventory(), item.getItemBuilder().build());
     }
 
@@ -151,8 +184,17 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         item.getSlot().setItem(this.getInventory(placeholders, parsePlaceholders), item.getItemBuilder().build(placeholders, parsePlaceholders));
     }
 
-    private Map<GUISlot, GUIItem<P>> getGuiItems() {
+    private Map<GUISlot, GUIItem<P>> guiItems() {
         return this.guiItems;
+    }
+
+    @Unmodifiable
+    public Map<GUISlot, GUIItem<P>> getGUIItems() {
+        return Collections.unmodifiableMap(this.guiItems);
+    }
+
+    public void clearItems() {
+        this.guiItems.clear();
     }
 
     public @Nullable GUIItem<P> getItem(GUISlot slot) {
@@ -160,6 +202,9 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
     }
 
     protected Inventory getInventory() {
+        if (this.placeholders != null && this.placeholdersArgs != null) {
+            return this.getInventory(this.placeholders, this.placeholdersArgs);
+        }
         if (this.inventory == null) {
             return this.createInventory(this.title);
         }
@@ -175,6 +220,10 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
 
     protected abstract Inventory createInventory(String title);
 
+    public abstract GUISlot getDefaultPaginatedPreviousPageSlot();
+
+    public abstract GUISlot getDefaultPaginatedNextPageSlot();
+
     protected void open(Player viewer) {
         this.viewers.add(viewer);
         viewer.openInventory(this.getInventory());
@@ -189,16 +238,32 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         players.forEach(this::open);
     }
 
+    public void setItem(int slot, GUIItem<P> guiItem) {
+        this.setItem(GUISlot.of(slot), guiItem);
+    }
+
     public void setItem(GUISlot slot, GUIItem<P> guiItem) {
+        if (this.placeholders != null && this.placeholdersArgs != null) {
+            this.setItem(slot, guiItem, placeholders, this.placeholdersArgs);
+            return;
+        }
         this.guiItems.put(slot, guiItem);
         guiItem.setSlot(slot);
         guiItem.observe(i -> this.update(guiItem));
+    }
+
+    public void setItem(int slot, GUIItem<P> guiItem, Placeholders placeholders, Object... parsePlaceholders) {
+        this.setItem(GUISlot.of(slot), guiItem, placeholders, parsePlaceholders);
     }
 
     public void setItem(GUISlot slot, GUIItem<P> guiItem, Placeholders placeholders, Object... parsePlaceholders) {
         this.guiItems.put(slot, guiItem);
         guiItem.setSlot(slot);
         guiItem.observe(i -> this.update(guiItem, placeholders, parsePlaceholders));
+    }
+
+    public void replaceItem(int slot, GUIItem<P> guiItem, Predicate<@Nullable GUIItem<P>> replacePredicate) {
+        this.replaceItem(GUISlot.of(slot), guiItem, replacePredicate);
     }
 
     public void replaceItem(GUISlot slot, GUIItem<P> guiItem, Predicate<@Nullable GUIItem<P>> replacePredicate) {
@@ -243,6 +308,24 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         return this.getInventory().getSize();
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void addPatterns(Collection<Pattern<P>> patterns) {
+        this.patterns.addAll(patterns);
+        Collections.sort(this.patterns);
+    }
+
+    public void addPattern(Pattern<P> pattern) {
+        this.patterns.add(pattern);
+    }
+
+    public void setPlaceholders(@Nullable Placeholders placeholders, @Nullable Object... placeholdersArgs) {
+        this.placeholders = placeholders;
+        this.placeholdersArgs = placeholdersArgs;
+    }
+
     public enum Type {
 
         CHEST,
@@ -259,7 +342,8 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         GRINDSTONE,
         STONECUTTER,
         MERCHANT,
-        BEACON
+        BEACON,
+        PAGINATED
 
     }
 
@@ -323,12 +407,16 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
         return WorkBenchGUI.builder();
     }
 
+    public static <P extends JavaPlugin> PaginatedGUI.Builder<P> paginatedBuilder(P plugin, GUIManager<P> guiManager) {
+        return PaginatedGUI.builder(plugin, guiManager);
+    }
+
     public static abstract class Builder<B extends Builder<B, G, P>, G extends GUI<P>, P extends JavaPlugin> extends ListenerHandler.Builder<P, B> {
 
         protected String title;
         protected Map<GUISlot, GUIItem<P>> guiItems;
         protected Metadata metadata = Metadata.mutableEmpty();
-        protected List<Pattern<P>> patterns;
+        protected List<Pattern<P>> patterns = new ArrayList<>();
 
         protected Builder() {
             this.guiItems = new HashMap<>();
@@ -354,8 +442,8 @@ public abstract class GUI<P extends JavaPlugin> implements ListenerHandler<P>, T
             return (B) this;
         }
 
-        public B patterns(List<Pattern<P>> patterns) {
-            this.patterns = patterns;
+        public B addPatterns(List<Pattern<P>> patterns) {
+            this.patterns.addAll(patterns);
             return (B) this;
         }
 

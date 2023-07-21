@@ -59,6 +59,16 @@ public class ChestGUI<P extends JavaPlugin> extends GUI<P> {
         return this.rows;
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.of(this.rows * 9 - 8);
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.of(this.rows * 9 - 1);
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

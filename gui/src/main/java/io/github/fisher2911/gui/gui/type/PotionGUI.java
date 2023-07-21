@@ -93,6 +93,16 @@ public class PotionGUI<P extends JavaPlugin> extends GUI<P> {
         return this.getItem(GUISlot.Potion.TWO);
     }
 
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return GUISlot.Potion.ZERO;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return GUISlot.Potion.TWO;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

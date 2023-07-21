@@ -52,6 +52,19 @@ public class HopperGUI<P extends JavaPlugin> extends GUI<P> {
         return this.inventory;
     }
 
+    private static final GUISlot PREVIOUS_PAGE_SLOT = GUISlot.of(0);
+    private static final GUISlot NEXT_PAGE_SLOT = GUISlot.of(4);
+
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return PREVIOUS_PAGE_SLOT;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return NEXT_PAGE_SLOT;
+    }
+
     public static <P extends JavaPlugin> Builder<P> builder() {
         return new Builder<>();
     }

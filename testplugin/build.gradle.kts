@@ -48,6 +48,8 @@ tasks {
     }
 
     shadowJar {
+        relocate("io.github.fisher2911.common", "io.github.fisher2911.test.common")
+        relocate("io.github.fisher2911.gui", "io.github.fisher2911.test.gui")
         archiveFileName.set("${project.name}-${project.version}.jar")
     }
 

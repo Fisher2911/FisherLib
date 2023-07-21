@@ -56,6 +56,19 @@ public class DropperGUI<P extends JavaPlugin> extends GUI<P> {
         return new Builder<>();
     }
 
+    private static final GUISlot PREVIOUS_PAGE_SLOT = GUISlot.of(6);
+    private static final GUISlot NEXT_PAGE_SLOT = GUISlot.of(8);
+
+    @Override
+    public GUISlot getDefaultPaginatedPreviousPageSlot() {
+        return PREVIOUS_PAGE_SLOT;
+    }
+
+    @Override
+    public GUISlot getDefaultPaginatedNextPageSlot() {
+        return NEXT_PAGE_SLOT;
+    }
+
     public static class Builder<P extends JavaPlugin> extends GUI.Builder<Builder<P>, DropperGUI<P>, P> {
         
         protected Builder() {

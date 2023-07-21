@@ -156,7 +156,10 @@ public class ItemBuilder {
         }
         itemMeta.setDisplayName(placeholders.apply(itemMeta.getDisplayName(), parsePlaceholders));
         final List<String> lore = itemMeta.getLore();
-        if (lore == null) return itemStack;
+        if (lore == null) {
+            itemStack.setItemMeta(itemMeta);
+            return itemStack;
+        }
         itemMeta.setLore(lore.stream()
                 .map(s -> placeholders.apply(s, parsePlaceholders))
                 .collect(Collectors.toList()));

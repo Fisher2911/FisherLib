@@ -46,7 +46,7 @@ public class GUIClickEvent<P extends JavaPlugin> extends GUIEvent<InventoryClick
         super(guiManager, gui, player, bukkitEvent);
         this.slot = slot;
         if (this.slot != null) {
-            this.item = this.getGui().getItem(this.slot);
+            this.item = this.getGUI().getItem(this.slot);
         } else {
             this.item = null;
         }
@@ -56,7 +56,7 @@ public class GUIClickEvent<P extends JavaPlugin> extends GUIEvent<InventoryClick
         super(guiManager, gui, player, bukkitEvent, async);
         this.slot = slot;
         if (this.slot != null) {
-            this.item = this.getGui().getItem(this.slot);
+            this.item = this.getGUI().getItem(this.slot);
         } else {
             this.item = null;
         }

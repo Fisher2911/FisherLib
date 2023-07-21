@@ -50,7 +50,7 @@ public abstract class GUIEvent<T extends InventoryEvent, P extends JavaPlugin> e
         return this.guiManager;
     }
 
-    public GUI<P> getGui() {
+    public GUI<P> getGUI() {
         return this.gui;
     }
 

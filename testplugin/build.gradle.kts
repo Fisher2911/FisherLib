@@ -33,10 +33,8 @@ repositories {
 }
 
 dependencies {
-//    implementation(project(":common"))
-//    implementation(project(":gui"))
-    implementation("io.github.fisher2911.FisherLib:common:1.0.0-beta")
-    implementation("io.github.fisher2911.FisherLib:gui:1.0.0-beta")
+    implementation(project(":common"))
+    implementation(project(":gui"))
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
 }

@@ -20,7 +20,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "${project.group}"
+            groupId = "${project.group}.${rootProject.name}"
             artifactId = "${project.name}"
             version = "${project.version}"
 

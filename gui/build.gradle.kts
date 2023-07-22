@@ -39,7 +39,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "${project.group}"
+            groupId = "${project.group}.${rootProject.name}"
             artifactId = "${project.name}"
             version = "${project.version}"
 
@@ -62,13 +62,6 @@ publishing {
     }
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("maven") {
-//            from(components["java"])
-//        }
-//    }
-//}
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

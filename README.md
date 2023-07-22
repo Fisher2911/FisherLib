@@ -21,7 +21,7 @@ Gradle:
 
 ```kotlin
 repositories {
-    maven("https://jitpack.io")
+    maven("https://repo.hibiscusmc.com/releases")
 }
 
 dependencies {
@@ -35,12 +35,11 @@ dependencies {
 Maven:
 
 ```xml
-<repositories>
-	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
-</repositories>
+<repository>
+    <id>hmc-repo-releases</id>
+    <name>HibiscusMC Repository</name>
+    <url>https://repo.hibiscusmc.com/releases</url>
+</repository>
 
 <dependency>
     <groupId>com.github.Fisher2911.FisherLib</groupId>

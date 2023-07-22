@@ -198,11 +198,6 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         paginated.populate(placeholders, player, player);
         this.guiManager.openGUI(paginated, player);
         player.updateInventory();
-//        gui.populate(placeholders, player, player);
-
-
-//        this.guiManager.openGUI(gui, player);
-//        player.updateInventory();
     }
 
 }

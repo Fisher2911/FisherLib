@@ -3,6 +3,9 @@ plugins {
     id("maven-publish")
 }
 
+group = "io.github.fisher2911"
+version = "1.0.0-beta"
+
 publishing {
     publications {
         create<MavenPublication>("maven") {

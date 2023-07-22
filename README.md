@@ -61,5 +61,5 @@ Refer to the wiki for usage information.
 
 ### Support:
 
-[Support Discord](https://discord.gg/zJQbHXYGWy)
-[Donate](https://buy.stripe.com/3cs7t5dNe4WQ1Ec4gX)
+- [Support Discord](https://discord.gg/zJQbHXYGWy)
+- [Donate](https://buy.stripe.com/3cs7t5dNe4WQ1Ec4gX)

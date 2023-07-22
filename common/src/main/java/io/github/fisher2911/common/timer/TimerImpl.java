@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 /**
  * Represents a timer that can be used to execute tasks.
  *
- * @param <T>
+ * @param <T> - the type of the timer
  */
 public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
 

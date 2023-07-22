@@ -18,7 +18,6 @@
 
 package io.github.fisher2911.common.timer;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,8 +25,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Represents a timer that can be used to execute tasks.
+ *
+ * @param <T>
+ */
 public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
 
+    /**
+     * Represents an implementation of {@link Timer}
+     */
     public static class Concrete extends TimerImpl<Concrete> {
 
         private Concrete(Function<Concrete, TimerExecutor> function, int delay, int period) {
@@ -41,21 +48,19 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
     }
 
     /**
-     *
      * @param function - the task to execute.
-     * @param delay - delay in milliseconds before task is to be executed.
-     * @param period - time in milliseconds between successive task executions.
+     * @param delay    - delay in milliseconds before task is to be executed.
+     * @param period   - time in milliseconds between successive task executions.
      */
     public static TimerImpl<Concrete> create(Function<Concrete, TimerExecutor> function, int delay, int period) {
         return new Concrete(function, delay, period);
     }
 
     /**
-     *
-     * @param function - the task to execute.
+     * @param function        - the task to execute.
      * @param cancelPredicate - the predicate to check if the task should be cancelled.
-     * @param delay - delay in milliseconds before task is to be executed.
-     * @param period - time in milliseconds between successive task executions.
+     * @param delay           - delay in milliseconds before task is to be executed.
+     * @param period          - time in milliseconds between successive task executions.
      */
     public static TimerImpl<Concrete> create(Function<Concrete, TimerExecutor> function, @Nullable Predicate<Concrete> cancelPredicate, int delay, int period) {
         return new Concrete(function, cancelPredicate, delay, period);
@@ -70,21 +75,19 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
-     *
      * @param function - the task to execute.
-     * @param delay - delay in milliseconds before task is to be executed.
-     * @param period - time in milliseconds between successive task executions.
+     * @param delay    - delay in milliseconds before task is to be executed.
+     * @param period   - time in milliseconds between successive task executions.
      */
     protected TimerImpl(Function<T, TimerExecutor> function, int delay, int period) {
         this(function, null, delay, period);
     }
 
     /**
-     *
-     * @param function - the task to execute.
+     * @param function        - the task to execute.
      * @param cancelPredicate - the predicate to check if the task should be cancelled.
-     * @param delay - delay in milliseconds before task is to be executed.
-     * @param period - time in milliseconds between successive task executions.
+     * @param delay           - delay in milliseconds before task is to be executed.
+     * @param period          - time in milliseconds between successive task executions.
      */
     protected TimerImpl(
             Function<T, TimerExecutor> function,
@@ -99,6 +102,11 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
     }
 
 
+    /**
+     * Starts the timer.
+     *
+     * @param executor - the executor to use.
+     */
     @Override
     public void start(TimerExecutor executor) {
         this.cancelled = false;

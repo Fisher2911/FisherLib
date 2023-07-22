@@ -20,6 +20,9 @@ package io.github.fisher2911.common.util;
 
 import org.bukkit.Bukkit;
 
+/**
+ * Represents the version of the server
+ */
 public enum ServerVersion {
 
     UNKNOWN,

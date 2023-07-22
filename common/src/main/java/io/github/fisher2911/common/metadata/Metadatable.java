@@ -20,8 +20,14 @@ package io.github.fisher2911.common.metadata;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an object that can have metadata attached to it.
+ */
 public interface Metadatable {
 
+    /**
+     * @return the metadata attached to this object
+     */
     @NotNull
     Metadata getMetadata();
 

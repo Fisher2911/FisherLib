@@ -22,10 +22,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executor;
 
+/**
+ * Represents an executor that is used for {@link Timer Timers}
+ */
 public interface TimerExecutor extends Executor {
 
+    /**
+     * Executes the given runnable
+     *
+     * @param runnable - the runnable to execute
+     */
     void execute(@NotNull Runnable runnable);
 
+    /**
+     * Executes the given runnable after the given delay
+     *
+     * @param runnable - the runnable to execute
+     * @param delay    - the delay in ticks
+     */
     void executeLater(Runnable runnable, int delay);
 
 }

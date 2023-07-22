@@ -18,6 +18,10 @@
 
 package io.github.fisher2911.common.timer;
 
+/**
+ * Represents a timer that can be started and stopped
+ * @param <T> - the type of the timer
+ */
 public interface Timer<T extends Timer<T>> {
 
     void start(TimerExecutor executor);

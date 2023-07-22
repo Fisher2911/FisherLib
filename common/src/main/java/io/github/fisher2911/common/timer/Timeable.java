@@ -18,6 +18,12 @@
 
 package io.github.fisher2911.common.timer;
 
+/**
+ * Represents an object that can be ticked.
+ * @param <Handler> - the type of the object that holds this {@link Timeable} instance,
+ *                 for example the GUI library which has a GUIItem that implements {@link Timeable},
+ *                 and the GUI that holds the GUIItem is the {@link Handler}
+ */
 public interface Timeable<Handler> {
 
     void tick(Handler handler);

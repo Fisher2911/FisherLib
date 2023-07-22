@@ -38,18 +38,33 @@ public class Placeholders {
         this.put(Player.class, Placeholder.PLAYER_HEALTH, p -> castAndParsePlayer(p, player -> DECIMAL_FORMAT.format(player.getHealth())));
     }
 
-    protected Object castAndParsePlayer(Object o, Function<Player, Object> parse) {
+    public Object castAndParsePlayer(Object o, Function<Player, Object> parse) {
         return castAndParse(Player.class, o, parse);
     }
 
-    protected <T> Object castAndParse(Class<T> clazz, Object o, Function<T, Object> parse) {
+    public <T> Object castAndParse(Class<T> clazz, Object o, Function<T, Object> parse) {
         return parse.apply(clazz.cast(o));
     }
 
-    protected <T> void put(Class<T> clazz, Placeholder placeholder, Function<Object, Object> parse) {
+    /**
+     * Puts a placeholder into the map
+     * An example is the {@link Placeholder#PLAYER_NAME} placeholder, which is added in {@link #load()}
+     * the following way: {@code put(Player.class, Placeholder.PLAYER_NAME, p -> castAndParsePlayer(p, Player::getName))}
+     *
+     * @param clazz       the class to put the placeholder under
+     * @param placeholder the placeholder to put
+     * @param parse       the function to parse the object
+     * @param <T>         the type of the class
+     */
+    public <T> void put(Class<T> clazz, Placeholder placeholder, Function<Object, Object> parse) {
         this.placeholders.put(clazz, placeholder, parse);
     }
 
+    /**
+     * @param s       the string to apply the placeholders to
+     * @param objects the placeholders that are being applied
+     * @return the string with the placeholders applied
+     */
     public String apply(String s, Object... objects) {
         final Map<String, Integer> placeholderCounts = new HashMap<>();
         for (Object o : objects) {
@@ -105,10 +120,18 @@ public class Placeholders {
         return original.replace(key.replace("}", SEPARATOR + count + "}"), String.valueOf(value));
     }
 
+    /**
+     * @param current the string to apply the placeholders to
+     * @return a {@link Builder} to chain {@link Builder#apply(Object...)} calls,
+     * using this {@link Placeholders} instance
+     */
     public Builder builder(String current) {
         return new Builder(this, current);
     }
 
+    /**
+     * A convenience class for applying placeholders, where you can chain {@link Builder#apply(Object...)} calls
+     */
     public static class Builder {
 
         protected final Placeholders placeholders;

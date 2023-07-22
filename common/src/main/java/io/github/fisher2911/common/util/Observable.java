@@ -21,6 +21,11 @@ package io.github.fisher2911.common.util;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Represents an object that can be listened to when it is changed
+ *
+ * @param <T> - the type of the object
+ */
 public class Observable<T> {
 
     private final T value;
@@ -31,11 +36,21 @@ public class Observable<T> {
         this.observers = observers;
     }
 
+    /**
+     * Edits the value of this observable
+     *
+     * @param editor - the consumer that edits the value
+     */
     public void edit(Consumer<T> editor) {
         editor.accept(this.value);
         this.observers.forEach(observer -> observer.accept(this.value));
     }
 
+    /**
+     * Adds a listener to listen for when the value is changed
+     *
+     * @param observer - the consumer that listens for changes
+     */
     public void observe(Consumer<T> observer) {
         this.observers.add(observer);
     }

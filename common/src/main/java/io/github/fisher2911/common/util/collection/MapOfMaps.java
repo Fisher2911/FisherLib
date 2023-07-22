@@ -27,6 +27,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+/**
+ * Represents a map of maps
+ * @param <K> - the key type
+ * @param <E> - the second key type
+ * @param <V> - the value type
+ */
 public class MapOfMaps<K, E, V> implements Map<K, Map<E, V>> {
 
     private final Map<K, Map<E, V>> map;

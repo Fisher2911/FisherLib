@@ -22,12 +22,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an executor that is used for {@link Timer Timers}
+ * using the Bukkit scheduler
+ */
 public abstract class BukkitTimerExecutor implements TimerExecutor {
 
+    /**
+     * Creates a new async {@link BukkitTimerExecutor}
+     * @param plugin - the plugin
+     * @param scheduler - the scheduler
+     * @return the new executor
+     */
     public static BukkitTimerExecutor async(JavaPlugin plugin, BukkitScheduler scheduler) {
         return new Async(plugin, scheduler);
     }
 
+    /**
+     * Creates a new sync {@link BukkitTimerExecutor}
+     * @param plugin - the plugin
+     * @param scheduler - the scheduler
+     * @return the new executor
+     */
     public static BukkitTimerExecutor sync(JavaPlugin plugin, BukkitScheduler scheduler) {
         return new Sync(plugin, scheduler);
     }

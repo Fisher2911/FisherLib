@@ -23,15 +23,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
+/**
+ * Represents a key that can be used to get an object from {@link Metadata}.
+ * @param <V> - the type of object that this key represents
+ */
 public record MetadataKey<V>(NamespacedKey key, Class<V> valueType) {
 
-//    public static final MetadataKey<Object> OBJECT_KEY = new MetadataKey<>("object", Object.class);
     private static final String OBJECT_KEY_NAME = "object";
 
+    /**
+     * Creates a new {@link MetadataKey} with the given {@link NamespacedKey} and {@link java.lang.Object} type.
+     * @param plugin - the plugin that this key belongs to
+     * @return a new {@link MetadataKey} with the given {@link NamespacedKey} and {@link java.lang.Object} type.
+     */
     public static MetadataKey<Object> objectKey(JavaPlugin plugin) {
         return new MetadataKey<>(new NamespacedKey(plugin, OBJECT_KEY_NAME), Object.class);
     }
 
+    /**
+     * Creates a new {@link MetadataKey} with the given {@link NamespacedKey} and {@link V} type.
+     * @param key - the {@link NamespacedKey} to use
+     * @return a new {@link MetadataKey} with the given {@link NamespacedKey} and {@link V} type.
+     */
     public static <V> MetadataKey<V> of(NamespacedKey key, Class<V> valueType) {
         return new MetadataKey<>(key, valueType);
     }

@@ -28,10 +28,12 @@ repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/groups/public/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
     implementation(project(":common"))
+//    compileOnly("com.github.Fisher2911:FisherLib:-SNAPSHOT")
     implementation(project(":GUI"))
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")

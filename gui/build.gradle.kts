@@ -39,14 +39,40 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+            version = "${project.version}"
+
             from(components["java"])
+        }
+    }
+
+    repositories {
+        maven {
+            authentication {
+                credentials(PasswordCredentials::class) {
+                    username = System.getenv("REPO_USERNAME")
+                    password = System.getenv("REPO_PASSWORD")
+                }
+            }
+
+            name = "HibiscusMCRepository"
+            url = uri("https://repo.hibiscusmc.com/releases/")
         }
     }
 }
 
+//publishing {
+//    publications {
+//        create<MavenPublication>("maven") {
+//            from(components["java"])
+//        }
+//    }
+//}
+
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-    withJavadocJar()
+//    withJavadocJar()
 }
 
 tasks {

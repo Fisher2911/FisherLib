@@ -1,6 +1,7 @@
 package io.github.fisher2911.testplugin;
 
 import io.github.fisher2911.common.item.ItemBuilder;
+import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.placeholder.Placeholders;
 import io.github.fisher2911.common.timer.BukkitTimerExecutor;
 import io.github.fisher2911.gui.gui.GUI;
@@ -15,6 +16,7 @@ import io.github.fisher2911.gui.gui.type.DropperGUI;
 import io.github.fisher2911.gui.gui.type.HopperGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public final class TestPlugin extends JavaPlugin implements Listener {
 
@@ -54,7 +58,6 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         final ItemBuilder nextPageItem = ItemBuilder.from(Material.ARROW)
                 .name(ChatColor.RED + "Next Page");
         final Pattern pattern = Pattern.borderPattern(
-                this,
                 List.of(
                         GUIItem.builder(ItemBuilder.from(Material.BLUE_STAINED_GLASS_PANE)
                                         .name(ChatColor.RED + "Border Item").build())
@@ -70,6 +73,20 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                                 .build()
                 ),
                 1
+        );
+        final AtomicInteger atomicInteger = new AtomicInteger(0);
+        final MetadataKey<Integer> fillKey = MetadataKey.of(new NamespacedKey(this, "fill_number"), Integer.class);
+        final Pattern fillPattern = Pattern.fillPattern(
+                Stream.generate(() ->
+                        GUIItem.builder(
+                                        ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE)
+                                                .name(ChatColor.RED + "Fill Item - " + atomicInteger.get()).build())
+                                .metadata(fillKey, atomicInteger.getAndIncrement())
+                                .build()
+                ).takeWhile(i -> atomicInteger.get() < 108).toList(),
+                slot -> true,
+                item -> item.getMetadata().get(fillKey) % 2 == 0,
+                2
         );
         final ItemBuilder newItemBuilder = ItemBuilder.from(Material.RED_MUSHROOM)
                 .name(ChatColor.GREEN + "Health Tracker - {player_name_0}")
@@ -121,6 +138,24 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 .cancelTopInventoryClick()
                 .cancelTopInventoryDrag()
                 .build();
+        final ChestGUI gui2 = GUI.chestBuilder()
+                .title("Test2 GUI")
+                .rows(3)
+                .guiItems(Map.of(GUISlot.of(13), guiItem))
+                .listenClick(e -> player.sendMessage("You clicked the 2nd chest GUI!"))
+                .addPatterns(List.of(pattern))
+                .cancelTopInventoryClick()
+                .cancelTopInventoryDrag()
+                .build();
+        final ChestGUI gui3 = GUI.chestBuilder()
+                .title("Test2 GUI")
+                .rows(5)
+                .guiItems(Map.of(GUISlot.of(15), guiItem))
+                .listenClick(e -> player.sendMessage("You clicked the 3rd chest GUI!"))
+                .addPatterns(List.of(pattern))
+                .cancelTopInventoryClick()
+                .cancelTopInventoryDrag()
+                .build();
         final HopperGUI hopperGUI = GUI.hopperBuilder()
                 .title("Test Hopper GUI")
                 .guiItems(Map.of(GUISlot.of(3), hopperItem))
@@ -144,9 +179,9 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 gui
         );
         final PaginatedGUI paginated = GUI.paginatedBuilder(this.guiManager)
-                .addPages(List.of(gui, dropperGUI, hopperGUI))
+                .addPages(List.of(gui, gui2, gui3, dropperGUI, hopperGUI))
+                .addPatterns(List.of(fillPattern))
                 .pagePatterns(List.of(Pattern.paginatedPattern(
-                        this,
                         GUIItem.builder(previousPageItem).build(),
                         GUIItem.builder(nextPageItem).build(),
                         0
@@ -154,6 +189,8 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 .build();
         paginated.setPlaceholders(placeholders, player, player);
         gui.setPlaceholders(placeholders, player, player);
+        gui2.setPlaceholders(placeholders, player, player);
+        gui3.setPlaceholders(placeholders, player, player);
         dropperGUI.setPlaceholders(placeholders, player, player);
         hopperGUI.setPlaceholders(placeholders, player, player);
         gui.setTimer(timer, executor);

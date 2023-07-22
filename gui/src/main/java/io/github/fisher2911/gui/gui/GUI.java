@@ -90,32 +90,35 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
             List<Pattern> patterns
     ) {
         this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
+        this.metadata = metadata;
         this.title = title;
         this.guiItems = guiItems;
         this.guiItems.forEach((slot, item) -> {
+            this.setItemGUI(item);
             item.setSlot(slot);
             item.observe(i -> this.update(item));
         });
         this.listeners = listeners;
         this.type = type;
         this.viewers = new HashSet<>();
-        this.metadata = metadata;
         this.patterns = patterns;
         Collections.sort(this.patterns);
     }
 
+    private static final String GUI_KEY = "gui";
     private static final String PAGINATED_KEY = "paginated";
 
-    public @Nullable PaginatedGUI getOwner(JavaPlugin plugin) {
-        return this.metadata.get(this.getPaginatedGUIKey(plugin));
+    public @Nullable PaginatedGUI getOwner() {
+        return this.metadata.get(this.getPaginatedGUIMetadataKey());
     }
 
-    public void setOwner(JavaPlugin plugin, PaginatedGUI owner) {
-        this.metadata.set(this.getPaginatedGUIKey(plugin), owner);
+    public void setOwner(PaginatedGUI owner) {
+        this.metadata.set(this.getPaginatedGUIMetadataKey(), owner);
+        this.getGUIItems().values().forEach(this::setItemGUI);
     }
 
-    private MetadataKey<PaginatedGUI> getPaginatedGUIKey(JavaPlugin plugin) {
-        return MetadataKey.of(new NamespacedKey(plugin, PAGINATED_KEY), PaginatedGUI.class);
+    private MetadataKey<PaginatedGUI> getPaginatedGUIMetadataKey() {
+        return MetadataKey.of(new NamespacedKey(this.plugin, PAGINATED_KEY), PaginatedGUI.class);
     }
 
     public void setTimer(GUITimer<? extends GUI> timer, TimerExecutor timerExecutor) {
@@ -150,9 +153,11 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
 
     public void populate(Placeholders placeholders, Object... parsePlaceholders) {
         this.patterns.forEach(pattern -> pattern.apply(this));
-        this.guiItems.forEach((slot, guiItem) -> slot.setItem(
-                this.getInventory(placeholders, parsePlaceholders),
-                guiItem.getItemBuilder().build(placeholders, parsePlaceholders))
+        this.guiItems.forEach((slot, guiItem) -> {
+                    slot.setItem(
+                            this.getInventory(placeholders, parsePlaceholders),
+                            guiItem.getItemBuilder().build(placeholders, parsePlaceholders));
+                }
         );
         if (this.timer != null) {
             this.timer.stop();
@@ -230,7 +235,14 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
     }
 
     protected void removeViewer(Player viewer) {
-        this.viewers.remove(viewer);
+        this.removeViewers(List.of(viewer));
+    }
+
+    protected void removeViewers(Collection<Player> viewers) {
+        this.viewers.removeAll(viewers);
+        if (this.viewers.isEmpty() && this.timer != null && this.timer.isRunning()) {
+            this.timer.stop();
+        }
     }
 
     protected void open(Collection<Player> players) {
@@ -247,6 +259,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
             return;
         }
         this.guiItems.put(slot, guiItem);
+        this.setItemGUI(guiItem);
         guiItem.setSlot(slot);
         guiItem.observe(i -> this.update(guiItem));
     }
@@ -257,32 +270,37 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
 
     public void setItem(GUISlot slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
         this.guiItems.put(slot, guiItem);
+        this.setItemGUI(guiItem);
         guiItem.setSlot(slot);
         guiItem.observe(i -> this.update(guiItem, placeholders, parsePlaceholders));
     }
 
-    public void replaceItem(int slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
-        this.replaceItem(GUISlot.of(slot), guiItem, replacePredicate);
+    public boolean replaceItem(int slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
+        return this.replaceItem(GUISlot.of(slot), guiItem, replacePredicate);
     }
 
-    public void replaceItem(GUISlot slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
-        if (!replacePredicate.test(this.getItem(slot))) return;
+    public boolean replaceItem(GUISlot slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
+        if (!replacePredicate.test(this.getItem(slot))) return false;
         this.setItem(slot, guiItem);
+        return true;
     }
 
-    public void setItem(
+    public boolean replaceItem(
             GUISlot slot,
             GUIItem guiItem,
             Predicate<@Nullable GUIItem> replacePredicate,
             Placeholders placeholders,
             Object... parsePlaceholders
     ) {
-        if (!replacePredicate.test(this.getItem(slot))) return;
+        if (!replacePredicate.test(this.getItem(slot))) return false;
         this.setItem(slot, guiItem, placeholders, parsePlaceholders);
+        return true;
     }
 
     public void removeItem(GUISlot slot) {
-        this.guiItems.remove(slot);
+        final GUIItem item = this.guiItems.remove(slot);
+        if (item == null) return;
+        item.removeGUI();
     }
 
     @Unmodifiable
@@ -299,7 +317,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
     }
 
     @Override
-    public @NotNull Metadata getMetaData() {
+    public @NotNull Metadata getMetadata() {
         return this.metadata;
     }
 
@@ -318,6 +336,13 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
 
     public void addPattern(Pattern pattern) {
         this.patterns.add(pattern);
+    }
+
+    private void setItemGUI(GUIItem item) {
+        if (this.type == Type.PAGINATED) {
+            return;
+        }
+        item.setGUI(this);
     }
 
     public void setPlaceholders(@Nullable Placeholders placeholders, @Nullable Object... placeholdersArgs) {
@@ -346,63 +371,63 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
 
     }
 
-    public static  AnvilGUI.Builder anvilBuilder() {
+    public static AnvilGUI.Builder anvilBuilder() {
         return AnvilGUI.builder();
     }
 
-    public static  BeaconGUI.Builder beaconBuilder() {
+    public static BeaconGUI.Builder beaconBuilder() {
         return BeaconGUI.builder();
     }
 
-    public static  CartographyGUI.Builder cartographyBuilder() {
+    public static CartographyGUI.Builder cartographyBuilder() {
         return CartographyGUI.builder();
     }
 
-    public static  ChestGUI.Builder chestBuilder() {
+    public static ChestGUI.Builder chestBuilder() {
         return ChestGUI.builder();
     }
 
-    public static  DropperGUI.Builder dropperBuilder() {
+    public static DropperGUI.Builder dropperBuilder() {
         return DropperGUI.builder();
     }
 
-    public static  EnchantingGUI.Builder enchantingBuilder() {
+    public static EnchantingGUI.Builder enchantingBuilder() {
         return EnchantingGUI.builder();
     }
 
-    public static  FurnaceGUI.Builder furnaceBuilder() {
+    public static FurnaceGUI.Builder furnaceBuilder() {
         return FurnaceGUI.builder();
     }
 
-    public static  GrindstoneGUI.Builder grindstoneBuilder() {
+    public static GrindstoneGUI.Builder grindstoneBuilder() {
         return GrindstoneGUI.builder();
     }
 
-    public static  HopperGUI.Builder hopperBuilder() {
+    public static HopperGUI.Builder hopperBuilder() {
         return HopperGUI.builder();
     }
 
-    public static  LoomGUI.Builder loomBuilder() {
+    public static LoomGUI.Builder loomBuilder() {
         return LoomGUI.builder();
     }
 
-    public static  MerchantGUI.Builder merchantBuilder() {
+    public static MerchantGUI.Builder merchantBuilder() {
         return MerchantGUI.builder();
     }
 
-    public static  PotionGUI.Builder potionBuilder() {
+    public static PotionGUI.Builder potionBuilder() {
         return PotionGUI.builder();
     }
 
-    public static  SmithingGUI.Builder smithingBuilder() {
+    public static SmithingGUI.Builder smithingBuilder() {
         return SmithingGUI.builder();
     }
 
-    public static  StonecutterGUI.Builder stonecutterBuilder() {
+    public static StonecutterGUI.Builder stonecutterBuilder() {
         return StonecutterGUI.builder();
     }
 
-    public static  WorkBenchGUI.Builder workBenchBuilder() {
+    public static WorkBenchGUI.Builder workBenchBuilder() {
         return WorkBenchGUI.builder();
     }
 

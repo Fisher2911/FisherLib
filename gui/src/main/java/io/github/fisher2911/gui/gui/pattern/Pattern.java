@@ -28,32 +28,32 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface Pattern extends Metadatable, Comparable<Pattern> {
 
     String PATTERN_KEY_NAME = "pattern";
 
-    static <P extends JavaPlugin, V extends Pattern> MetadataKey<V> getPatternKey(JavaPlugin plugin, Class<V> clazz) {
-        return MetadataKey.of(new NamespacedKey(plugin, PATTERN_KEY_NAME), clazz);
+    static <V extends Pattern> MetadataKey<V> getPatternKey(Class<V> clazz) {
+        return MetadataKey.of(new NamespacedKey(JavaPlugin.getProvidingPlugin(clazz), PATTERN_KEY_NAME), clazz);
     }
 
-    static <P extends JavaPlugin> BorderPattern borderPattern(
-            P plugin,
+    static BorderPattern borderPattern(
             List<GUIItem> borders,
             int priority
     ) {
         return new BorderPattern(
                 borders,
-                getPatternKey(plugin, BorderPattern.class),
+                getPatternKey(BorderPattern.class),
                 priority
         );
     }
 
-    static  PaginatedPattern paginatedPattern(
-            JavaPlugin plugin,
+    static PaginatedPattern paginatedPattern(
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
             Function<GUI, GUISlot> previousPageItemSlotFunction,
@@ -61,33 +61,45 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
             int priority
     ) {
         return new PaginatedPattern(
-                plugin,
                 previousPageItem,
                 nextPageItem,
                 previousPageItemSlotFunction,
                 nextPageItemSlotFunction,
-                getPatternKey(plugin, PaginatedPattern.class),
+                getPatternKey(PaginatedPattern.class),
                 priority
         );
     }
 
-    static  PaginatedPattern paginatedPattern(
-            JavaPlugin plugin,
+    static PaginatedPattern paginatedPattern(
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
             int priority
     ) {
         return new PaginatedPattern(
-                plugin,
                 previousPageItem,
                 nextPageItem,
-                getPatternKey(plugin, PaginatedPattern.class),
+                getPatternKey(PaginatedPattern.class),
                 priority
         );
     }
 
-    static  boolean replacePredicate(GUIItem item, Pattern pattern) {
-        return item == null || Objects.equals(item.getMetaData().get(pattern.getKey()), pattern);
+    static FillPattern fillPattern(
+            Collection<GUIItem> guiItems,
+            Predicate<GUISlot> slotFillPredicate,
+            Predicate<GUIItem> itemFillPredicate,
+            int priority
+    ) {
+        return new FillPattern(
+                guiItems,
+                slotFillPredicate,
+                itemFillPredicate,
+                getPatternKey(FillPattern.class),
+                priority
+        );
+    }
+
+    static boolean replacePredicate(GUIItem item, Pattern pattern) {
+        return item == null || Objects.equals(item.getMetadata().get(pattern.getKey()), pattern);
     }
 
     void apply(GUI gui);

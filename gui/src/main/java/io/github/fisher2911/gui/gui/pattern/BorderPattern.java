@@ -23,8 +23,6 @@ import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUISlot;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,19 +42,23 @@ public class BorderPattern implements Pattern {
     }
 
     @Override
-    public @NotNull Metadata getMetaData() {
+    public @NotNull Metadata getMetadata() {
         return this.metadata;
+    }
+
+    public static int getSlotsPerRow(GUI gui) {
+        return switch (gui.getType()) {
+            case CHEST -> 9;
+            case DROPPER -> 3;
+            default -> -1;
+        };
     }
 
     @Override
     public void apply(GUI gui) {
         if (this.borders.isEmpty()) return;
-        final Integer slotsPerRow = switch (gui.getType()) {
-            case CHEST -> 9;
-            case DROPPER -> 3;
-            default -> null;
-        };
-        if (slotsPerRow == null) return;
+        final int slotsPerRow = getSlotsPerRow(gui);
+        if (slotsPerRow == -1) return;
         final int size = gui.getInventorySize();
         final int rows = size / slotsPerRow;
         int rowIndex = 0;

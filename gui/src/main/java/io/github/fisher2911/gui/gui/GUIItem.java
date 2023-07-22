@@ -20,13 +20,16 @@ package io.github.fisher2911.gui.gui;
 
 import io.github.fisher2911.common.item.ItemBuilder;
 import io.github.fisher2911.common.metadata.Metadata;
+import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.common.timer.Timeable;
 import io.github.fisher2911.common.util.Observable;
 import io.github.fisher2911.gui.event.GUIEvent;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +41,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"unused", "unchecked"})
 public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler, Timeable<GUI>, Metadatable {
 
+    private final JavaPlugin plugin;
     private final Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners;
     private ItemBuilder itemBuilder;
     private final Metadata metadata;
@@ -51,10 +55,29 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
             @Nullable BiConsumer<GUIItem, GUI> timerConsumer
     ) {
         super(itemBuilder, new ArrayList<>());
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.listeners = listeners;
         this.itemBuilder = itemBuilder;
         this.metadata = metadata;
         this.timerConsumer = timerConsumer;
+    }
+
+    private static final String GUI_KEY = "gui";
+
+    public MetadataKey<GUI> getGUIMetadataKey() {
+        return MetadataKey.of(new NamespacedKey(this.plugin, GUI_KEY), GUI.class);
+    }
+
+    public void setGUI(GUI gui) {
+        this.metadata.set(this.getGUIMetadataKey(), gui);
+    }
+
+    public void removeGUI() {
+        this.metadata.remove(this.getGUIMetadataKey());
+    }
+
+    public @Nullable GUI getGUI() {
+        return this.metadata.get(this.getGUIMetadataKey());
     }
 
     @Override
@@ -111,7 +134,7 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
     }
 
     @Override
-    public @NotNull Metadata getMetaData() {
+    public @NotNull Metadata getMetadata() {
         return this.metadata;
     }
 
@@ -130,7 +153,7 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
     public static class Builder extends ListenerHandler.Builder<Builder> {
 
         private final ItemBuilder itemBuilder;
-        private Metadata metadata;
+        private Metadata metadata = Metadata.mutableEmpty();
         private @Nullable BiConsumer<GUIItem, GUI> timerConsumer;
 
 
@@ -152,13 +175,17 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
             return this;
         }
 
+        public <V> Builder metadata(MetadataKey<V> metadataKey, V v) {
+            this.metadata.set(metadataKey, v);
+            return this;
+        }
+
         public Builder timer(BiConsumer<GUIItem, GUI> timerConsumer) {
             this.timerConsumer = timerConsumer;
             return this;
         }
 
         public GUIItem build() {
-            if (this.metadata == null) this.metadata = Metadata.mutableEmpty();
             return new GUIItem(this.listeners, this.itemBuilder, this.metadata, timerConsumer);
         }
 

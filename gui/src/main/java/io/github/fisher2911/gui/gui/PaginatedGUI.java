@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class PaginatedGUI extends GUI {
         this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.guiManager = guiManager;
         this.pages = pages;
-        this.pages.forEach(page -> page.setOwner(this.plugin, this));
+        this.pages.forEach(page -> page.setOwner(this));
         this.currentPage = 0;
         this.setTitle(this.getCurrentGUI().getTitle());
         this.refillGUIItems();
@@ -68,15 +69,17 @@ public class PaginatedGUI extends GUI {
     @Override
     protected Inventory createInventory(String title) {
         final GUI page = this.getCurrentGUI();
-        this.inventory = page.createInventory(title);
+        this.inventory = page.getInventory();
         return this.inventory;
     }
 
     public void nextPage() {
         final int previousPage = this.currentPage;
-        final Collection<Player> viewers = this.getViewers();
+        final Collection<Player> viewers = new HashSet<>(this.getViewers());
         this.currentPage = Math.min(this.pages.size() - 1, this.currentPage + 1);
         if (previousPage != this.currentPage) {
+            this.pages.get(previousPage).removeViewers(viewers);
+            this.createInventory(this.getCurrentGUI().getTitle());
             this.refillGUIItems();
         }
         this.openGUIS(viewers);
@@ -84,9 +87,11 @@ public class PaginatedGUI extends GUI {
 
     public void previousPage() {
         final int previousPage = this.currentPage;
-        final Collection<Player> viewers = this.getViewers();
+        final Collection<Player> viewers = new HashSet<>(this.getViewers());
         this.currentPage = Math.max(0, this.currentPage - 1);
         if (previousPage != currentPage) {
+            this.pages.get(previousPage).removeViewers(viewers);
+            this.createInventory(this.getCurrentGUI().getTitle());
             this.refillGUIItems();
         }
         this.openGUIS(viewers);
@@ -104,9 +109,7 @@ public class PaginatedGUI extends GUI {
 
     private void openGUIS(Collection<Player> viewers) {
         this.switchingPages = true;
-        final GUI gui = this.getCurrentGUI();
-        gui.populate();
-        this.refillGUIItems();
+        this.populate();
         viewers.forEach(player -> this.guiManager.openPaginatedGUI(this, viewers));
         this.switchingPages = false;
     }
@@ -125,6 +128,16 @@ public class PaginatedGUI extends GUI {
         // refill after populate to ensure that the pattern items are added
         this.refillGUIItems();
         super.populate(placeholders, parsedPlaceholders);
+    }
+
+    public void setItem(GUISlot slot, GUIItem guiItem) {
+        this.getCurrentGUI().setItem(slot, guiItem);
+        super.setItem(slot, guiItem);
+    }
+
+    public void setItem(GUISlot slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
+        this.getCurrentGUI().setItem(slot, guiItem, placeholders, parsePlaceholders);
+        super.setItem(slot, guiItem, placeholders, parsePlaceholders);
     }
 
     public int getPageIndex(GUI gui) {
@@ -149,7 +162,7 @@ public class PaginatedGUI extends GUI {
         return this.switchingPages;
     }
 
-    public static  PaginatedGUI.Builder builder(GUIManager guiManager) {
+    public static PaginatedGUI.Builder builder(GUIManager guiManager) {
         return new PaginatedGUI.Builder(guiManager, new ArrayList<>());
     }
 

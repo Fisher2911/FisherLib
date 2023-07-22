@@ -106,6 +106,13 @@ public class Metadata {
         this.putAll(metadata.get(), overwrite);
     }
 
+    public <T> T remove(MetadataKey<T> key) {
+        final Object o = this.metadata.remove(key);
+        if (o == null) return null;
+        if (!key.valueType().isInstance(o)) return null;
+        return key.valueType().cast(o);
+    }
+
     @Override
     public String toString() {
         return "Metadata{" +

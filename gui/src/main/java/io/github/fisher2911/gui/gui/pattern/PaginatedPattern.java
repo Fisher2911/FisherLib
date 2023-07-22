@@ -25,7 +25,6 @@ import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUISlot;
 import io.github.fisher2911.gui.gui.PaginatedGUI;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +32,6 @@ import java.util.function.Function;
 
 public class PaginatedPattern implements Pattern {
 
-    private final JavaPlugin plugin;
     private final @Nullable GUIItem previousPageItem;
     private final @Nullable GUIItem nextPageItem;
     private final Function<GUI, GUISlot> previousPageItemSlotFunction;
@@ -43,7 +41,6 @@ public class PaginatedPattern implements Pattern {
     private final int priority;
 
     protected PaginatedPattern(
-            JavaPlugin plugin,
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
             Function<GUI, GUISlot> previousPageItemSlotFunction,
@@ -51,19 +48,18 @@ public class PaginatedPattern implements Pattern {
             MetadataKey<? extends PaginatedPattern> key,
             int priority
     ) {
-        this.plugin = plugin;
         this.previousPageItem = previousPageItem;
         this.nextPageItem = nextPageItem;
         if (this.previousPageItem != null) {
             this.previousPageItem.appendListener(GUIClickEvent.class, e -> {
-                final PaginatedGUI gui = e.getGUI().getOwner(this.plugin);
+                final PaginatedGUI gui = e.getGUI().getOwner();
                 if (gui == null) return;
                 gui.previousPage();
             });
         }
         if (this.nextPageItem != null) {
             this.nextPageItem.appendListener(GUIClickEvent.class, e -> {
-                final PaginatedGUI gui = e.getGUI().getOwner(this.plugin);
+                final PaginatedGUI gui = e.getGUI().getOwner();
                 if (gui == null) return;
                 gui.nextPage();
             });
@@ -76,14 +72,12 @@ public class PaginatedPattern implements Pattern {
     }
 
     protected PaginatedPattern(
-            JavaPlugin plugin,
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
             MetadataKey<? extends PaginatedPattern> key,
             int priority
     ) {
         this(
-                plugin,
                 previousPageItem,
                 nextPageItem,
                 GUI::getDefaultPaginatedPreviousPageSlot,
@@ -95,13 +89,13 @@ public class PaginatedPattern implements Pattern {
 
 
     @Override
-    public @NotNull Metadata getMetaData() {
+    public @NotNull Metadata getMetadata() {
         return this.metadata;
     }
 
     @Override
     public void apply(GUI gui) {
-        final PaginatedGUI owner = gui.getOwner(this.plugin);
+        final PaginatedGUI owner = gui.getOwner();
         if (owner == null) return;
         final int index = owner.getPageIndex(gui);
         if (index > 0 && this.previousPageItem != null) {

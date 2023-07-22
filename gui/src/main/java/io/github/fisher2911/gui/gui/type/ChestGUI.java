@@ -61,7 +61,7 @@ public class ChestGUI extends GUI {
 
     @Override
     public GUISlot getDefaultPaginatedPreviousPageSlot() {
-        return GUISlot.of(this.rows * 9 - 8);
+        return GUISlot.of(this.rows * 9 - 9);
     }
 
     @Override

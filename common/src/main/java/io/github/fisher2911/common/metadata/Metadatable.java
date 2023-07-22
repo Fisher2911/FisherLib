@@ -23,6 +23,6 @@ import org.jetbrains.annotations.NotNull;
 public interface Metadatable {
 
     @NotNull
-    Metadata getMetaData();
+    Metadata getMetadata();
 
 }

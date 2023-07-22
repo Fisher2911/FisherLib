@@ -18,6 +18,7 @@
 
 package io.github.fisher2911.common.timer;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -103,12 +104,13 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
         this.cancelled = false;
         if (this.running.get()) return;
         this.running.set(true);
+        this.loopCount.set(0);
         this.doNextTask(executor);
     }
 
     private void doNextTask(TimerExecutor executor) {
         executor.executeLater(() -> {
-            if (this.cancelled || this.cancelPredicate != null && this.cancelPredicate.test((T) this)) {
+            if (this.cancelled || (this.cancelPredicate != null && this.cancelPredicate.test((T) this))) {
                 this.running.set(false);
                 return;
             }
@@ -127,7 +129,7 @@ public abstract class TimerImpl<T extends TimerImpl<T>> implements Timer<T> {
 
     @Override
     public boolean isRunning() {
-        return !this.cancelled;
+        return this.running.get();
     }
 
     @Override

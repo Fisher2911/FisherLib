@@ -64,7 +64,7 @@ public class GUIManager implements Listener {
             this.openPaginatedGUI(paginatedGUI, players);
             return;
         }
-        if (gui.getOwner(this.plugin) == null) {
+        if (gui.getOwner() == null) {
             players.forEach(player -> this.guiViewers.put(player.getUniqueId(), gui));
         }
         gui.open(players);
@@ -98,7 +98,10 @@ public class GUIManager implements Listener {
         final GUI gui = this.getCurrentGUI(player);
         if (gui == null) return;
         final GUICloseEvent guiCloseEvent = new GUICloseEvent(this, gui, player, event);
-        gui.handle(guiCloseEvent, GUICloseEvent.class);
+        final PaginatedGUI owner = gui.getOwner();
+        if (owner == null || !owner.isSwitchingPages()) {
+            gui.handle(guiCloseEvent, GUICloseEvent.class);
+        }
         if (guiCloseEvent.isCancelled()) {
             Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> gui.open(player), 1);
             return;
@@ -110,8 +113,8 @@ public class GUIManager implements Listener {
                 this.tryCloseGUI(page);
             }
         }
-        this.guiViewers.remove(player.getUniqueId());
         gui.removeViewer(player);
+        this.guiViewers.remove(player.getUniqueId());
         this.tryCloseGUI(gui);
     }
 

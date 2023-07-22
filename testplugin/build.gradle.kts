@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":GUI"))
+    implementation(project(":gui"))
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
 }

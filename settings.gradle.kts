@@ -1,6 +1,6 @@
 rootProject.name = "FisherLib"
 include(
-        "GUI",
+        "gui",
         "testplugin",
         "common",
         "item"

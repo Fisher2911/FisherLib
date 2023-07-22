@@ -50,6 +50,10 @@ java {
 
 tasks {
 
+    build {
+        dependsOn(javadoc)
+    }
+
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)

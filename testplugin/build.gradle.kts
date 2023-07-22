@@ -46,6 +46,7 @@ java {
 tasks {
     build {
         dependsOn(shadowJar)
+        dependsOn(javadoc)
     }
 
     shadowJar {

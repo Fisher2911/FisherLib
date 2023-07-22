@@ -81,6 +81,7 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                         GUIItem.builder(
                                         ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE)
                                                 .name(ChatColor.RED + "Fill Item - " + atomicInteger.get()).build())
+                                .listenClick(e -> e.getPlayer().sendMessage("You clicked the fill item: " + e.getItem().getMetadata().get(fillKey)))
                                 .metadata(fillKey, atomicInteger.getAndIncrement())
                                 .build()
                 ).takeWhile(i -> atomicInteger.get() < 108).toList(),

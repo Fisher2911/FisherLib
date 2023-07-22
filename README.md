@@ -44,7 +44,13 @@ Maven:
 
 <dependency>
     <groupId>com.github.Fisher2911.FisherLib</groupId>
-    <artifactId>FisherLib</artifactId>
+    <artifactId>gui</artifactId>
+    <version>v1.0.0-beta</version>
+</dependency>
+
+<dependency>
+    <groupId>com.github.Fisher2911.FisherLib</groupId>
+    <artifactId>common</artifactId>
     <version>v1.0.0-beta</version>
 </dependency>
 ```

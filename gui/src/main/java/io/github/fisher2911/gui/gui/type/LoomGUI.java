@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#LOOM} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class LoomGUI extends GUI {
 
@@ -47,34 +50,58 @@ public class LoomGUI extends GUI {
         super(title, guiItems, listeners, Type.LOOM, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Loom#BANNER} slot.
+     */
     public @Nullable GUIItem getBanner() {
         return this.getItem(GUISlot.Loom.BANNER);
     }
 
+    /**
+     * @param banner The {@link GUIItem} to set in the {@link GUISlot.Loom#BANNER} slot.
+     */
     public void setBanner(GUIItem banner) {
         this.setItem(GUISlot.Loom.BANNER, banner);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Loom#DYE} slot.
+     */
     public @Nullable GUIItem getDye() {
         return this.getItem(GUISlot.Loom.DYE);
     }
 
+    /**
+     * @param dye The {@link GUIItem} to set in the {@link GUISlot.Loom#DYE} slot.
+     */
     public void setDye(GUIItem dye) {
         this.setItem(GUISlot.Loom.DYE, dye);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Loom#PATTERN} slot.
+     */
     public @Nullable GUIItem getPattern() {
         return this.getItem(GUISlot.Loom.PATTERN);
     }
 
+    /**
+     * @param pattern The {@link GUIItem} to set in the {@link GUISlot.Loom#PATTERN} slot.
+     */
     public void setPattern(GUIItem pattern) {
         this.setItem(GUISlot.Loom.PATTERN, pattern);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Loom#RESULT} slot.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Loom.RESULT);
     }
 
+    /**
+     * @param result The {@link GUIItem} to set in the {@link GUISlot.Loom#RESULT} slot.
+     */
     public void setResult(GUIItem result) {
         this.setItem(GUISlot.Loom.RESULT, result);
     }
@@ -95,7 +122,10 @@ public class LoomGUI extends GUI {
         return GUISlot.Loom.PATTERN;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} instance.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -104,30 +134,49 @@ public class LoomGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         * @param banner The {@link GUIItem} to set in the {@link GUISlot.Loom#BANNER} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder banner(GUIItem banner) {
             this.guiItems.put(GUISlot.Loom.BANNER, banner);
             return this;
         }
 
+        /**
+         * @param dye The {@link GUIItem} to set in the {@link GUISlot.Loom#DYE} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder dye(GUIItem dye) {
             this.guiItems.put(GUISlot.Loom.DYE, dye);
             return this;
         }
 
+        /**
+         * @param pattern The {@link GUIItem} to set in the {@link GUISlot.Loom#PATTERN} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder pattern(GUIItem pattern) {
             this.guiItems.put(GUISlot.Loom.PATTERN, pattern);
             return this;
         }
 
+        /**
+         * @param result The {@link GUIItem} to set in the {@link GUISlot.Loom#RESULT} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder result(GUIItem result) {
             this.guiItems.put(GUISlot.Loom.RESULT, result);
             return this;
         }
 
+        /**
+         * @return A new {@link LoomGUI} instance.
+         */
         public LoomGUI build() {
             return new LoomGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }
 
     }
-    
+
 }

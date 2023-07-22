@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#ANVIL} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class AnvilGUI extends GUI {
 
@@ -47,26 +50,44 @@ public class AnvilGUI extends GUI {
         super(title, guiItems, listeners, Type.ANVIL, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Anvil#FIRST} slot.
+     */
     public @Nullable GUIItem getFirst() {
         return this.getItem(GUISlot.Anvil.FIRST);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#FIRST} slot.
+     */
     public void setFirst(GUIItem item) {
         this.setItem(GUISlot.Anvil.FIRST, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Anvil#SECOND} slot.
+     */
     public @Nullable GUIItem getSecond() {
         return this.getItem(GUISlot.Anvil.SECOND);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#SECOND} slot.
+     */
     public void setSecond(GUIItem item) {
         this.setItem(GUISlot.Anvil.SECOND, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Anvil#RESULT} slot.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Anvil.RESULT);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#RESULT} slot.
+     */
     public void setResult(GUIItem item) {
         this.setItem(GUISlot.Anvil.RESULT, item);
     }
@@ -87,7 +108,11 @@ public class AnvilGUI extends GUI {
         return GUISlot.Anvil.SECOND;
     }
 
-    public static  Builder builder() {
+    /**
+     *
+     * @return A new {@link Builder} instance.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -96,21 +121,40 @@ public class AnvilGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#FIRST} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder first(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.FIRST, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#SECOND} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder second(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.SECOND, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Anvil#RESULT} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Anvil.RESULT, item);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link AnvilGUI} instance.
+         */
         public AnvilGUI build() {
             return new AnvilGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

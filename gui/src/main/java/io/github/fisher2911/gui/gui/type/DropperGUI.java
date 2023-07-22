@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#DROPPER} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class DropperGUI extends GUI {
 
@@ -52,9 +55,6 @@ public class DropperGUI extends GUI {
         return this.inventory;
     }
 
-    public static  Builder builder() {
-        return new Builder();
-    }
 
     private static final GUISlot PREVIOUS_PAGE_SLOT = GUISlot.of(6);
     private static final GUISlot NEXT_PAGE_SLOT = GUISlot.of(8);
@@ -69,11 +69,22 @@ public class DropperGUI extends GUI {
         return NEXT_PAGE_SLOT;
     }
 
+    /**
+     * @return a new {@link Builder} instance.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder extends GUI.Builder<Builder, DropperGUI> {
-        
+
         protected Builder() {
         }
 
+        /**
+         *
+         * @return a new {@link DropperGUI} instance.
+         */
         public DropperGUI build() {
             return new DropperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

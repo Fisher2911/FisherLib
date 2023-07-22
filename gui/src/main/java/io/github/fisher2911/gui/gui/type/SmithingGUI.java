@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#SMITHING_TABLE} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class SmithingGUI extends GUI {
 
@@ -47,34 +50,60 @@ public class SmithingGUI extends GUI {
         super(title, guiItems, listeners, Type.SMITHING_TABLE, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.SmithingTable#TEMPLATE} {@link GUISlot}.
+     */
     public @Nullable GUIItem getTemplate() {
         return this.getItem(GUISlot.SmithingTable.TEMPLATE);
     }
 
+    /**
+     * @param template The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#TEMPLATE} {@link GUISlot}.
+     */
     public void setTemplate(GUIItem template) {
         this.setItem(GUISlot.SmithingTable.TEMPLATE, template);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.SmithingTable#BASE_ITEM} {@link GUISlot}.
+     */
     public @Nullable GUIItem setBaseItem() {
         return this.getItem(GUISlot.SmithingTable.BASE_ITEM);
     }
 
+    /**
+     * @param baseItem The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#BASE_ITEM} {@link GUISlot}.
+     */
     public void setBaseItem(GUIItem baseItem) {
         this.setItem(GUISlot.SmithingTable.BASE_ITEM, baseItem);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.SmithingTable#ADDITIONAL_ITEM} {@link GUISlot}.
+     */
     public @Nullable GUIItem getAdditionalItem() {
         return this.getItem(GUISlot.SmithingTable.ADDITIONAL_ITEM);
     }
 
+    /**
+     * @param additionalItem The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#ADDITIONAL_ITEM} {@link GUISlot}.
+     */
     public void setAdditionalItem(GUIItem additionalItem) {
         this.setItem(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
     }
 
+    /**
+     *
+     * @return The {@link GUIItem} in the {@link GUISlot.SmithingTable#RESULT} {@link GUISlot}.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.SmithingTable.RESULT);
     }
 
+    /**
+     *
+     * @param result The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#RESULT} {@link GUISlot}.
+     */
     public void setResult(GUIItem result) {
         this.setItem(GUISlot.SmithingTable.RESULT, result);
     }
@@ -95,34 +124,63 @@ public class SmithingGUI extends GUI {
         return GUISlot.SmithingTable.ADDITIONAL_ITEM;
     }
 
-    public static  Builder builder() {
+    /**
+     *
+     * @return A new {@link Builder} for {@link SmithingGUI}s.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder extends GUI.Builder<Builder, SmithingGUI> {
 
-        protected Builder() {}
+        protected Builder() {
+        }
 
+        /**
+         *
+         * @param template The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#TEMPLATE} {@link GUISlot}.
+         * @return This {@link Builder}.
+         */
         public Builder template(GUIItem template) {
             this.guiItems.put(GUISlot.SmithingTable.TEMPLATE, template);
             return this;
         }
 
+        /**
+         *
+         * @param baseItem The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#BASE_ITEM} {@link GUISlot}.
+         * @return This {@link Builder}.
+         */
         public Builder baseItem(GUIItem baseItem) {
             this.guiItems.put(GUISlot.SmithingTable.BASE_ITEM, baseItem);
             return this;
         }
 
+        /**
+         *
+         * @param additionalItem The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#ADDITIONAL_ITEM} {@link GUISlot}.
+         * @return This {@link Builder}.
+         */
         public Builder additionalItem(GUIItem additionalItem) {
             this.guiItems.put(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
             return this;
         }
 
+        /**
+         *
+         * @param result The {@link GUIItem} to set in the {@link GUISlot.SmithingTable#RESULT} {@link GUISlot}.
+         * @return This {@link Builder}.
+         */
         public Builder result(GUIItem result) {
             this.guiItems.put(GUISlot.SmithingTable.RESULT, result);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link SmithingGUI} with the properties set in this {@link Builder}.
+         */
         public SmithingGUI build() {
             return new SmithingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

@@ -24,13 +24,15 @@ import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUISlot;
 import io.github.fisher2911.gui.gui.PaginatedGUI;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Predicate;
 
+/**
+ * This pattern is used to fill a GUI with items.
+ */
 public class FillPattern implements Pattern {
 
     private final MetadataKey<? extends FillPattern> key;

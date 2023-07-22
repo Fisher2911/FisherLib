@@ -30,6 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
+/**
+ * This pattern is used to add previous and next page buttons to a {@link PaginatedGUI}.
+ */
 public class PaginatedPattern implements Pattern {
 
     private final @Nullable GUIItem previousPageItem;

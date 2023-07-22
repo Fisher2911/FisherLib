@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#ENCHANTING} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class EnchantingGUI extends GUI {
 
@@ -47,18 +50,34 @@ public class EnchantingGUI extends GUI {
         super(title, guiItems, listeners, Type.ENCHANTING, metadata, patterns);
     }
 
+    /**
+     *
+     * @return The {@link GUIItem} in the {@link GUISlot.EnchantingTable#ITEM} slot.
+     */
     public @Nullable GUIItem getItem() {
         return this.getItem(GUISlot.EnchantingTable.ITEM);
     }
 
+    /**
+     *
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#ITEM} slot.
+     */
     public void setItem(GUIItem item) {
         this.setItem(GUISlot.EnchantingTable.ITEM, item);
     }
 
+    /**
+     *
+     * @return The {@link GUIItem} in the {@link GUISlot.EnchantingTable#LAPIS} slot.
+     */
     public @Nullable GUIItem getLapisItem() {
         return this.getItem(GUISlot.EnchantingTable.LAPIS);
     }
 
+    /**
+     *
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#LAPIS} slot.
+     */
     public void setLapisItem(GUIItem item) {
         this.setItem(GUISlot.EnchantingTable.LAPIS, item);
     }
@@ -69,6 +88,10 @@ public class EnchantingGUI extends GUI {
         return this.inventory;
     }
 
+    /**
+     *
+     * @return A new {@link Builder} instance.
+     */
     public static  Builder builder() {
         return new Builder();
     }
@@ -88,14 +111,28 @@ public class EnchantingGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#ITEM} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder item(GUIItem item) {
             return this.set(GUISlot.EnchantingTable.ITEM, item);
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#LAPIS} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder lapis(GUIItem item) {
             return this.set(GUISlot.EnchantingTable.LAPIS, item);
         }
 
+        /**
+         *
+         * @return A new {@link EnchantingGUI} instance.
+         */
         public EnchantingGUI build() {
             return new EnchantingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#HOPPER} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class HopperGUI extends GUI {
 
@@ -65,6 +68,10 @@ public class HopperGUI extends GUI {
         return NEXT_PAGE_SLOT;
     }
 
+    /**
+     *
+     * @return a new {@link Builder} instance.
+     */
     public static  Builder builder() {
         return new Builder();
     }
@@ -74,6 +81,10 @@ public class HopperGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @return a new {@link HopperGUI} instance.
+         */
         public HopperGUI build() {
             return new HopperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

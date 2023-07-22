@@ -44,15 +44,19 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
     String PATTERN_KEY_NAME = "pattern";
 
     /**
-     *
      * @param clazz The class of the pattern
-     * @param <V> - The type of the pattern
+     * @param <V>   - The type of the pattern
      * @return The MetadataKey for the pattern
      */
     static <V extends Pattern> MetadataKey<V> getPatternKey(Class<V> clazz) {
         return MetadataKey.of(new NamespacedKey(JavaPlugin.getProvidingPlugin(clazz), PATTERN_KEY_NAME), clazz);
     }
 
+    /**
+     * @param borders  - the GUIItems to be used as borders
+     * @param priority - the priority of the pattern
+     * @return a new BorderPattern
+     */
     static BorderPattern borderPattern(
             List<GUIItem> borders,
             int priority
@@ -64,6 +68,14 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
         );
     }
 
+    /**
+     * @param previousPageItem             - the GUIItem to be used as the previous page item
+     * @param nextPageItem                 - the GUIItem to be used as the next page item
+     * @param previousPageItemSlotFunction - the function to get the slot for the previous page item
+     * @param nextPageItemSlotFunction     - the function to get the slot for the next page item
+     * @param priority                     - the priority of the pattern
+     * @return a new PaginatedPattern
+     */
     static PaginatedPattern paginatedPattern(
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
@@ -81,6 +93,12 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
         );
     }
 
+    /**
+     * @param previousPageItem - the GUIItem to be used as the previous page item
+     * @param nextPageItem     - the GUIItem to be used as the next page item
+     * @param priority         - the priority of the pattern
+     * @return a new PaginatedPattern
+     */
     static PaginatedPattern paginatedPattern(
             @Nullable GUIItem previousPageItem,
             @Nullable GUIItem nextPageItem,
@@ -94,6 +112,13 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
         );
     }
 
+    /**
+     * @param guiItems          - the GUIItems to be used to fill the GUI
+     * @param slotFillPredicate - the predicate to determine if a slot should be filled
+     * @param itemFillPredicate - the predicate to determine if a GUIItem should be used to fill a slot
+     * @param priority          - the priority of the pattern
+     * @return a new FillPattern
+     */
     static FillPattern fillPattern(
             Collection<GUIItem> guiItems,
             Predicate<GUISlot> slotFillPredicate,
@@ -111,7 +136,8 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
 
     /**
      * This replaces GUIItems that have the same pattern key as the pattern being checked, or if they do not exist
-     * @param item - the item to be compared against
+     *
+     * @param item    - the item to be compared against
      * @param pattern - the pattern being checked
      * @return true if the pattern should replace the previous GUIItem
      */
@@ -121,12 +147,12 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
 
     /**
      * This applies the pattern to the GUI
+     *
      * @param gui - the GUI to apply the pattern to
      */
     void apply(GUI gui);
 
     /**
-     *
      * @return the {@link MetadataKey} for the pattern, used to identify GUIItem's that
      * the pattern applies to
      */
@@ -138,12 +164,12 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
      * Lower priorities are applied first, so if you want a pattern to be applied first, give it a lower priority
      * This means that other patterns will not overwrite them unless they explicitly do so in their replace predicate.
      * The built-in patterns do not overwrite other patterns.
+     *
      * @return the priority of the pattern
      */
     int getPriority();
 
     /**
-     *
      * @param o - the pattern to compare to
      * @return see {@link Integer#compare(int, int)}
      */

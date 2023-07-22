@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#WORK_BENCH} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class WorkBenchGUI extends GUI {
 
@@ -47,10 +50,16 @@ public class WorkBenchGUI extends GUI {
         super(title, guiItems, listeners, Type.WORK_BENCH, metadata, patterns);
     }
 
+    /**
+     * @param guiItem The {@link GUIItem} to set as the result.
+     */
     public void setResult(GUIItem guiItem) {
         this.setItem(GUISlot.WorkBench.RESULT, guiItem);
     }
 
+    /**
+     * @return The {@link GUIItem} set as the result.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.WorkBench.RESULT);
     }
@@ -71,19 +80,30 @@ public class WorkBenchGUI extends GUI {
         return GUISlot.WorkBench.RESULT;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} instance.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder extends GUI.Builder<Builder, WorkBenchGUI> {
 
-        protected Builder() {}
+        protected Builder() {
+        }
 
+        /**
+         * @param guiItem The {@link GUIItem} to set as the result.
+         * @return The {@link Builder} instance.
+         */
         public Builder result(GUIItem guiItem) {
             this.guiItems.put(GUISlot.WorkBench.RESULT, guiItem);
             return this;
         }
 
+        /**
+         * @return The built {@link WorkBenchGUI} instance.
+         */
         public WorkBenchGUI build() {
             return new WorkBenchGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

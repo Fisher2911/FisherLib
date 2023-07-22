@@ -34,6 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+
+/**
+ * A {@link GUI} with an {@link GUI.Type#CARTOGRAPHY} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class CartographyGUI extends GUI {
 
@@ -47,26 +51,49 @@ public class CartographyGUI extends GUI {
         super(title, guiItems, listeners, Type.CARTOGRAPHY, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.CartographyTable#MAP} slot.
+     */
     public @Nullable GUIItem getMapItem() {
         return this.getItem(GUISlot.CartographyTable.MAP);
     }
 
+    /**
+     *
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#MAP} slot.
+     */
     public void setMapItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.MAP, item);
     }
 
+    /**
+     *
+     * @return The {@link GUIItem} in the {@link GUISlot.CartographyTable#PAPER} slot.
+     */
     public @Nullable GUIItem getPaperItem() {
         return this.getItem(GUISlot.CartographyTable.PAPER);
     }
 
+    /**
+     *
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#PAPER} slot.
+     */
     public void setPaperItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.PAPER, item);
     }
 
+    /**
+     *
+     * @return The {@link GUIItem} in the {@link GUISlot.CartographyTable#OUTPUT} slot.
+     */
     public @Nullable GUIItem getOutputItem() {
         return this.getItem(GUISlot.CartographyTable.OUTPUT);
     }
 
+    /**
+     *
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#OUTPUT} slot.
+     */
     public void setOutputItem(GUIItem item) {
         this.setItem(GUISlot.CartographyTable.OUTPUT, item);
     }
@@ -87,7 +114,11 @@ public class CartographyGUI extends GUI {
         return GUISlot.CartographyTable.PAPER;
     }
 
-    public static  Builder builder() {
+    /**
+     *
+     * @return A new {@link Builder} for {@link CartographyGUI}s.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -96,21 +127,40 @@ public class CartographyGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#MAP} slot.
+         * @return The {@link Builder} instance.
+         */
         public Builder mapItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.MAP, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#PAPER} slot.
+         * @return The {@link Builder} instance.
+         */
         public Builder paperItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.PAPER, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.CartographyTable#OUTPUT} slot.
+         * @return The {@link Builder} instance.
+         */
         public Builder outputItem(GUIItem item) {
             this.guiItems.put(GUISlot.CartographyTable.OUTPUT, item);
             return this;
         }
 
+        /**
+         *
+         * @return The built {@link CartographyGUI}.
+         */
         public CartographyGUI build() {
             return new CartographyGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

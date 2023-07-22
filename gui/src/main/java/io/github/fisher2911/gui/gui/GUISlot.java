@@ -27,15 +27,33 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+/**
+ * Represents a slot in a GUI.
+ */
 @SuppressWarnings("unused")
 public abstract class GUISlot {
 
     private static final ServerVersion SERVER_VERSION = ServerVersion.getServerVersion();
 
+    /**
+     *
+     * @param inventory The inventory to get the item from.
+     * @return The item in the slot in the inventory.
+     */
     public abstract @Nullable ItemStack getItem(Inventory inventory);
 
+    /**
+     *
+     * @param inventory The inventory to set the item in.
+     * @param itemStack The item to set in the slot in the inventory.
+     */
     public abstract void setItem(Inventory inventory, @Nullable ItemStack itemStack);
 
+    /**
+     *
+     * @param slot The slot to get the GUISlot from.
+     * @return a new {@link Number} GUISlot.
+     */
     public static GUISlot of(int slot) {
         return switch (slot) {
             case 0 -> Number.ZERO;
@@ -52,6 +70,9 @@ public abstract class GUISlot {
         };
     }
 
+    /**
+     * The {@link Potion} GUISlot used in {@link io.github.fisher2911.gui.gui.type.PotionGUI}.
+     */
     public static class Potion extends GUISlot {
 
         public static Potion FUEL = new Potion(Slot.FUEL);
@@ -104,6 +125,9 @@ public abstract class GUISlot {
 
     }
 
+    /**
+     * The {@link WorkBench} GUISlot used in {@link io.github.fisher2911.gui.gui.type.WorkBenchGUI}.
+     */
     public static class WorkBench extends GUISlot {
 
         public static final WorkBench RESULT = new WorkBench(Slot.RESULT);
@@ -154,6 +178,9 @@ public abstract class GUISlot {
 
     }
 
+    /**
+     * The {@link Furnace} GUISlot used in {@link io.github.fisher2911.gui.gui.type.FurnaceGUI}.
+     */
     public static class Furnace extends GUISlot {
 
         public static final Furnace SMELTING = new Furnace(Slot.SMELTING);
@@ -201,6 +228,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link SmithingTable} GUISlot used in {@link io.github.fisher2911.gui.gui.type.SmithingGUI}.
+     */
     public static class SmithingTable extends GUISlot {
 
         public static final SmithingTable TEMPLATE = new SmithingTable(Slot.TEMPLATE);
@@ -298,6 +328,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link EnchantingTable} GUISlot used in {@link io.github.fisher2911.gui.gui.type.EnchantingGUI}.
+     */
     public static class EnchantingTable extends GUISlot {
 
         public static final EnchantingTable ITEM = new EnchantingTable(Slot.ITEM);
@@ -343,6 +376,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Anvil} GUISlot used in {@link io.github.fisher2911.gui.gui.type.AnvilGUI}.
+     */
     public static class Anvil extends GUISlot {
 
         public static final Anvil FIRST = new Anvil(Slot.FIRST);
@@ -391,6 +427,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Grindstone} GUISlot used in {@link io.github.fisher2911.gui.gui.type.GrindstoneGUI}.
+     */
     public static class Grindstone extends GUISlot {
 
         public static final Grindstone FIRST = new Grindstone(Slot.FIRST);
@@ -439,6 +478,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Stonecutter} GUISlot used in {@link io.github.fisher2911.gui.gui.type.StonecutterGUI}.
+     */
     public static class Stonecutter extends GUISlot {
 
         public static final Stonecutter INPUT = new Stonecutter(Slot.FIRST);
@@ -485,6 +527,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Loom} GUISlot used in {@link io.github.fisher2911.gui.gui.type.LoomGUI}.
+     */
     public static class Loom extends GUISlot {
 
         public static final Loom BANNER = new Loom(Slot.BANNER);
@@ -535,6 +580,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link CartographyTable} GUISlot used in {@link io.github.fisher2911.gui.gui.type.CartographyGUI}.
+     */
     public static class CartographyTable extends GUISlot {
 
         public static final CartographyTable MAP = new CartographyTable(Slot.MAP);
@@ -583,6 +631,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Merchant} GUISlot used in {@link io.github.fisher2911.gui.gui.type.MerchantGUI}.
+     */
     public static class Merchant extends GUISlot {
 
         public static final Merchant FIRST = new Merchant(Slot.FIRST);
@@ -631,6 +682,9 @@ public abstract class GUISlot {
         }
     }
 
+    /**
+     * The {@link Number} GUISlot used in any {@link GUI}.
+     */
     public static class Number extends GUISlot {
 
         public static final Number ZERO = new Number(0);

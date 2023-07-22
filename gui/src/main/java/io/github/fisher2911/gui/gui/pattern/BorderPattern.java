@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * This pattern is used to set the borders of a GUI.
+ */
 public class BorderPattern implements Pattern {
 
     private final List<GUIItem> borders;

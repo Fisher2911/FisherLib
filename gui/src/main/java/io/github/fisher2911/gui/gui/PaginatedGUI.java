@@ -37,6 +37,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * A type of {@link GUI} that allows multiple pages of {@link GUI}s to be displayed to the {@link Player}.
+ * These can be any type of {@link GUI}, excluding {@link PaginatedGUI}s.
+ */
 @SuppressWarnings("unused")
 public class PaginatedGUI extends GUI {
 
@@ -73,6 +77,9 @@ public class PaginatedGUI extends GUI {
         return this.inventory;
     }
 
+    /**
+     * This changes the inventory to the next page, or stays the same if it is already on the last page
+     */
     public void nextPage() {
         final int previousPage = this.currentPage;
         final Collection<Player> viewers = new HashSet<>(this.getViewers());
@@ -85,6 +92,9 @@ public class PaginatedGUI extends GUI {
         this.openGUIS(viewers);
     }
 
+    /**
+     * This changes the inventory to the previous page, or stays the same if it is already on the first page
+     */
     public void previousPage() {
         final int previousPage = this.currentPage;
         final Collection<Player> viewers = new HashSet<>(this.getViewers());
@@ -97,6 +107,9 @@ public class PaginatedGUI extends GUI {
         this.openGUIS(viewers);
     }
 
+    /**
+     * @return The current page of the {@link PaginatedGUI}
+     */
     public GUI getCurrentGUI() {
         return this.pages.get(this.currentPage);
     }
@@ -140,10 +153,17 @@ public class PaginatedGUI extends GUI {
         super.setItem(slot, guiItem, placeholders, parsePlaceholders);
     }
 
+    /**
+     * @param gui The {@link GUI} that is being checked
+     * @return The index of the {@link GUI} in the {@link PaginatedGUI}
+     */
     public int getPageIndex(GUI gui) {
         return this.pages.indexOf(gui);
     }
 
+    /**
+     * @return The amount of pages in the {@link PaginatedGUI}
+     */
     public int getPageSize() {
         return this.pages.size();
     }
@@ -158,10 +178,17 @@ public class PaginatedGUI extends GUI {
         return this.getCurrentGUI().getDefaultPaginatedNextPageSlot();
     }
 
+    /**
+     * @return Whether the {@link PaginatedGUI} is currently switching pages
+     */
     public boolean isSwitchingPages() {
         return this.switchingPages;
     }
 
+    /**
+     * @param guiManager The {@link GUIManager} that is managing the {@link PaginatedGUI}
+     * @return A {@link PaginatedGUI.Builder} to create a {@link PaginatedGUI}
+     */
     public static PaginatedGUI.Builder builder(GUIManager guiManager) {
         return new PaginatedGUI.Builder(guiManager, new ArrayList<>());
     }
@@ -171,11 +198,15 @@ public class PaginatedGUI extends GUI {
         return this.getCurrentGUI().getViewers();
     }
 
+    @Override
     public void removeViewer(Player player) {
         super.removeViewer(player);
         this.pages.forEach(page -> page.removeViewer(player));
     }
 
+    /**
+     * @return An unmodifiable list of the {@link GUI}s in the {@link PaginatedGUI}
+     */
     @Unmodifiable
     public List<GUI> getPages() {
         return Collections.unmodifiableList(this.pages);
@@ -191,21 +222,39 @@ public class PaginatedGUI extends GUI {
             this.pages = pages;
         }
 
+        /**
+         * @param page The {@link GUI} to add to the {@link PaginatedGUI}
+         * @return The {@link PaginatedGUI.Builder} instance
+         */
         public PaginatedGUI.Builder addPage(GUI page) {
             this.pages.add(page);
             return this;
         }
 
+        /**
+         * @param pages The {@link GUI}s to add to the {@link PaginatedGUI}
+         * @return The {@link PaginatedGUI.Builder} instance
+         */
         public PaginatedGUI.Builder addPages(List<GUI> pages) {
             this.pages.addAll(pages);
             return this;
         }
 
+        /**
+         * This adds {@link Pattern}s to all of the {@link GUI}s in the {@link PaginatedGUI}
+         *
+         * @param patterns The {@link Pattern}s to add
+         * @return The {@link PaginatedGUI.Builder} instance
+         */
         public PaginatedGUI.Builder pagePatterns(List<Pattern> patterns) {
             this.pages.forEach(page -> page.addPatterns(patterns));
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link PaginatedGUI} instance
+         */
         @Override
         public PaginatedGUI build() {
             return new PaginatedGUI(

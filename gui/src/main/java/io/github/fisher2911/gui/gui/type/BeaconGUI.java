@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#BEACON} {@link GUI.Type}.
+ */
 public class BeaconGUI extends GUI {
 
     private BeaconGUI(
@@ -46,10 +49,18 @@ public class BeaconGUI extends GUI {
         super(title, guiItems, listeners, Type.BEACON, metadata, patterns);
     }
 
+    /**
+     *
+     * @return the {@link GUIItem} in the {@link GUISlot.Number#ZERO} slot.
+     */
     public @Nullable GUIItem getItem() {
         return this.getItem(GUISlot.of(0));
     }
 
+    /**
+     *
+     * @param item the {@link GUIItem} to set in the {@link GUISlot.Number#ZERO} slot.
+     */
     public void setItem(@Nullable GUIItem item) {
         this.setItem(GUISlot.of(0), item);
     }
@@ -70,6 +81,10 @@ public class BeaconGUI extends GUI {
         return GUISlot.Number.ZERO;
     }
 
+    /**
+     *
+     * @return a new {@link Builder} instance.
+     */
     public static  Builder builder() {
         return new Builder();
     }
@@ -79,6 +94,11 @@ public class BeaconGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param item the {@link GUIItem} to set in the {@link GUISlot.Number#ZERO} slot.
+         * @return this {@link Builder} instance.
+         */
         public Builder item(@Nullable GUIItem item) {
             this.set(GUISlot.of(0), item);
             return this;

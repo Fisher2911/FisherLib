@@ -64,18 +64,30 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
 
     private static final String GUI_KEY = "gui";
 
+    /**
+     * @return The {@link MetadataKey} for the {@link GUI} this {@link GUIItem} is in.
+     */
     public MetadataKey<GUI> getGUIMetadataKey() {
         return MetadataKey.of(new NamespacedKey(this.plugin, GUI_KEY), GUI.class);
     }
 
+    /**
+     * @param gui The {@link GUI} that this {@link GUIItem} is in.
+     */
     public void setGUI(GUI gui) {
         this.metadata.set(this.getGUIMetadataKey(), gui);
     }
 
+    /**
+     * Removes the {@link GUI} from this {@link GUIItem}.
+     */
     public void removeGUI() {
         this.metadata.remove(this.getGUIMetadataKey());
     }
 
+    /**
+     * @return The {@link GUI} that this {@link GUIItem} is in.
+     */
     public @Nullable GUI getGUI() {
         return this.metadata.get(this.getGUIMetadataKey());
     }
@@ -87,6 +99,14 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
         consumer.accept(event);
     }
 
+    /**
+     * Appends a new listener to the previous {@link Consumer}.
+     *
+     * @param clazz    The {@link GUIEvent} class to append a listener to.
+     * @param consumer The {@link Consumer} to append to the {@link GUIEvent} class.
+     * @param <T>      The {@link InventoryEvent} type.
+     * @param <G>      The {@link GUIEvent} type.
+     */
     public <T extends InventoryEvent, G extends GUIEvent<T>> void appendListener(Class<?> clazz, Consumer<G> consumer) {
         if (!GUIEvent.class.isAssignableFrom(clazz))
             throw new IllegalArgumentException("Class must be a subclass of GUIEvent: " + clazz.getName());
@@ -99,14 +119,23 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
         this.listeners.put(castedClass, oldConsumer.andThen(consumer));
     }
 
+    /**
+     * @return A copy of the {@link ItemBuilder} for this {@link GUIItem}.
+     */
     public ItemBuilder copyItemBuilder() {
         return this.itemBuilder.copy();
     }
 
+    /**
+     * @return The {@link ItemBuilder} for this {@link GUIItem}.
+     */
     public ItemBuilder getItemBuilder() {
         return this.itemBuilder;
     }
 
+    /**
+     * @param itemBuilder The {@link ItemBuilder} to set for this {@link GUIItem}.
+     */
     public void setItemBuilder(ItemBuilder itemBuilder) {
         this.itemBuilder = itemBuilder;
     }
@@ -117,14 +146,23 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
         this.timerConsumer.accept(this, gui);
     }
 
+    /**
+     * @return Whether this {@link GUIItem} has a timer {@link BiConsumer}.
+     */
     public boolean hasTimer() {
         return this.timerConsumer != null;
     }
 
+    /**
+     * @param timerConsumer The {@link BiConsumer} to set for this {@link GUIItem}.
+     */
     public void setTimerConsumer(@Nullable BiConsumer<GUIItem, GUI> timerConsumer) {
         this.timerConsumer = timerConsumer;
     }
 
+    /**
+     * @return The {@link GUISlot} for this {@link GUIItem}.
+     */
     public GUISlot getSlot() {
         return slot;
     }
@@ -138,14 +176,26 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
         return this.metadata;
     }
 
+    /**
+     * @param itemBuilder The {@link ItemBuilder} to use for the new {@link Builder}
+     * @return A new {@link Builder} with the given {@link ItemBuilder}.
+     */
     public static Builder builder(ItemBuilder itemBuilder) {
         return new Builder(itemBuilder);
     }
 
+    /**
+     * @param itemStack The {@link ItemStack} to use for the new {@link Builder}
+     * @return A new {@link Builder} with the given {@link ItemStack}.
+     */
     public static Builder builder(ItemStack itemStack) {
         return new Builder(itemStack);
     }
 
+    /**
+     * @param material The {@link Material} to use for the new {@link Builder}
+     * @return A new {@link Builder} with the given {@link Material}.
+     */
     public static Builder builder(Material material) {
         return new Builder(material);
     }
@@ -170,21 +220,42 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
             this(ItemBuilder.from(itemStack));
         }
 
+        /**
+         *
+         * @param metadata The {@link Metadata} to set for the new {@link Builder}.
+         * @return The {@link Builder} with the given {@link Metadata}.
+         */
         public Builder metadata(Metadata metadata) {
             this.metadata = metadata;
             return this;
         }
 
+        /**
+         *
+         * @param metadataKey The {@link MetadataKey} to set for the new {@link Builder}.
+         * @param v The value to set for the {@link MetadataKey}.
+         * @param <V> The type of the {@link MetadataKey}.
+         * @return The {@link Builder} with the given {@link MetadataKey} and value.
+         */
         public <V> Builder metadata(MetadataKey<V> metadataKey, V v) {
             this.metadata.set(metadataKey, v);
             return this;
         }
 
+        /**
+         *
+         * @param timerConsumer The {@link BiConsumer} to set for the new {@link Builder}.
+         * @return The {@link Builder} with the given {@link BiConsumer}.
+         */
         public Builder timer(BiConsumer<GUIItem, GUI> timerConsumer) {
             this.timerConsumer = timerConsumer;
             return this;
         }
 
+        /**
+         *
+         * @return The {@link GUIItem} built from this {@link Builder}.
+         */
         public GUIItem build() {
             return new GUIItem(this.listeners, this.itemBuilder, this.metadata, timerConsumer);
         }

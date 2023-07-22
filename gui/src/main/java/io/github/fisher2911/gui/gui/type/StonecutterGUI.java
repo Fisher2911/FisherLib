@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#STONECUTTER} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class StonecutterGUI extends GUI {
 
@@ -47,18 +50,30 @@ public class StonecutterGUI extends GUI {
         super(title, guiItems, listeners, Type.STONECUTTER, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Stonecutter#INPUT} slot.
+     */
     public @Nullable GUIItem getInput() {
         return this.getItem(GUISlot.Stonecutter.INPUT);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Stonecutter#INPUT} slot.
+     */
     public void setInput(GUIItem item) {
         this.setItem(GUISlot.Stonecutter.INPUT, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Stonecutter#RESULT} slot.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Stonecutter.RESULT);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Stonecutter#RESULT} slot.
+     */
     public void setResult(GUIItem item) {
         this.setItem(GUISlot.Stonecutter.RESULT, item);
     }
@@ -79,24 +94,42 @@ public class StonecutterGUI extends GUI {
         return GUISlot.Stonecutter.RESULT;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} for {@link StonecutterGUI}s.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder extends GUI.Builder<Builder, StonecutterGUI> {
 
-        protected Builder() {}
+        protected Builder() {
+        }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Stonecutter#INPUT} slot.
+         * @return This {@link Builder}.
+         */
         public Builder input(GUIItem item) {
             this.guiItems.put(GUISlot.Stonecutter.INPUT, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Stonecutter#RESULT} slot.
+         * @return This {@link Builder}.
+         */
         public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Stonecutter.RESULT, item);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link StonecutterGUI} with the properties set in this {@link Builder}.
+         */
         public StonecutterGUI build() {
             return new StonecutterGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

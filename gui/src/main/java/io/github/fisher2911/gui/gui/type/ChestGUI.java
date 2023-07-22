@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#CHEST} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class ChestGUI extends GUI {
 
@@ -55,6 +58,10 @@ public class ChestGUI extends GUI {
         return this.inventory;
     }
 
+    /**
+     *
+     * @return The number of rows in this {@link ChestGUI}.
+     */
     public int getRows() {
         return this.rows;
     }
@@ -69,6 +76,10 @@ public class ChestGUI extends GUI {
         return GUISlot.of(this.rows * 9 - 1);
     }
 
+    /**
+     *
+     * @return A new {@link Builder} for a {@link ChestGUI}.
+     */
     public static  Builder builder() {
         return new Builder();
     }
@@ -80,6 +91,11 @@ public class ChestGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param rows The number of rows in the {@link ChestGUI}.
+         * @return This {@link Builder}.
+         */
         public Builder rows(int rows) {
             this.rows = rows;
             return this;

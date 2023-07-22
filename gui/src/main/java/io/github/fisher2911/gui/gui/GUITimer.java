@@ -25,6 +25,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * This class is a wrapper for {@link TimerImpl} that allows you to easily
+ * create a timer that ticks the GUI it is attached to.
+ * @param <G> The GUI type
+ */
 @SuppressWarnings("unused")
 public class GUITimer<G extends GUI> extends TimerImpl<GUITimer<G>> {
 
@@ -57,6 +62,10 @@ public class GUITimer<G extends GUI> extends TimerImpl<GUITimer<G>> {
         this.gui = gui;
     }
 
+    /**
+     *
+     * @return The GUI that this timer is attached to
+     */
     public GUI getGui() {
         return this.gui;
     }

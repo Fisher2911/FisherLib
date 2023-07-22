@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#MERCHANT} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class MerchantGUI extends GUI {
 
@@ -55,39 +58,67 @@ public class MerchantGUI extends GUI {
         this.trades = trades;
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Merchant#FIRST} slot.
+     */
     public @Nullable GUIItem getFirst() {
         return this.getItem(GUISlot.Merchant.FIRST);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Merchant#SECOND} slot.
+     */
     public @Nullable GUIItem getSecond() {
         return this.getItem(GUISlot.Merchant.SECOND);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Merchant#RESULT} slot.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Merchant.RESULT);
     }
 
+    /**
+     * @param recipe The {@link MerchantRecipe} to add to the {@link MerchantGUI}.
+     */
     public void addTrade(MerchantRecipe recipe) {
         this.trades.add(recipe);
     }
 
+    /**
+     * @param recipe The {@link MerchantRecipe} to remove from the {@link MerchantGUI}.
+     */
     public void removeTrade(MerchantRecipe recipe) {
         this.trades.remove(recipe);
     }
 
+    /**
+     * @param index  The index of the {@link MerchantRecipe} to set.
+     * @param recipe The {@link MerchantRecipe} to set.
+     */
     public void setTrade(int index, MerchantRecipe recipe) {
         this.trades.set(index, recipe);
     }
 
+    /**
+     * @param index The index of the {@link MerchantRecipe} to remove.
+     */
     public void removeTrade(int index) {
         this.trades.remove(index);
     }
 
+    /**
+     * @return An unmodifiable {@link List} of {@link MerchantRecipe}s.
+     */
     @Unmodifiable
     public List<MerchantRecipe> getTrades() {
         return Collections.unmodifiableList(this.trades);
     }
 
+    /**
+     * Clears all {@link MerchantRecipe}s from the {@link MerchantGUI}.
+     */
     public void clearTrades() {
         this.trades.clear();
     }
@@ -108,7 +139,10 @@ public class MerchantGUI extends GUI {
         return GUISlot.Merchant.SECOND;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} for {@link MerchantGUI}s.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -120,26 +154,45 @@ public class MerchantGUI extends GUI {
             this.recipes = new ArrayList<>();
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Merchant#FIRST} slot.
+         * @return The {@link Builder}.
+         */
         public Builder first(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.FIRST, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Merchant#SECOND} slot.
+         * @return The {@link Builder}.
+         */
         public Builder second(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.SECOND, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Merchant#RESULT} slot.
+         * @return The {@link Builder}.
+         */
         public Builder result(GUIItem item) {
             this.guiItems.put(GUISlot.Merchant.RESULT, item);
             return this;
         }
 
+        /**
+         * @param recipe The {@link MerchantRecipe} to add to the {@link MerchantGUI}.
+         * @return The {@link Builder}.
+         */
         public Builder trade(MerchantRecipe recipe) {
             this.recipes.add(recipe);
             return this;
         }
 
+        /**
+         * @return The {@link MerchantGUI} built from the {@link Builder}.
+         */
         public MerchantGUI build() {
             return new MerchantGUI(this.title, this.guiItems, this.listeners, this.recipes, this.metadata, this.patterns);
         }

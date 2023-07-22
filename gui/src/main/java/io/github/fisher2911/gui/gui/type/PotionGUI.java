@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#POTION} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class PotionGUI extends GUI {
 
@@ -44,7 +47,7 @@ public class PotionGUI extends GUI {
             Metadata metadata,
             List<Pattern> patterns
     ) {
-        super(title, guiItems, listeners, Type.BREWING_STAND, metadata, patterns);
+        super(title, guiItems, listeners, Type.POTION, metadata, patterns);
     }
 
     @Override
@@ -53,42 +56,72 @@ public class PotionGUI extends GUI {
         return this.inventory;
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#FUEL} {@link GUISlot}.
+     */
     public void setFuel(GUIItem item) {
         this.setItem(GUISlot.Potion.FUEL, item);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#INGREDIENT} {@link GUISlot}.
+     */
     public void setIngredient(GUIItem item) {
         this.setItem(GUISlot.Potion.FUEL, item);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#ZERO} {@link GUISlot}.
+     */
     public void setZero(GUIItem item) {
         this.setItem(GUISlot.Potion.ZERO, item);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#ONE} {@link GUISlot}.
+     */
     public void setOne(GUIItem item) {
         this.setItem(GUISlot.Potion.ONE, item);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#TWO} {@link GUISlot}.
+     */
     public void setTwo(GUIItem item) {
         this.setItem(GUISlot.Potion.TWO, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Potion#FUEL} {@link GUISlot}.
+     */
     public @Nullable GUIItem getFuel() {
         return this.getItem(GUISlot.Potion.FUEL);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Potion#INGREDIENT} {@link GUISlot}.
+     */
     public @Nullable GUIItem getIngredient() {
         return this.getItem(GUISlot.Potion.INGREDIENT);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Potion#ZERO} {@link GUISlot}.
+     */
     public @Nullable GUIItem getZero() {
         return this.getItem(GUISlot.Potion.ZERO);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Potion#ONE} {@link GUISlot}.
+     */
     public @Nullable GUIItem getOne() {
         return this.getItem(GUISlot.Potion.ONE);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Potion#TWO} {@link GUISlot}.
+     */
     public @Nullable GUIItem getTwo() {
         return this.getItem(GUISlot.Potion.TWO);
     }
@@ -103,7 +136,10 @@ public class PotionGUI extends GUI {
         return GUISlot.Potion.TWO;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} instance.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -112,31 +148,55 @@ public class PotionGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#FUEL} {@link GUISlot}.
+         * @return This {@link Builder} instance.
+         */
         public Builder fuel(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.FUEL, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#INGREDIENT} {@link GUISlot}.
+         * @return This {@link Builder} instance.
+         */
         public Builder ingredient(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.INGREDIENT, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#ZERO} {@link GUISlot}.
+         * @return This {@link Builder} instance.
+         */
         public Builder zero(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.ZERO, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#ONE} {@link GUISlot}.
+         * @return This {@link Builder} instance.
+         */
         public Builder one(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.ONE, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Potion#TWO} {@link GUISlot}.
+         * @return This {@link Builder} instance.
+         */
         public Builder two(GUIItem item) {
             this.guiItems.put(GUISlot.Potion.TWO, item);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link PotionGUI} instance.
+         */
         @Override
         public PotionGUI build() {
             return new PotionGUI(

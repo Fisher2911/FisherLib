@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#FURNACE} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class FurnaceGUI extends GUI {
 
@@ -47,26 +50,44 @@ public class FurnaceGUI extends GUI {
         super(title, guiItems, listeners, Type.FURNACE, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Furnace#SMELTING} slot.
+     */
     public @Nullable GUIItem getSmelting() {
         return this.getItem(GUISlot.Furnace.SMELTING);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#SMELTING} slot.
+     */
     public void setSmelting(GUIItem item) {
         this.setItem(GUISlot.Furnace.SMELTING, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Furnace#FUEL} slot.
+     */
     public @Nullable GUIItem getFuel() {
         return this.getItem(GUISlot.Furnace.FUEL);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#FUEL} slot.
+     */
     public void setFuel(GUIItem item) {
         this.setItem(GUISlot.Furnace.FUEL, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Furnace#RESULT} slot.
+     */
     public @Nullable GUIItem getResult() {
         return this.getItem(GUISlot.Furnace.RESULT);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#RESULT} slot.
+     */
     public void setResult(GUIItem item) {
         this.setItem(GUISlot.Furnace.RESULT, item);
     }
@@ -87,7 +108,10 @@ public class FurnaceGUI extends GUI {
         return GUISlot.Furnace.FUEL;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} instance.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -96,21 +120,38 @@ public class FurnaceGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#SMELTING} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder smelting(GUIItem item) {
             this.set(GUISlot.Furnace.SMELTING, item);
             return this;
         }
 
+        /**
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#FUEL} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder fuel(GUIItem item) {
             this.set(GUISlot.Furnace.FUEL, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Furnace#RESULT} slot.
+         * @return This {@link Builder} instance.
+         */
         public Builder result(GUIItem item) {
             this.set(GUISlot.Furnace.RESULT, item);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link FurnaceGUI} instance.
+         */
         public FurnaceGUI build() {
             return new FurnaceGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

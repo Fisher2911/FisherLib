@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A {@link GUI} with an {@link GUI.Type#GRINDSTONE} {@link GUI.Type}.
+ */
 @SuppressWarnings("unused")
 public class GrindstoneGUI extends GUI {
 
@@ -47,26 +50,44 @@ public class GrindstoneGUI extends GUI {
         super(title, guiItems, listeners, Type.GRINDSTONE, metadata, patterns);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Grindstone#FIRST} slot.
+     */
     public @Nullable GUIItem getFirstItem() {
         return this.getItem(GUISlot.Grindstone.FIRST);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#FIRST} slot.
+     */
     public void setFirstItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.FIRST, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Grindstone#SECOND} slot.
+     */
     public @Nullable GUIItem getSecondItem() {
         return this.getItem(GUISlot.Grindstone.SECOND);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#SECOND} slot.
+     */
     public void setSecondItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.SECOND, item);
     }
 
+    /**
+     * @return The {@link GUIItem} in the {@link GUISlot.Grindstone#RESULT} slot.
+     */
     public @Nullable GUIItem getResultItem() {
         return this.getItem(GUISlot.Grindstone.RESULT);
     }
 
+    /**
+     * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#RESULT} slot.
+     */
     public void setResultItem(GUIItem item) {
         this.setItem(GUISlot.Grindstone.RESULT, item);
     }
@@ -87,7 +108,10 @@ public class GrindstoneGUI extends GUI {
         return GUISlot.Grindstone.SECOND;
     }
 
-    public static  Builder builder() {
+    /**
+     * @return A new {@link Builder} for {@link GrindstoneGUI}s.
+     */
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -96,21 +120,40 @@ public class GrindstoneGUI extends GUI {
         protected Builder() {
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#FIRST} slot.
+         * @return This {@link Builder}.
+         */
         public Builder firstItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.FIRST, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#SECOND} slot.
+         * @return This {@link Builder}.
+         */
         public Builder secondItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.SECOND, item);
             return this;
         }
 
+        /**
+         *
+         * @param item The {@link GUIItem} to set in the {@link GUISlot.Grindstone#RESULT} slot.
+         * @return This {@link Builder}.
+         */
         public Builder resultItem(GUIItem item) {
             this.guiItems.put(GUISlot.Grindstone.RESULT, item);
             return this;
         }
 
+        /**
+         *
+         * @return A new {@link GrindstoneGUI} with the properties of this {@link Builder}.
+         */
         public GrindstoneGUI build() {
             return new GrindstoneGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
         }

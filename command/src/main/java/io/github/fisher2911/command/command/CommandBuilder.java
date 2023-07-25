@@ -21,7 +21,7 @@ package io.github.fisher2911.command.command;
 import io.github.fisher2911.command.argument.Argument;
 import io.github.fisher2911.command.argument.ArgumentResult;
 import io.github.fisher2911.command.argument.LiteralArgument;
-import org.apache.logging.log4j.util.TriConsumer;
+import io.github.fisher2911.common.util.function.TriConsumer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

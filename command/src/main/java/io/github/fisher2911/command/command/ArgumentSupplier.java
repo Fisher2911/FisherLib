@@ -23,22 +23,24 @@ import io.github.fisher2911.command.argument.BooleanArgument;
 import io.github.fisher2911.command.argument.DoubleArgument;
 import io.github.fisher2911.command.argument.FloatArgument;
 import io.github.fisher2911.command.argument.IntArgument;
+import io.github.fisher2911.command.argument.ListArgument;
 import io.github.fisher2911.command.argument.LiteralArgument;
 import io.github.fisher2911.command.argument.LongArgument;
 import io.github.fisher2911.command.argument.PlayerArgument;
 import io.github.fisher2911.command.argument.StringArgument;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 public class ArgumentSupplier {
 
     private final Map<String, Argument<?>> argumentIdMap;
-    private final Map<Class<?>, Argument<?>> argumentClassMap;
+    private final Map<Type, Argument<?>> argumentClassMap;
 
     public ArgumentSupplier(
             Map<String, Argument<?>> argumentIdMap,
-            Map<Class<?>, Argument<?>> argumentClassMap
+            Map<Type, Argument<?>> argumentClassMap
     ) {
         this.argumentIdMap = argumentIdMap;
         this.argumentClassMap = argumentClassMap;
@@ -48,8 +50,8 @@ public class ArgumentSupplier {
         return this.argumentIdMap.get(id);
     }
 
-    public @Nullable Argument<?> getArgument(Class<?> clazz) {
-        return this.argumentClassMap.get(clazz);
+    public @Nullable Argument<?> getArgument(Type type) {
+        return this.argumentClassMap.get(type);
     }
 
     public void addDefaults() {
@@ -62,6 +64,14 @@ public class ArgumentSupplier {
                 .argument(BooleanArgument.create())
                 .argument(PlayerArgument.create())
         ;
+    }
+
+    public ListArgument getListArgument(String delimiter, Type parameterClass) {
+        final Argument<?> argument = this.getArgument(parameterClass);
+        if (argument == null) {
+            throw new IllegalArgumentException("No argument found for class " + parameterClass.getTypeName());
+        }
+        return ListArgument.create(delimiter, argument);
     }
 
     public ArgumentSupplier argument(Argument<?> argument, boolean addClass) {

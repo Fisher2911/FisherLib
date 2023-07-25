@@ -28,9 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class CommandParser {
@@ -105,7 +107,13 @@ public class CommandParser {
         int parameterIndex = 0;
         for (final Class<?> parameter : parameterTypes) {
             if (parameterIndex++ == 0) continue;
-            final Argument<?> argument = argumentSupplier.getArgument(parameter);
+            final Argument<?> argument;
+            if (parameter.isAssignableFrom(List.class)) {
+                argument = argumentSupplier.getListArgument(",",
+                        ((ParameterizedType) method.getGenericParameterTypes()[parameterIndex - 1]).getActualTypeArguments()[0]);
+            } else {
+                argument = argumentSupplier.getArgument(parameter);
+            }
             if (argument == null) {
                 throw new CommandParameterNotFoundException(parameter);
             }
@@ -193,9 +201,9 @@ public class CommandParser {
             final ErrorHandler errorHandler = method.getAnnotation(ErrorHandler.class);
             if (errorHandler == null) continue;
             final Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes.length != 2) {
+            if (parameterTypes.length != 3) {
                 throw new IllegalArgumentException("Error handler method " + method.getName() + " in class " + method.getDeclaringClass().getName() +
-                        " must have exactly two parameters of types: CommandSender/Player and ArgumentResult");
+                        " must have exactly three parameters of types: CommandSender/Player, ArgumentResult and String[]");
             }
             errorHandlers.put(errorHandler.value(), method);
         }

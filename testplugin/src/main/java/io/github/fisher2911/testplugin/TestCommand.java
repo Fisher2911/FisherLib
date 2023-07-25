@@ -24,6 +24,8 @@ import io.github.fisher2911.command.anotation.SubCommand;
 import io.github.fisher2911.command.argument.ArgumentResult;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 @Command(name = "test", permission = "test")
 public class TestCommand {
 
@@ -33,8 +35,8 @@ public class TestCommand {
     }
 
     @SubCommand(name = "test1")
-    public void test1Command(Player player) {
-        player.sendMessage("In test1Command");
+    public void test1Command(Player player, List<Integer> numbers, Player lastArg) {
+        player.sendMessage("In test1Command: " + numbers + " " + lastArg.getName());
     }
 
     @SubCommand(name = "test2")

@@ -1,5 +1,7 @@
 package io.github.fisher2911.testplugin;
 
+import io.github.fisher2911.command.CommandManager;
+import io.github.fisher2911.command.command.ArgumentSupplier;
 import io.github.fisher2911.common.item.ItemBuilder;
 import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.placeholder.Placeholders;
@@ -25,6 +27,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +45,10 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         );
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getPluginManager().registerEvents(this.guiManager, this);
+        final CommandManager commandManager = new CommandManager(new HashMap<>());
+        final ArgumentSupplier supplier = new ArgumentSupplier(new HashMap<>(), new HashMap<>());
+        supplier.addDefaults();
+        commandManager.register(TestCommand.class, supplier);
     }
 
     @Override

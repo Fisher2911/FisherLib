@@ -1,5 +1,5 @@
 name: TestPlugin
-version: '${version}'
+version: '1.0.0-beta'
 main: io.github.fisher2911.testplugin.TestPlugin
 api-version: 1.16
 authors: [ Fisher2911 ]

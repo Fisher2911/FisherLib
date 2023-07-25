@@ -5,3 +5,4 @@ include(
         "common",
         "item"
 )
+include("command")

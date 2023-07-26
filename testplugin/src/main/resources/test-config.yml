@@ -1,0 +1,9 @@
+first: "test first value"
+name: "test name value"
+number: 6
+nested:
+  test: "nested test value"
+list-value:
+  - 1
+  - 2
+  - 3

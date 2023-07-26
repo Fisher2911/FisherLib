@@ -6,6 +6,8 @@ import io.github.fisher2911.common.item.ItemBuilder;
 import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.common.placeholder.Placeholders;
 import io.github.fisher2911.common.timer.BukkitTimerExecutor;
+import io.github.fisher2911.config.ConfigLoader;
+import io.github.fisher2911.config.type.TypeProvider;
 import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUIManager;
@@ -49,6 +51,16 @@ public final class TestPlugin extends JavaPlugin implements Listener {
         final ArgumentSupplier supplier = new ArgumentSupplier(new HashMap<>(), new HashMap<>());
         supplier.addDefaults();
         commandManager.register(TestCommand.class, supplier);
+        final TestConfig config = ConfigLoader.load(
+                TestConfig.class,
+                TypeProvider.create(),
+                ConfigLoader.NamingStrategy.CAMEL_CASE
+        );
+        System.out.println("First: " + config.getFirst());
+        System.out.println("Name: " + config.getName());
+        System.out.println("Number: " + config.getNumber());
+        System.out.println("List: " + config.getList());
+        System.out.println("Nested: " + config.getNestedTest());
     }
 
     @Override

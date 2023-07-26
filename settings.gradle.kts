@@ -3,6 +3,7 @@ include(
         "gui",
         "testplugin",
         "common",
-        "item"
+        "item",
+        "command",
+        "config"
 )
-include("command")

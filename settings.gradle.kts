@@ -7,3 +7,4 @@ include(
         "command",
         "config"
 )
+include("gui-config")

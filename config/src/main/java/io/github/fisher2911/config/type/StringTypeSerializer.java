@@ -45,4 +45,9 @@ public class StringTypeSerializer implements TypeSerializer<String> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<String> value) {
+        section.set(path, value);
+    }
+
 }

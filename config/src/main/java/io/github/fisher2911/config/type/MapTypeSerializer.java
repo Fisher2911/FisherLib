@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
 
@@ -35,7 +38,7 @@ public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
         this.serializer = serializer;
     }
 
-    public static MapTypeSerializer<?> create(TypeSerializer<?> serializer) {
+    public static <T> MapTypeSerializer<T> create(TypeSerializer<T> serializer) {
         return new MapTypeSerializer<>(serializer);
     }
 
@@ -49,6 +52,13 @@ public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
             }
         }
         return map;
+    }
+
+    public @Nullable <K> Map<K, T> load(ConfigurationSection section, String path, Function<String, K> function) {
+        return Objects.requireNonNull(this.load(section, path))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> function.apply(e.getKey()), Map.Entry::getValue));
     }
 
     @Override
@@ -67,6 +77,13 @@ public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
     public void save(ConfigurationSection section, String path, Map<String, T> value) {
         for (final Map.Entry<String, T> entry : value.entrySet()) {
             this.serializer.save(section, entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Map<String, T>> value) {
+        for (int i = 0; i < value.size(); i++) {
+            this.save(section, path + "." + i, value.get(i));
         }
     }
 

@@ -45,4 +45,9 @@ public class BooleanTypeSerializer implements TypeSerializer<Boolean> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Boolean> value) {
+        section.set(path, value);
+    }
+
 }

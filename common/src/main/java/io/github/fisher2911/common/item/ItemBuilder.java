@@ -167,6 +167,17 @@ public class ItemBuilder {
         return itemStack;
     }
 
+    public Material getMaterial() {
+        return this.material;
+    }
+
+    public int getAmount() {
+        return this.amount;
+    }
+
+    public ItemMeta getItemMeta() {
+        return this.itemMeta;
+    }
 
     public <T extends ItemBuilder> T copy() {
         final ItemBuilder builder = new ItemBuilder(this.material).amount(this.amount);

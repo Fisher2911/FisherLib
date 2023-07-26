@@ -45,4 +45,9 @@ public class FloatTypeSerializer implements TypeSerializer<Float> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Float> value) {
+        section.set(path, value);
+    }
+
 }

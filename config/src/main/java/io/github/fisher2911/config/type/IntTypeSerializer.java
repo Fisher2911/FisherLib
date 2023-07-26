@@ -45,4 +45,9 @@ public class IntTypeSerializer implements TypeSerializer<Integer> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Integer> value) {
+        section.set(path, value);
+    }
+
 }

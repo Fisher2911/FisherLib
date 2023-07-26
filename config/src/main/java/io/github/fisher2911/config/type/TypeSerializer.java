@@ -33,7 +33,9 @@ public interface TypeSerializer<T> {
             IntTypeSerializer.INSTANCE,
             LongTypeSerializer.INSTANCE,
             StringTypeSerializer.INSTANCE,
-            BooleanTypeSerializer.INSTANCE
+            BooleanTypeSerializer.INSTANCE,
+            MaterialTypeSerializer.INSTANCE,
+            ItemBuilderTypeSerializer.INSTANCE
     );
 
     @Nullable T load(ConfigurationSection section, String path);
@@ -41,5 +43,7 @@ public interface TypeSerializer<T> {
     @NotNull List<T> loadList(ConfigurationSection section, String path);
 
     void save(ConfigurationSection section, String path, T value);
+
+    void saveList(ConfigurationSection section, String path, List<T> value);
 
 }

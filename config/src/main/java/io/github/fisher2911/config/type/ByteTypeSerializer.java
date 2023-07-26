@@ -45,4 +45,9 @@ public class ByteTypeSerializer implements TypeSerializer<Byte> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Byte> value) {
+        section.set(path, value);
+    }
+
 }

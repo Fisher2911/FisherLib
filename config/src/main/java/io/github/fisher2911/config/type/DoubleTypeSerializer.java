@@ -45,4 +45,9 @@ public class DoubleTypeSerializer implements TypeSerializer<Double> {
         section.set(path, value);
     }
 
+    @Override
+    public void saveList(ConfigurationSection section, String path, List<Double> value) {
+        section.set(path, value);
+    }
+
 }

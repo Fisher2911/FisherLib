@@ -99,7 +99,10 @@ public class PaginatedPattern implements Pattern {
     @Override
     public void apply(GUI gui) {
         final PaginatedGUI owner = gui.getOwner();
-        if (owner == null) return;
+        if (owner == null) {
+            this.applyNonPaginatedGUI(gui);
+            return;
+        }
         final int index = owner.getPageIndex(gui);
         if (index > 0 && this.previousPageItem != null) {
             gui.replaceItem(
@@ -115,6 +118,29 @@ public class PaginatedPattern implements Pattern {
                         this.nextPageItem,
                         item -> Pattern.replacePredicate(item, this)
                 );
+            }
+        }
+    }
+
+    private void applyNonPaginatedGUI(GUI gui) {
+        for (int guiPage = 0; guiPage < gui.getPageSize(); guiPage++) {
+            if (guiPage > 0 && this.previousPageItem != null) {
+                gui.replaceItem(
+                        guiPage,
+                        this.previousPageItemSlotFunction.apply(gui),
+                        this.previousPageItem,
+                        item -> Pattern.replacePredicate(item, this)
+                );
+            }
+            if (guiPage < gui.getPageSize() - 1) {
+                if (this.nextPageItem != null) {
+                    gui.replaceItem(
+                            guiPage,
+                            this.nextPageItemSlotFunction.apply(gui),
+                            this.nextPageItem,
+                            item -> Pattern.replacePredicate(item, this)
+                    );
+                }
             }
         }
     }

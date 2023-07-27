@@ -41,12 +41,13 @@ public class BeaconGUI extends GUI {
 
     private BeaconGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.BEACON, metadata, patterns);
+        super(title, guiItems, listeners, Type.BEACON, metadata, patterns, expandable);
     }
 
     /**
@@ -105,7 +106,7 @@ public class BeaconGUI extends GUI {
         }
 
         public BeaconGUI build() {
-            return new BeaconGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new BeaconGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

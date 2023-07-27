@@ -8,3 +8,4 @@ include(
         "config"
 )
 include("gui-config")
+include("message")

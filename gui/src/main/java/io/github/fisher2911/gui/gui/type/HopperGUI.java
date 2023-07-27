@@ -41,12 +41,13 @@ public class HopperGUI extends GUI {
 
     private HopperGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.HOPPER, metadata, patterns);
+        super(title, guiItems, listeners, Type.HOPPER, metadata, patterns, expandable);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class HopperGUI extends GUI {
          * @return a new {@link HopperGUI} instance.
          */
         public HopperGUI build() {
-            return new HopperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new HopperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

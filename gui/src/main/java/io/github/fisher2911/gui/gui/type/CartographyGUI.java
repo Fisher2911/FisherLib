@@ -43,12 +43,13 @@ public class CartographyGUI extends GUI {
 
     private CartographyGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.CARTOGRAPHY, metadata, patterns);
+        super(title, guiItems, listeners, Type.CARTOGRAPHY, metadata, patterns, expandable);
     }
 
     /**
@@ -133,7 +134,7 @@ public class CartographyGUI extends GUI {
          * @return The {@link Builder} instance.
          */
         public Builder mapItem(GUIItem item) {
-            this.guiItems.put(GUISlot.CartographyTable.MAP, item);
+            this.currentGuiItems.put(GUISlot.CartographyTable.MAP, item);
             return this;
         }
 
@@ -143,7 +144,7 @@ public class CartographyGUI extends GUI {
          * @return The {@link Builder} instance.
          */
         public Builder paperItem(GUIItem item) {
-            this.guiItems.put(GUISlot.CartographyTable.PAPER, item);
+            this.currentGuiItems.put(GUISlot.CartographyTable.PAPER, item);
             return this;
         }
 
@@ -153,7 +154,7 @@ public class CartographyGUI extends GUI {
          * @return The {@link Builder} instance.
          */
         public Builder outputItem(GUIItem item) {
-            this.guiItems.put(GUISlot.CartographyTable.OUTPUT, item);
+            this.currentGuiItems.put(GUISlot.CartographyTable.OUTPUT, item);
             return this;
         }
 
@@ -162,7 +163,7 @@ public class CartographyGUI extends GUI {
          * @return The built {@link CartographyGUI}.
          */
         public CartographyGUI build() {
-            return new CartographyGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new CartographyGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

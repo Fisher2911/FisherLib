@@ -42,16 +42,16 @@ public class EnchantingGUI extends GUI {
 
     private EnchantingGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.ENCHANTING, metadata, patterns);
+        super(title, guiItems, listeners, Type.ENCHANTING, metadata, patterns, expandable);
     }
 
     /**
-     *
      * @return The {@link GUIItem} in the {@link GUISlot.EnchantingTable#ITEM} slot.
      */
     public @Nullable GUIItem getItem() {
@@ -59,7 +59,6 @@ public class EnchantingGUI extends GUI {
     }
 
     /**
-     *
      * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#ITEM} slot.
      */
     public void setItem(GUIItem item) {
@@ -67,7 +66,6 @@ public class EnchantingGUI extends GUI {
     }
 
     /**
-     *
      * @return The {@link GUIItem} in the {@link GUISlot.EnchantingTable#LAPIS} slot.
      */
     public @Nullable GUIItem getLapisItem() {
@@ -75,7 +73,6 @@ public class EnchantingGUI extends GUI {
     }
 
     /**
-     *
      * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#LAPIS} slot.
      */
     public void setLapisItem(GUIItem item) {
@@ -89,10 +86,9 @@ public class EnchantingGUI extends GUI {
     }
 
     /**
-     *
      * @return A new {@link Builder} instance.
      */
-    public static  Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -112,7 +108,6 @@ public class EnchantingGUI extends GUI {
         }
 
         /**
-         *
          * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#ITEM} slot.
          * @return This {@link Builder} instance.
          */
@@ -121,7 +116,6 @@ public class EnchantingGUI extends GUI {
         }
 
         /**
-         *
          * @param item The {@link GUIItem} to set in the {@link GUISlot.EnchantingTable#LAPIS} slot.
          * @return This {@link Builder} instance.
          */
@@ -130,11 +124,10 @@ public class EnchantingGUI extends GUI {
         }
 
         /**
-         *
          * @return A new {@link EnchantingGUI} instance.
          */
         public EnchantingGUI build() {
-            return new EnchantingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new EnchantingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

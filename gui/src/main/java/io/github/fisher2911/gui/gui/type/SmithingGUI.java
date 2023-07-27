@@ -42,12 +42,13 @@ public class SmithingGUI extends GUI {
 
     private SmithingGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.SMITHING_TABLE, metadata, patterns);
+        super(title, guiItems, listeners, Type.SMITHING_TABLE, metadata, patterns, expandable);
     }
 
     /**
@@ -143,7 +144,7 @@ public class SmithingGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder template(GUIItem template) {
-            this.guiItems.put(GUISlot.SmithingTable.TEMPLATE, template);
+            this.currentGuiItems.put(GUISlot.SmithingTable.TEMPLATE, template);
             return this;
         }
 
@@ -153,7 +154,7 @@ public class SmithingGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder baseItem(GUIItem baseItem) {
-            this.guiItems.put(GUISlot.SmithingTable.BASE_ITEM, baseItem);
+            this.currentGuiItems.put(GUISlot.SmithingTable.BASE_ITEM, baseItem);
             return this;
         }
 
@@ -163,7 +164,7 @@ public class SmithingGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder additionalItem(GUIItem additionalItem) {
-            this.guiItems.put(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
+            this.currentGuiItems.put(GUISlot.SmithingTable.ADDITIONAL_ITEM, additionalItem);
             return this;
         }
 
@@ -173,7 +174,7 @@ public class SmithingGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder result(GUIItem result) {
-            this.guiItems.put(GUISlot.SmithingTable.RESULT, result);
+            this.currentGuiItems.put(GUISlot.SmithingTable.RESULT, result);
             return this;
         }
 
@@ -182,7 +183,7 @@ public class SmithingGUI extends GUI {
          * @return A new {@link SmithingGUI} with the properties set in this {@link Builder}.
          */
         public SmithingGUI build() {
-            return new SmithingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new SmithingGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

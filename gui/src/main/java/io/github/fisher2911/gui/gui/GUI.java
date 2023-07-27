@@ -71,7 +71,9 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
 
     protected final JavaPlugin plugin;
     private String title;
-    private final Map<GUISlot, GUIItem> guiItems;
+    private final List<Map<GUISlot, GUIItem>> guiItems;
+    private final Map<GUISlot, GUIItem> currentGUIItems;
+    private int currentPage;
     private final Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners;
     private final Type type;
     protected final Metadata metadata;
@@ -83,20 +85,24 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
     private final List<Pattern> patterns;
     private @Nullable Placeholders placeholders;
     private @Nullable Object[] placeholdersArgs;
+    private final boolean expandable;
 
     protected GUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Type type,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
         this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.metadata = metadata;
         this.title = title;
         this.guiItems = guiItems;
-        this.guiItems.forEach((slot, item) -> {
+        this.currentGUIItems = new HashMap<>();
+        this.currentGUIItems.putAll(this.guiItems.get(0));
+        this.currentGUIItems.forEach((slot, item) -> {
             this.setItemGUI(item);
             item.setSlot(slot);
             item.observe(i -> this.update(item));
@@ -106,6 +112,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
         this.viewers = new HashSet<>();
         this.patterns = patterns;
         Collections.sort(this.patterns);
+        this.expandable = expandable;
     }
 
     private static final String GUI_KEY = "gui";
@@ -172,7 +179,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
             return;
         }
         this.patterns.forEach(pattern -> pattern.apply(this));
-        this.guiItems.forEach((slot, guiItem) -> slot.setItem(this.getInventory(), guiItem.getItemBuilder().build()));
+        this.currentGUIItems.forEach((slot, guiItem) -> slot.setItem(this.getInventory(), guiItem.getItemBuilder().build()));
         if (this.timer != null) {
             this.timer.stop();
             this.timer.start(this.timerExecutor);
@@ -187,7 +194,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      */
     public void populate(Placeholders placeholders, Object... parsePlaceholders) {
         this.patterns.forEach(pattern -> pattern.apply(this));
-        this.guiItems.forEach((slot, guiItem) -> {
+        this.currentGUIItems.forEach((slot, guiItem) -> {
                     slot.setItem(
                             this.getInventory(placeholders, parsePlaceholders),
                             guiItem.getItemBuilder().build(placeholders, parsePlaceholders));
@@ -233,6 +240,15 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
         item.getSlot().setItem(this.getInventory(), item.getItemBuilder().build());
     }
 
+    public void update(int guiPage, GUIItem item) {
+        if (this.placeholders != null && this.placeholdersArgs != null) {
+            this.update(guiPage, item, this.placeholders, this.placeholdersArgs);
+            return;
+        }
+        if (guiPage != this.getCurrentPage()) return;
+        item.getSlot().setItem(this.getInventory(), item.getItemBuilder().build());
+    }
+
     /**
      * This updates the {@link GUIItem} using the {@link GUIItem#getSlot()}
      *
@@ -244,8 +260,13 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
         item.getSlot().setItem(this.getInventory(placeholders, parsePlaceholders), item.getItemBuilder().build(placeholders, parsePlaceholders));
     }
 
+    public void update(int guiPage, GUIItem item, Placeholders placeholders, Object... parsePlaceholders) {
+        if (guiPage != this.getCurrentPage()) return;
+        item.getSlot().setItem(this.getInventory(placeholders, parsePlaceholders), item.getItemBuilder().build(placeholders, parsePlaceholders));
+    }
+
     private Map<GUISlot, GUIItem> guiItems() {
-        return this.guiItems;
+        return this.currentGUIItems;
     }
 
     /**
@@ -253,14 +274,14 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      */
     @Unmodifiable
     public Map<GUISlot, GUIItem> getGUIItems() {
-        return Collections.unmodifiableMap(this.guiItems);
+        return Collections.unmodifiableMap(this.currentGUIItems);
     }
 
     /**
      * Clears all the {@link GUIItem}s of the GUI.
      */
     public void clearItems() {
-        this.guiItems.clear();
+        this.currentGUIItems.clear();
     }
 
     /**
@@ -268,7 +289,11 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @return the {@link GUIItem} of the given slot
      */
     public @Nullable GUIItem getItem(GUISlot slot) {
-        return this.guiItems.get(slot);
+        return this.currentGUIItems.get(slot);
+    }
+
+    public @Nullable GUIItem getItem(int guiPage, GUISlot slot) {
+        return this.guiItems.get(guiPage).get(slot);
     }
 
     protected Inventory getInventory() {
@@ -286,6 +311,32 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
             return this.createInventory(placeholders.apply(this.title, parsePlaceholders));
         }
         return this.inventory;
+    }
+
+    public void nextPage() {
+        if (this.currentPage == this.guiItems.size() - 1) return;
+        this.currentPage++;
+        this.currentGUIItems.clear();
+        this.currentGUIItems.putAll(this.guiItems.get(this.currentPage));
+        this.getInventory().clear();
+        this.populate();
+    }
+
+    public void previousPage() {
+        if (this.currentPage == 0) return;
+        this.currentPage--;
+        this.currentGUIItems.clear();
+        this.currentGUIItems.putAll(this.guiItems.get(this.currentPage));
+        this.getInventory().clear();
+        this.populate();
+    }
+
+    public int getCurrentPage() {
+        return this.currentPage;
+    }
+
+    public int getPageSize() {
+        return this.guiItems.size();
     }
 
     protected abstract Inventory createInventory(String title);
@@ -328,7 +379,11 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @param guiItem the {@link GUIItem} to set
      */
     public void setItem(int slot, GUIItem guiItem) {
-        this.setItem(GUISlot.of(slot), guiItem);
+        this.setItem(this.currentPage, GUISlot.of(slot), guiItem);
+    }
+
+    public void setItem(int guiPage, int slot, GUIItem guiItem) {
+        this.setItem(guiPage, GUISlot.of(slot), guiItem);
     }
 
     /**
@@ -338,14 +393,24 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @param guiItem the {@link GUIItem} to set
      */
     public void setItem(GUISlot slot, GUIItem guiItem) {
+        this.setItem(this.currentPage, slot, guiItem);
+    }
+
+    public void setItem(int guiPage, GUISlot slot, GUIItem guiItem) {
         if (this.placeholders != null && this.placeholdersArgs != null) {
-            this.setItem(slot, guiItem, placeholders, this.placeholdersArgs);
+            this.setItem(guiPage, slot, guiItem, placeholders, this.placeholdersArgs);
             return;
         }
-        this.guiItems.put(slot, guiItem);
+        if (this.currentPage == guiPage) {
+            this.guiItems.get(guiPage).put(slot, guiItem);
+            this.currentGUIItems.put(slot, guiItem);
+        } else {
+            this.checkExpansion(guiPage);
+            this.guiItems.get(guiPage).put(slot, guiItem);
+        }
         this.setItemGUI(guiItem);
         guiItem.setSlot(slot);
-        guiItem.observe(i -> this.update(guiItem));
+        guiItem.observe(i -> this.update(guiPage, guiItem));
     }
 
     /**
@@ -369,10 +434,20 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @param parsePlaceholders the parse placeholders to use
      */
     public void setItem(GUISlot slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
-        this.guiItems.put(slot, guiItem);
+        this.setItem(this.currentPage, slot, guiItem, placeholders, parsePlaceholders);
+    }
+
+    public void setItem(int guiPage, GUISlot slot, GUIItem guiItem, Placeholders placeholders, Object... parsePlaceholders) {
+        if (this.currentPage == guiPage) {
+            this.guiItems.get(guiPage).put(slot, guiItem);
+            this.currentGUIItems.put(slot, guiItem);
+        } else {
+            this.checkExpansion(guiPage);
+            this.guiItems.get(guiPage).put(slot, guiItem);
+        }
         this.setItemGUI(guiItem);
         guiItem.setSlot(slot);
-        guiItem.observe(i -> this.update(guiItem, placeholders, parsePlaceholders));
+        guiItem.observe(i -> this.update(guiPage, guiItem, placeholders, parsePlaceholders));
     }
 
     /**
@@ -400,8 +475,12 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @return {@code true} if the {@link GUIItem} was replaced, {@code false} otherwise
      */
     public boolean replaceItem(GUISlot slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
-        if (!replacePredicate.test(this.getItem(slot))) return false;
-        this.setItem(slot, guiItem);
+        return this.replaceItem(this.currentPage, slot, guiItem, replacePredicate);
+    }
+
+    public boolean replaceItem(int guiPage, GUISlot slot, GUIItem guiItem, Predicate<@Nullable GUIItem> replacePredicate) {
+        if (!replacePredicate.test(this.getItem(guiPage, slot))) return false;
+        this.setItem(guiPage, slot, guiItem);
         return true;
     }
 
@@ -424,8 +503,29 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
             Placeholders placeholders,
             Object... parsePlaceholders
     ) {
-        if (!replacePredicate.test(this.getItem(slot))) return false;
-        this.setItem(slot, guiItem, placeholders, parsePlaceholders);
+//        if (!replacePredicate.test(this.getItem(slot))) return false;
+//        this.setItem(slot, guiItem, placeholders, parsePlaceholders);
+//        return true;
+        return this.replaceItem(
+                this.currentPage,
+                slot,
+                guiItem,
+                replacePredicate,
+                placeholders,
+                parsePlaceholders
+        );
+    }
+
+    public boolean replaceItem(
+            int guiPage,
+            GUISlot slot,
+            GUIItem guiItem,
+            Predicate<@Nullable GUIItem> replacePredicate,
+            Placeholders placeholders,
+            Object... parsePlaceholders
+    ) {
+        if (!replacePredicate.test(this.getItem(guiPage, slot))) return false;
+        this.setItem(guiPage, slot, guiItem, placeholders, parsePlaceholders);
         return true;
     }
 
@@ -435,7 +535,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
      * @param slot the slot to set the {@link GUIItem} to
      */
     public void removeItem(GUISlot slot) {
-        final GUIItem item = this.guiItems.remove(slot);
+        final GUIItem item = this.currentGUIItems.remove(slot);
         if (item == null) return;
         item.removeGUI();
     }
@@ -513,6 +613,20 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
     public void setPlaceholders(@Nullable Placeholders placeholders, @Nullable Object... placeholdersArgs) {
         this.placeholders = placeholders;
         this.placeholdersArgs = placeholdersArgs;
+    }
+
+    public boolean isExpandable() {
+        return this.expandable;
+    }
+
+    private void checkExpansion(int guiPage) {
+        if (!this.expandable) return;
+        if (this.guiItems.size() > guiPage) return;
+        this.guiItems.add(new HashMap<>());
+    }
+
+    public JavaPlugin getPlugin() {
+        return this.plugin;
     }
 
     /**
@@ -656,12 +770,18 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
     public static abstract class Builder<B extends Builder<B, G>, G extends GUI> extends ListenerHandler.Builder<B> {
 
         protected String title;
-        protected Map<GUISlot, GUIItem> guiItems;
+        protected List<Map<GUISlot, GUIItem>> guiItems;
+        protected Map<GUISlot, GUIItem> currentGuiItems;
+        private int currentPage;
         protected Metadata metadata = Metadata.mutableEmpty();
         protected List<Pattern> patterns = new ArrayList<>();
+        protected boolean expandable;
 
         protected Builder() {
-            this.guiItems = new HashMap<>();
+            this.guiItems = new ArrayList<>();
+            this.currentGuiItems = new HashMap<>();
+            this.currentPage = 0;
+            this.guiItems.add(this.currentGuiItems);
         }
 
         public B title(String title) {
@@ -674,7 +794,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
          * @return this {@link Builder}
          */
         public B guiItems(Map<GUISlot, GUIItem> guiItems) {
-            this.guiItems.putAll(guiItems);
+            this.currentGuiItems.putAll(guiItems);
             return (B) this;
         }
 
@@ -686,7 +806,7 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
          * @return this {@link Builder}
          */
         public B set(GUISlot slot, GUIItem guiItem) {
-            this.guiItems.put(slot, guiItem);
+            this.currentGuiItems.put(slot, guiItem);
             return (B) this;
         }
 
@@ -742,6 +862,24 @@ public abstract class GUI implements ListenerHandler, Timeable<Void>, Metadatabl
          */
         public B listenOpen(Consumer<GUIOpenEvent> consumer, boolean append) {
             this.listen(GUIOpenEvent.class, consumer, append);
+            return (B) this;
+        }
+
+        public B expandable(boolean expandable) {
+            this.expandable = expandable;
+            return (B) this;
+        }
+
+        public B nextPage() {
+            this.currentPage++;
+            this.currentGuiItems = new HashMap<>();
+            this.guiItems.add(this.currentGuiItems);
+            return (B) this;
+        }
+
+        public B previousPage() {
+            this.currentPage--;
+            this.currentGuiItems = this.guiItems.get(this.currentPage);
             return (B) this;
         }
 

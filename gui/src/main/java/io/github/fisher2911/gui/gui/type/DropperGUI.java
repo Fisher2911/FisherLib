@@ -41,12 +41,13 @@ public class DropperGUI extends GUI {
 
     private DropperGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.DROPPER, metadata, patterns);
+        super(title, guiItems, listeners, Type.DROPPER, metadata, patterns, expandable);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class DropperGUI extends GUI {
          * @return a new {@link DropperGUI} instance.
          */
         public DropperGUI build() {
-            return new DropperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new DropperGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

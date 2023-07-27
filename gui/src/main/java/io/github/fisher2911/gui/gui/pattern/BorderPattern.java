@@ -23,6 +23,7 @@ import io.github.fisher2911.common.metadata.MetadataKey;
 import io.github.fisher2911.gui.gui.GUI;
 import io.github.fisher2911.gui.gui.GUIItem;
 import io.github.fisher2911.gui.gui.GUISlot;
+import io.github.fisher2911.gui.gui.PaginatedGUI;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -64,46 +65,52 @@ public class BorderPattern implements Pattern {
         if (slotsPerRow == -1) return;
         final int size = gui.getInventorySize();
         final int rows = size / slotsPerRow;
-        int rowIndex = 0;
-        int leftColIndex = 0;
-        int rightColIndex = 0;
-        for (int i = 0; i < rows; i++) {
-            if (i == 0) {
-                for (int j = 0; j < slotsPerRow; j++) {
-                    gui.replaceItem(
-                            GUISlot.of(i + j),
-                            this.borders.get(rowIndex),
-                            item -> Pattern.replacePredicate(item, this)
-                    );
-                    rowIndex = getNextIndex(rowIndex);
+        for (int pageNum = 0; pageNum < (gui instanceof PaginatedGUI ? 1 : gui.getPageSize()); pageNum++) {
+            int rowIndex = 0;
+            int leftColIndex = 0;
+            int rightColIndex = 0;
+            for (int i = 0; i < rows; i++) {
+                if (i == 0) {
+                    for (int j = 0; j < slotsPerRow; j++) {
+                        gui.replaceItem(
+                                pageNum,
+                                GUISlot.of(i + j),
+                                this.borders.get(rowIndex),
+                                item -> Pattern.replacePredicate(item, this)
+                        );
+                        rowIndex = getNextIndex(rowIndex);
+                    }
+                    leftColIndex = getNextIndex(0);
+                    rightColIndex = rowIndex;
+                    continue;
                 }
-                leftColIndex = getNextIndex(0);
-                rightColIndex = rowIndex;
-                continue;
-            }
-            gui.replaceItem(
-                    GUISlot.of((i + 1) * slotsPerRow - 1),
-                    this.borders.get(rightColIndex),
-                    item -> Pattern.replacePredicate(item, this)
-            );
-            rightColIndex = getNextIndex(rightColIndex);
+                gui.replaceItem(
+                        pageNum,
+                        GUISlot.of((i + 1) * slotsPerRow - 1),
+                        this.borders.get(rightColIndex),
+                        item -> Pattern.replacePredicate(item, this)
+                );
+                rightColIndex = getNextIndex(rightColIndex);
 
-            gui.replaceItem(
-                    GUISlot.of(i * slotsPerRow),
-                    this.borders.get(leftColIndex),
-                    item -> Pattern.replacePredicate(item, this)
-            );
-            leftColIndex = getNextIndex(leftColIndex);
+                gui.replaceItem(
+                        pageNum,
+                        GUISlot.of(i * slotsPerRow),
+                        this.borders.get(leftColIndex),
+                        item -> Pattern.replacePredicate(item, this)
+                );
+                leftColIndex = getNextIndex(leftColIndex);
 
-            if (i == rows - 1) {
-                rowIndex = leftColIndex;
-                for (int j = 1; j < slotsPerRow - 1; j++) {
-                    gui.replaceItem(
-                            GUISlot.of(i * slotsPerRow + j),
-                            this.borders.get(rowIndex),
-                            item -> Pattern.replacePredicate(item, this)
-                    );
-                    rowIndex = getNextIndex(rowIndex);
+                if (i == rows - 1) {
+                    rowIndex = leftColIndex;
+                    for (int j = 1; j < slotsPerRow - 1; j++) {
+                        gui.replaceItem(
+                                pageNum,
+                                GUISlot.of(i * slotsPerRow + j),
+                                this.borders.get(rowIndex),
+                                item -> Pattern.replacePredicate(item, this)
+                        );
+                        rowIndex = getNextIndex(rowIndex);
+                    }
                 }
             }
         }

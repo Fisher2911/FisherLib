@@ -42,12 +42,13 @@ public class LoomGUI extends GUI {
 
     private LoomGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.LOOM, metadata, patterns);
+        super(title, guiItems, listeners, Type.LOOM, metadata, patterns, expandable);
     }
 
     /**
@@ -139,7 +140,7 @@ public class LoomGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder banner(GUIItem banner) {
-            this.guiItems.put(GUISlot.Loom.BANNER, banner);
+            this.currentGuiItems.put(GUISlot.Loom.BANNER, banner);
             return this;
         }
 
@@ -148,7 +149,7 @@ public class LoomGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder dye(GUIItem dye) {
-            this.guiItems.put(GUISlot.Loom.DYE, dye);
+            this.currentGuiItems.put(GUISlot.Loom.DYE, dye);
             return this;
         }
 
@@ -157,7 +158,7 @@ public class LoomGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder pattern(GUIItem pattern) {
-            this.guiItems.put(GUISlot.Loom.PATTERN, pattern);
+            this.currentGuiItems.put(GUISlot.Loom.PATTERN, pattern);
             return this;
         }
 
@@ -166,7 +167,7 @@ public class LoomGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder result(GUIItem result) {
-            this.guiItems.put(GUISlot.Loom.RESULT, result);
+            this.currentGuiItems.put(GUISlot.Loom.RESULT, result);
             return this;
         }
 
@@ -174,7 +175,7 @@ public class LoomGUI extends GUI {
          * @return A new {@link LoomGUI} instance.
          */
         public LoomGUI build() {
-            return new LoomGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new LoomGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

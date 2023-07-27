@@ -42,12 +42,13 @@ public class AnvilGUI extends GUI {
 
     private AnvilGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.ANVIL, metadata, patterns);
+        super(title, guiItems, listeners, Type.ANVIL, metadata, patterns, expandable);
     }
 
     /**
@@ -127,7 +128,7 @@ public class AnvilGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder first(GUIItem item) {
-            this.guiItems.put(GUISlot.Anvil.FIRST, item);
+            this.currentGuiItems.put(GUISlot.Anvil.FIRST, item);
             return this;
         }
 
@@ -137,7 +138,7 @@ public class AnvilGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder second(GUIItem item) {
-            this.guiItems.put(GUISlot.Anvil.SECOND, item);
+            this.currentGuiItems.put(GUISlot.Anvil.SECOND, item);
             return this;
         }
 
@@ -147,7 +148,7 @@ public class AnvilGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder result(GUIItem item) {
-            this.guiItems.put(GUISlot.Anvil.RESULT, item);
+            this.currentGuiItems.put(GUISlot.Anvil.RESULT, item);
             return this;
         }
 
@@ -156,7 +157,7 @@ public class AnvilGUI extends GUI {
          * @return A new {@link AnvilGUI} instance.
          */
         public AnvilGUI build() {
-            return new AnvilGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new AnvilGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

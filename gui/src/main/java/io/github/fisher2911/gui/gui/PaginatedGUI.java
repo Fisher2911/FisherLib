@@ -60,7 +60,7 @@ public class PaginatedGUI extends GUI {
             List<Pattern> patterns,
             List<GUI> pages
     ) {
-        super(title, guiItems, listeners, type, metadata, patterns);
+        super(title, List.of(guiItems), listeners, type, metadata, patterns, false);
         this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.guiManager = guiManager;
         this.pages = pages;
@@ -80,6 +80,7 @@ public class PaginatedGUI extends GUI {
     /**
      * This changes the inventory to the next page, or stays the same if it is already on the last page
      */
+    @Override
     public void nextPage() {
         final int previousPage = this.currentPage;
         final Collection<Player> viewers = new HashSet<>(this.getViewers());
@@ -95,6 +96,7 @@ public class PaginatedGUI extends GUI {
     /**
      * This changes the inventory to the previous page, or stays the same if it is already on the first page
      */
+    @Override
     public void previousPage() {
         final int previousPage = this.currentPage;
         final Collection<Player> viewers = new HashSet<>(this.getViewers());
@@ -112,6 +114,11 @@ public class PaginatedGUI extends GUI {
      */
     public GUI getCurrentGUI() {
         return this.pages.get(this.currentPage);
+    }
+
+    @Override
+    public int getCurrentPage() {
+        return this.currentPage;
     }
 
     private void refillGUIItems() {
@@ -164,6 +171,7 @@ public class PaginatedGUI extends GUI {
     /**
      * @return The amount of pages in the {@link PaginatedGUI}
      */
+    @Override
     public int getPageSize() {
         return this.pages.size();
     }
@@ -260,7 +268,7 @@ public class PaginatedGUI extends GUI {
             return new PaginatedGUI(
                     this.guiManager,
                     this.title,
-                    this.guiItems,
+                    this.currentGuiItems,
                     this.listeners,
                     Type.PAGINATED,
                     this.metadata,

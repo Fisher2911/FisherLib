@@ -42,12 +42,13 @@ public class FurnaceGUI extends GUI {
 
     private FurnaceGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.FURNACE, metadata, patterns);
+        super(title, guiItems, listeners, Type.FURNACE, metadata, patterns, expandable);
     }
 
     /**
@@ -153,7 +154,7 @@ public class FurnaceGUI extends GUI {
          * @return A new {@link FurnaceGUI} instance.
          */
         public FurnaceGUI build() {
-            return new FurnaceGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new FurnaceGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

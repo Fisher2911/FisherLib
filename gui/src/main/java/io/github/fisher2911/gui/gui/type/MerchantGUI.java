@@ -48,13 +48,14 @@ public class MerchantGUI extends GUI {
 
     private MerchantGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             List<MerchantRecipe> trades,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.MERCHANT, metadata, patterns);
+        super(title, guiItems, listeners, Type.MERCHANT, metadata, patterns, expandable);
         this.trades = trades;
     }
 
@@ -159,7 +160,7 @@ public class MerchantGUI extends GUI {
          * @return The {@link Builder}.
          */
         public Builder first(GUIItem item) {
-            this.guiItems.put(GUISlot.Merchant.FIRST, item);
+            this.currentGuiItems.put(GUISlot.Merchant.FIRST, item);
             return this;
         }
 
@@ -168,7 +169,7 @@ public class MerchantGUI extends GUI {
          * @return The {@link Builder}.
          */
         public Builder second(GUIItem item) {
-            this.guiItems.put(GUISlot.Merchant.SECOND, item);
+            this.currentGuiItems.put(GUISlot.Merchant.SECOND, item);
             return this;
         }
 
@@ -177,7 +178,7 @@ public class MerchantGUI extends GUI {
          * @return The {@link Builder}.
          */
         public Builder result(GUIItem item) {
-            this.guiItems.put(GUISlot.Merchant.RESULT, item);
+            this.currentGuiItems.put(GUISlot.Merchant.RESULT, item);
             return this;
         }
 
@@ -194,7 +195,7 @@ public class MerchantGUI extends GUI {
          * @return The {@link MerchantGUI} built from the {@link Builder}.
          */
         public MerchantGUI build() {
-            return new MerchantGUI(this.title, this.guiItems, this.listeners, this.recipes, this.metadata, this.patterns);
+            return new MerchantGUI(this.title, this.guiItems, this.listeners, this.recipes, this.metadata, this.patterns, this.expandable);
         }
 
     }

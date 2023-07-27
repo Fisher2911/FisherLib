@@ -42,12 +42,13 @@ public class PotionGUI extends GUI {
 
     private PotionGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.POTION, metadata, patterns);
+        super(title, guiItems, listeners, Type.POTION, metadata, patterns, expandable);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class PotionGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder fuel(GUIItem item) {
-            this.guiItems.put(GUISlot.Potion.FUEL, item);
+            this.currentGuiItems.put(GUISlot.Potion.FUEL, item);
             return this;
         }
 
@@ -162,7 +163,7 @@ public class PotionGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder ingredient(GUIItem item) {
-            this.guiItems.put(GUISlot.Potion.INGREDIENT, item);
+            this.currentGuiItems.put(GUISlot.Potion.INGREDIENT, item);
             return this;
         }
 
@@ -171,7 +172,7 @@ public class PotionGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder zero(GUIItem item) {
-            this.guiItems.put(GUISlot.Potion.ZERO, item);
+            this.currentGuiItems.put(GUISlot.Potion.ZERO, item);
             return this;
         }
 
@@ -180,7 +181,7 @@ public class PotionGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder one(GUIItem item) {
-            this.guiItems.put(GUISlot.Potion.ONE, item);
+            this.currentGuiItems.put(GUISlot.Potion.ONE, item);
             return this;
         }
 
@@ -189,7 +190,7 @@ public class PotionGUI extends GUI {
          * @return This {@link Builder} instance.
          */
         public Builder two(GUIItem item) {
-            this.guiItems.put(GUISlot.Potion.TWO, item);
+            this.currentGuiItems.put(GUISlot.Potion.TWO, item);
             return this;
         }
 
@@ -204,7 +205,8 @@ public class PotionGUI extends GUI {
                     this.guiItems,
                     this.listeners,
                     this.metadata,
-                    this.patterns
+                    this.patterns,
+                    this.expandable
             );
         }
 

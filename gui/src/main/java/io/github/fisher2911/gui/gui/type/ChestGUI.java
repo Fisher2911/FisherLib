@@ -42,13 +42,14 @@ public class ChestGUI extends GUI {
 
     private ChestGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             int rows,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.CHEST, metadata, patterns);
+        super(title, guiItems, listeners, Type.CHEST, metadata, patterns, expandable);
         this.rows = rows;
     }
 
@@ -102,7 +103,7 @@ public class ChestGUI extends GUI {
         }
 
         public ChestGUI build() {
-            return new ChestGUI(this.title, this.guiItems, this.listeners, this.rows, this.metadata, this.patterns);
+            return new ChestGUI(this.title, this.guiItems, this.listeners, this.rows, this.metadata, this.patterns, this.expandable);
         }
 
     }

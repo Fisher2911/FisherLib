@@ -42,12 +42,13 @@ public class StonecutterGUI extends GUI {
 
     private StonecutterGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.STONECUTTER, metadata, patterns);
+        super(title, guiItems, listeners, Type.STONECUTTER, metadata, patterns, expandable);
     }
 
     /**
@@ -112,7 +113,7 @@ public class StonecutterGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder input(GUIItem item) {
-            this.guiItems.put(GUISlot.Stonecutter.INPUT, item);
+            this.currentGuiItems.put(GUISlot.Stonecutter.INPUT, item);
             return this;
         }
 
@@ -122,7 +123,7 @@ public class StonecutterGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder result(GUIItem item) {
-            this.guiItems.put(GUISlot.Stonecutter.RESULT, item);
+            this.currentGuiItems.put(GUISlot.Stonecutter.RESULT, item);
             return this;
         }
 
@@ -131,7 +132,7 @@ public class StonecutterGUI extends GUI {
          * @return A new {@link StonecutterGUI} with the properties set in this {@link Builder}.
          */
         public StonecutterGUI build() {
-            return new StonecutterGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new StonecutterGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

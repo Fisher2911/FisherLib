@@ -42,12 +42,13 @@ public class GrindstoneGUI extends GUI {
 
     private GrindstoneGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.GRINDSTONE, metadata, patterns);
+        super(title, guiItems, listeners, Type.GRINDSTONE, metadata, patterns, expandable);
     }
 
     /**
@@ -126,7 +127,7 @@ public class GrindstoneGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder firstItem(GUIItem item) {
-            this.guiItems.put(GUISlot.Grindstone.FIRST, item);
+            this.currentGuiItems.put(GUISlot.Grindstone.FIRST, item);
             return this;
         }
 
@@ -136,7 +137,7 @@ public class GrindstoneGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder secondItem(GUIItem item) {
-            this.guiItems.put(GUISlot.Grindstone.SECOND, item);
+            this.currentGuiItems.put(GUISlot.Grindstone.SECOND, item);
             return this;
         }
 
@@ -146,7 +147,7 @@ public class GrindstoneGUI extends GUI {
          * @return This {@link Builder}.
          */
         public Builder resultItem(GUIItem item) {
-            this.guiItems.put(GUISlot.Grindstone.RESULT, item);
+            this.currentGuiItems.put(GUISlot.Grindstone.RESULT, item);
             return this;
         }
 
@@ -155,7 +156,7 @@ public class GrindstoneGUI extends GUI {
          * @return A new {@link GrindstoneGUI} with the properties of this {@link Builder}.
          */
         public GrindstoneGUI build() {
-            return new GrindstoneGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new GrindstoneGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

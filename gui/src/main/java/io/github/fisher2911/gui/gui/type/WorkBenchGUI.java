@@ -42,12 +42,13 @@ public class WorkBenchGUI extends GUI {
 
     private WorkBenchGUI(
             String title,
-            Map<GUISlot, GUIItem> guiItems,
+            List<Map<GUISlot, GUIItem>> guiItems,
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
             Metadata metadata,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            boolean expandable
     ) {
-        super(title, guiItems, listeners, Type.WORK_BENCH, metadata, patterns);
+        super(title, guiItems, listeners, Type.WORK_BENCH, metadata, patterns, expandable);
     }
 
     /**
@@ -97,7 +98,7 @@ public class WorkBenchGUI extends GUI {
          * @return The {@link Builder} instance.
          */
         public Builder result(GUIItem guiItem) {
-            this.guiItems.put(GUISlot.WorkBench.RESULT, guiItem);
+            this.currentGuiItems.put(GUISlot.WorkBench.RESULT, guiItem);
             return this;
         }
 
@@ -105,7 +106,7 @@ public class WorkBenchGUI extends GUI {
          * @return The built {@link WorkBenchGUI} instance.
          */
         public WorkBenchGUI build() {
-            return new WorkBenchGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns);
+            return new WorkBenchGUI(this.title, this.guiItems, this.listeners, this.metadata, this.patterns, this.expandable);
         }
 
     }

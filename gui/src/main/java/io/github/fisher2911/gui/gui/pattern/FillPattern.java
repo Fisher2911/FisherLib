@@ -69,12 +69,15 @@ public class FillPattern implements Pattern {
             return;
         }
         int nextSlot = 0;
+        int guiPage = 0;
         for (final GUIItem guiItem : this.guiItems) {
             if (!this.itemFillPredicate.test(guiItem)) {
                 continue;
             }
-            nextSlot = this.applySlot(nextSlot, gui, guiItem);
-            if (nextSlot == -1) break;
+            final ApplySlotResult result = this.applySlot(nextSlot, guiPage,  gui, guiItem);
+            nextSlot = result.nextSlot();
+            guiPage = result.guiPage();
+            if (nextSlot == -1 || guiPage == -1) break;
         }
     }
 
@@ -89,39 +92,49 @@ public class FillPattern implements Pattern {
             if (!this.itemFillPredicate.test(guiItem)) {
                 continue;
             }
-            nextSlot = this.applySlot(nextSlot, gui, guiItem);
+            nextSlot = this.applySlot(nextSlot, 0, gui, guiItem).nextSlot;
             if (nextSlot == -1) break;
         }
     }
 
-    private int applySlot(int nextSlot, GUI gui, GUIItem guiItem) {
-        @Nullable ApplySlotResult applySlotResult = this.attemptApplySlot(nextSlot, gui, guiItem);
+    private ApplySlotResult applySlot(int nextSlot, int guiPage, GUI gui, GUIItem guiItem) {
+        @Nullable ApplySlotResult applySlotResult = this.attemptApplySlot(nextSlot, gui, guiItem, guiPage);
         while (applySlotResult != null && !applySlotResult.replaceSuccessful()) {
-            applySlotResult = this.attemptApplySlot(applySlotResult.nextSlot(), gui, guiItem);
+            applySlotResult = this.attemptApplySlot(applySlotResult.nextSlot(), gui, guiItem, applySlotResult.guiPage());
         }
-        if (applySlotResult == null) return -1;
-        return applySlotResult.nextSlot();
+        if (applySlotResult == null) {
+            return new ApplySlotResult(-1, -1, false);
+        }
+        return applySlotResult;
     }
 
-    private @Nullable ApplySlotResult attemptApplySlot(int nextSlot, GUI gui, GUIItem guiItem) {
+    private @Nullable ApplySlotResult attemptApplySlot(int nextSlot, GUI gui, GUIItem guiItem, int guiPage) {
         GUISlot slot = GUISlot.of(nextSlot);
         int inventorySize = gui.getInventorySize();
         while (!this.slotFillPredicate.test(slot) && nextSlot < inventorySize) {
             nextSlot++;
             slot = GUISlot.of(nextSlot);
         }
-        if (nextSlot >= inventorySize) return null;
+        if (nextSlot >= inventorySize && (gui.isExpandable() || guiPage < gui.getPageSize() - 1)) {
+            return new ApplySlotResult(0, guiPage + 1, false); // attemptApplySlot(0, gui, guiItem, guiPage + 1);
+        }
+        if (nextSlot >= inventorySize) {
+            return null;
+        }
         if (!gui.replaceItem(
+                guiPage,
                 slot,
                 guiItem,
                 item -> Pattern.replacePredicate(item, this)
         )) {
-            return new ApplySlotResult(nextSlot + 1, false);
+            return new ApplySlotResult(nextSlot + 1, guiPage, false);
         }
-        return new ApplySlotResult(nextSlot + 1, true);
+        return new ApplySlotResult(nextSlot + 1, guiPage, true);
     }
 
-    private static record ApplySlotResult(int nextSlot, boolean replaceSuccessful) { }
+    private static record ApplySlotResult(int nextSlot, int guiPage, boolean replaceSuccessful) {
+
+    }
 
     @Override
     public MetadataKey<? extends FillPattern> getKey() {

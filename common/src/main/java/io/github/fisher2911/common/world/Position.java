@@ -18,36 +18,52 @@
 
 package io.github.fisher2911.common.world;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+import java.util.Objects;
+import java.util.UUID;
+
 public class Position {
 
+    private final UUID world;
     private final int x;
     private final int y;
     private final int z;
 
-    private Position(int x, int y, int z) {
+    private Position(UUID world, int x, int y, int z) {
+        this.world = world;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public static Position of(int x, int y, int z) {
-        return new Position(x, y, z);
+    public static Position of(UUID world, int x, int y, int z) {
+        return new Position(world, x, y, z);
+    }
+
+    public static Position fromBukkitLocation(UUID world, int x, int y, int z) {
+        return new Position(world, x, y, z);
+    }
+
+    public Location toBukkitLocation() {
+        return new Location(Bukkit.getWorld(this.world), this.x, this.y, this.z);
     }
 
     public Position add(int x, int y, int z) {
-        return new Position(this.x + x, this.y + y, this.z + z);
+        return new Position(this.world, this.x + x, this.y + y, this.z + z);
     }
 
     public Position subtract(int x, int y, int z) {
-        return new Position(this.x - x, this.y - y, this.z - z);
+        return new Position(this.world, this.x - x, this.y - y, this.z - z);
     }
 
     public Position multiply(int x, int y, int z) {
-        return new Position(this.x * x, this.y * y, this.z * z);
+        return new Position(this.world, this.x * x, this.y * y, this.z * z);
     }
 
     public Position divide(int x, int y, int z) {
-        return new Position(this.x / x, this.y / y, this.z / z);
+        return new Position(this.world, this.x / x, this.y / y, this.z / z);
     }
 
     public Position divide(int i) {
@@ -72,6 +88,35 @@ public class Position {
 
     public Position divide(Position position) {
         return divide(position.x, position.y, position.z);
+    }
+
+    public int x() {
+        return this.x;
+    }
+
+    public int y() {
+        return this.y;
+    }
+
+    public int z() {
+        return this.z;
+    }
+
+    public UUID world() {
+        return this.world;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Position position = (Position) o;
+        return this.x == position.x && this.y == position.y && this.z == position.z && Objects.equals(this.world, position.world);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.world, this.x, this.y, this.z);
     }
 
 }

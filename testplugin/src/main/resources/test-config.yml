@@ -11,3 +11,7 @@ item:
   material: STONE
   amount: 1
   name: "Test"
+items:
+  1:
+    material: "BLACK_STAINED_GLASS_PANE"
+    name: " "

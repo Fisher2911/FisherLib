@@ -47,6 +47,9 @@ public class TestConfig {
     @ConfigPath("item")
     private ItemBuilder item;
 
+    @ConfigPath("items")
+    private List<ItemBuilder> items;
+
     public TestConfig(String first) {
         this.first = first;
     }

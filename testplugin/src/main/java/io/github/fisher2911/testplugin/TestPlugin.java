@@ -51,11 +51,6 @@ public final class TestPlugin extends JavaPlugin implements Listener {
                 TypeProvider.create(),
                 ConfigLoader.NamingStrategy.CAMEL_CASE
         );
-        System.out.println("First: " + config.getFirst());
-        System.out.println("Name: " + config.getName());
-        System.out.println("Number: " + config.getNumber());
-        System.out.println("List: " + config.getList());
-        System.out.println("Nested: " + config.getNestedTest());
     }
 
     @Override

@@ -18,6 +18,7 @@
 
 package io.github.fisher2911.testplugin;
 
+import io.github.fisher2911.common.item.ItemBuilder;
 import io.github.fisher2911.config.annotation.Config;
 import io.github.fisher2911.config.annotation.ConfigPath;
 
@@ -43,6 +44,9 @@ public class TestConfig {
     @ConfigPath("nested.test")
     private String nestedTest;
 
+    @ConfigPath("item")
+    private ItemBuilder item;
+
     public TestConfig(String first) {
         this.first = first;
     }
@@ -65,6 +69,10 @@ public class TestConfig {
 
     public String getNestedTest() {
         return this.nestedTest;
+    }
+
+    public ItemBuilder getItem() {
+        return item;
     }
 
 }

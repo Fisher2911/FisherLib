@@ -26,9 +26,9 @@ repositories {
 
 dependencies {
     // common library
-    implementation("io.github.Fisher2911.FisherLib:common:v1.0.0-beta")
+    implementation("io.github.Fisher2911.FisherLib:common:v1.0.1-beta")
     // gui library
-    implementation("io.github.Fisher2911.FisherLib:gui:v1.0.0-beta")
+    implementation("io.github.Fisher2911.FisherLib:gui:v1.0.1-beta")
 }
 ```
 
@@ -44,13 +44,13 @@ Maven:
 <dependency>
     <groupId>io.github.Fisher2911.FisherLib</groupId>
     <artifactId>gui</artifactId>
-    <version>v1.0.0-beta</version>
+    <version>v1.0.1-beta</version>
 </dependency>
 
 <dependency>
     <groupId>io.github.Fisher2911.FisherLib</groupId>
     <artifactId>common</artifactId>
-    <version>v1.0.0-beta</version>
+    <version>v1.0.1-beta</version>
 </dependency>
 ```
 

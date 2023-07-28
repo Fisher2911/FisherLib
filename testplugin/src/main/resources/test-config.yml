@@ -7,3 +7,7 @@ list-value:
   - 1
   - 2
   - 3
+item:
+  material: STONE
+  amount: 1
+  name: "Test"

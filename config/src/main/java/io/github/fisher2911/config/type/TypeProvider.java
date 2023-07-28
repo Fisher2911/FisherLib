@@ -18,6 +18,8 @@
 
 package io.github.fisher2911.config.type;
 
+import io.github.fisher2911.common.item.ItemBuilder;
+import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -89,6 +91,8 @@ public class TypeProvider {
         this.serializers.put(Long.class, LongTypeSerializer.INSTANCE);
         this.serializers.put(long.class, LongTypeSerializer.INSTANCE);
         this.serializers.put(String.class, StringTypeSerializer.INSTANCE);
+        this.serializers.put(Material.class, MaterialTypeSerializer.INSTANCE);
+        this.serializers.put(ItemBuilder.class, ItemBuilderTypeSerializer.INSTANCE);
     }
 
 }

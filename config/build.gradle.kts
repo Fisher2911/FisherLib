@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.0.0-beta"
+version = "1.0.2-beta"
 
 repositories {
     mavenCentral()
@@ -58,7 +58,7 @@ publishing {
             }
 
             name = "HibiscusMCRepository"
-            url = uri("https://repo.hibiscusmc.com/releases/")
+            url = uri("https://repo.hibiscusmc.com/snapshots/")
         }
     }
 }

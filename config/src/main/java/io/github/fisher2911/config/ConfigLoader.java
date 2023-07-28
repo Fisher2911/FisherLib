@@ -67,7 +67,6 @@ public class ConfigLoader {
                 }
             }
             final FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
-            System.out.println("Test: " + fileConfiguration.getString("name"));
             for (final Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 final ConfigPath configPath = field.getAnnotation(ConfigPath.class);
@@ -80,7 +79,6 @@ public class ConfigLoader {
                         field.set(configObject, serializer.loadList(fileConfiguration, pathString));
                         continue;
                     }
-                    System.out.println("Setting to " + serializer.load(fileConfiguration, pathString) + " " + pathString + " " + serializer.getClass().getSimpleName());
                     field.set(configObject, serializer.load(fileConfiguration, pathString));
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Failed to set field " + field.getName() + " in class " + clazz.getName(), e);

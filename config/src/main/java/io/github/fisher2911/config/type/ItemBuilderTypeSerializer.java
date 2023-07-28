@@ -50,7 +50,9 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
     private static final String FLAGS_PATH = "flags";
 
     @Override
-    public @Nullable ItemBuilder load(ConfigurationSection section, String path) {
+    public @Nullable ItemBuilder load(ConfigurationSection parent, String path) {
+        final ConfigurationSection section = parent.getConfigurationSection(path);
+        if (section == null) throw new IllegalArgumentException("Section cannot be null");
         final Material material = MaterialTypeSerializer.INSTANCE.load(section, MATERIAL_PATH);
         if (material == null) throw new IllegalArgumentException("Material cannot be null");
         final ItemBuilder builder = ItemBuilder.from(material)

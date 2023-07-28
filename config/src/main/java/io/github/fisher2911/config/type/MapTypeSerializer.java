@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +46,12 @@ public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
     @Override
     public @Nullable Map<String, T> load(ConfigurationSection section, String path) {
         final Map<String, T> map = new HashMap<>();
-        for (final String key : section.getKeys(false)) {
-            final T value = this.serializer.load(section, key);
+        final ConfigurationSection mapSection = section.getConfigurationSection(path);
+        if (mapSection == null) {
+            return new HashMap<>();
+        }
+        for (final String key : mapSection.getKeys(false)) {
+            final T value = this.serializer.load(mapSection, key);
             if (value != null) {
                 map.put(key, value);
             }
@@ -55,7 +60,7 @@ public class MapTypeSerializer<T> implements TypeSerializer<Map<String, T>> {
     }
 
     public @Nullable <K> Map<K, T> load(ConfigurationSection section, String path, Function<String, K> function) {
-        return Objects.requireNonNull(this.load(section, path))
+        return Objects.requireNonNullElse(this.load(section, path), Collections.<String, T>emptyMap())
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(e -> function.apply(e.getKey()), Map.Entry::getValue));

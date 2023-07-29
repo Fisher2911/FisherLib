@@ -115,7 +115,7 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
             section = parent.createSection(path);
         }
         for (int i = 0; i < value.size(); i++) {
-            save(section, path + "." + i, value.get(i));
+            save(section, String.valueOf(i), value.get(i));
         }
     }
 

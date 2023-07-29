@@ -199,6 +199,7 @@ public class BaseCommand {
                 continue;
             }
             if (argumentResult.isSuccess() && !reader.hasNext()) {
+                reader.previous();
                 break;
             }
             final List<Object> newPreviousArgs = new ArrayList<>(previousArgs);

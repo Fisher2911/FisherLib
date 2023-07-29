@@ -32,6 +32,16 @@ public class TestCommand {
         player.sendMessage("In defaultCommand");
     }
 
+    @SubCommand(name = "hi")
+    public void test(Player player, String test) {
+        player.sendMessage("In hi: " + test);
+    }
+
+    @SubCommand(name = "hello")
+    public void test2(Player player, String test) {
+        player.sendMessage("In hello: " + test);
+    }
+
     @SubCommand(name = "test1")
     public void test1Command(Player player, /*List<Integer> numbers, */String lastArg) {
         player.sendMessage("In test1Command: " + /*numbers + " " +*/ lastArg);

@@ -84,7 +84,11 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
     }
 
     @Override
-    public void save(ConfigurationSection section, String path, ItemBuilder value) {
+    public void save(ConfigurationSection parent, String path, ItemBuilder value) {
+        ConfigurationSection section = parent.getConfigurationSection(path);
+        if (section == null) {
+            section = parent.createSection(path);
+        }
         final ItemMeta itemMeta = value.getItemMeta();
         MaterialTypeSerializer.INSTANCE.save(section, MATERIAL_PATH, value.getMaterial());
         IntTypeSerializer.INSTANCE.save(section, AMOUNT_PATH, value.getAmount());
@@ -105,7 +109,11 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
     }
 
     @Override
-    public void saveList(ConfigurationSection section, String path, List<ItemBuilder> value) {
+    public void saveList(ConfigurationSection parent, String path, List<ItemBuilder> value) {
+        ConfigurationSection section = parent.getConfigurationSection(path);
+        if (section == null) {
+            section = parent.createSection(path);
+        }
         for (int i = 0; i < value.size(); i++) {
             save(section, path + "." + i, value.get(i));
         }

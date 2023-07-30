@@ -18,6 +18,7 @@
 
 package io.github.fisher2911.command.argument;
 
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -25,10 +26,12 @@ import java.util.List;
 
 public class ArgumentReader {
 
+    private final CommandSender sender;
     private final String[] args;
     private int index;
 
-    private ArgumentReader(String[] args) {
+    private ArgumentReader(CommandSender sender, String[] args) {
+        this.sender = sender;
         this.args = args;
     }
 
@@ -52,7 +55,11 @@ public class ArgumentReader {
         return this.index < this.args.length;
     }
 
-    public static ArgumentReader newReader(String[] unfilteredArgs) {
+    public CommandSender getSender() {
+        return this.sender;
+    }
+
+    public static ArgumentReader newReader(CommandSender sender, String[] unfilteredArgs) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < unfilteredArgs.length; i++) {
             builder.append(unfilteredArgs[i]);
@@ -94,7 +101,7 @@ public class ArgumentReader {
         if (unfilteredArgs[unfilteredArgs.length - 1].equals("")) {
             list.add("");
         }
-        return new ArgumentReader(list.toArray(new String[0]));
+        return new ArgumentReader(sender, list.toArray(new String[0]));
     }
 
     @Contract(pure = true)

@@ -37,10 +37,11 @@ public class PlayerArgument extends Argument<Player> {
 
     public static PlayerArgument create() {
         return new PlayerArgument(reader -> {
-            final Player value = Bukkit.getPlayerExact(reader.next());
+            final String next = reader.next();
+            final Player value = Bukkit.getPlayerExact(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid player");
+                return ArgumentResult.invalidArgument(next);
             }
             return ArgumentResult.success(value);
         });

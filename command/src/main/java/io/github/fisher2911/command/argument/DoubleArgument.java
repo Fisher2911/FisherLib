@@ -35,10 +35,11 @@ public class DoubleArgument extends Argument<Double> {
 
     public static DoubleArgument create() {
         return new DoubleArgument(reader -> {
-            final Double value = NumberUtils.tryParseDouble(reader.next());
+            final String next = reader.next();
+            final Double value = NumberUtils.tryParseDouble(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid double");
+                return ArgumentResult.invalidArgument(next);
             };
             return ArgumentResult.success(value);
         });

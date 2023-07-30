@@ -64,23 +64,23 @@ public class TestCommand {
 
     @ErrorHandler
     public void errorHandler(Player player, ArgumentResult<?> argumentResult, String[] args) {
-        final String error = argumentResult.getError();
+        final ArgumentResult.Error error = argumentResult.getError();
         if (error == null) return;
-        player.sendMessage("Default error handler: " + error);
+        player.sendMessage("Default error handler: " + error.getObject());
     }
 
     @ErrorHandler("test3ErrorHandler1")
     public void errorHandler2(Player player, ArgumentResult<?> argumentResult, String[] args) {
-        final String error = argumentResult.getError();
+        final ArgumentResult.Error error = argumentResult.getError();
         if (error == null) return;
-        player.sendMessage("Error handler 1: " + error);
+        player.sendMessage("Error handler 1: " + error.getObject());
     }
 
     @ErrorHandler("test3ErrorHandler2")
     public void errorHandler3(Player player, ArgumentResult<?> argumentResult, String[] args) {
-        final String error = argumentResult.getError();
+        final ArgumentResult.Error error = argumentResult.getError();
         if (error == null) return;
-        player.sendMessage("Error handler 2: " + error);
+        player.sendMessage("Error handler 2: " + error.getObject());
     }
 
 

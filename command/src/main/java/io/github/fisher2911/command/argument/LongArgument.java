@@ -35,10 +35,11 @@ public class LongArgument extends Argument<Long> {
 
     public static LongArgument create() {
         return new LongArgument(reader -> {
-            final Long value = NumberUtils.tryParseLong(reader.next());
+            final String next = reader.next();
+            final Long value = NumberUtils.tryParseLong(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid long");
+                return ArgumentResult.invalidArgument(next);
             };
             return ArgumentResult.success(value);
         });

@@ -35,10 +35,11 @@ public class FloatArgument extends Argument<Float> {
 
     public static FloatArgument create() {
         return new FloatArgument(reader -> {
-            final Float value = NumberUtils.tryParseFloat(reader.next());
+            final String next = reader.next();
+            final Float value = NumberUtils.tryParseFloat(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid float");
+                return ArgumentResult.invalidArgument(next);
             };
             return ArgumentResult.success(value);
         });

@@ -35,10 +35,11 @@ public class IntArgument extends Argument<Integer> {
 
     public static IntArgument create() {
         return new IntArgument(reader -> {
-            final Integer value = NumberUtils.tryParseInt(reader.next());
+            final String next = reader.next();
+            final Integer value = NumberUtils.tryParseInt(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid integer");
+                return ArgumentResult.invalidArgument(next);
             };
             return ArgumentResult.success(value);
         });

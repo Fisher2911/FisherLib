@@ -41,7 +41,9 @@ public class ListArgument extends Argument<List> {
         return new ListArgument(reader -> {
             final List<Object> list = new ArrayList<>();
             while (reader.hasNext()) {
+                final String next = reader.next();
                 try {
+                    reader.previous();
                     final ArgumentResult<?> result = argument.parse(reader);
                     if (result.isFailure()) break;
                     list.add(result.getResult());
@@ -49,7 +51,7 @@ public class ListArgument extends Argument<List> {
                     reader.previous();
                 }
                 if (list.isEmpty()) {
-                    return ArgumentResult.failure("Expected " + argument.getId() + " but got nothing");
+                    return ArgumentResult.invalidArgument(next);
                 }
             }
             return ArgumentResult.success(list);

@@ -58,7 +58,7 @@ public class BaseCommand {
     }
 
     public void execute(CommandSender sender, String[] args) {
-        final ArgumentReader reader = ArgumentReader.newReader(args);
+        final ArgumentReader reader = ArgumentReader.newReader(sender, args);
         final ArgumentResultData resultData = this.execute(reader);
         final BaseCommand command = resultData.command();
         final TriConsumer<CommandSender, ArgumentResult<?>, String[]> errorHandler = command == null ? this.errorHandler : command.errorHandler;
@@ -81,7 +81,7 @@ public class BaseCommand {
             if (errorHandler == null) {
                 return;
             }
-            errorHandler.accept(sender, ArgumentResult.failure(e.getMessage()), args);
+            errorHandler.accept(sender, ArgumentResult.exception(e), args);
         }
     }
 
@@ -104,7 +104,9 @@ public class BaseCommand {
             if (!reader.hasNext()) {
                 return previousResult;
             }
-            return new ArgumentResultData(previousResult.parsed(), previousResult.command(), ArgumentResult.failure("Too many args."));
+            final String next = reader.next();
+            reader.previous();
+            return new ArgumentResultData(previousResult.parsed(), previousResult.command(), ArgumentResult.invalidArgument(next));
         }
         ArgumentResultData furthestError = null;
         for (final BaseCommand child : this.children) {
@@ -134,7 +136,7 @@ public class BaseCommand {
             return new ArgumentResultData(
                     previousResult.parsed(),
                     previousResult.command(),
-                    ArgumentResult.failure("No matching subcommand.")
+                    previousResult.result()
             );
         }
         return new ArgumentResultData(
@@ -155,7 +157,7 @@ public class BaseCommand {
     public @NotNull List<String> getTabCompletions(CommandSender sender, String[] args) {
         final String[] argsCopy = args.clone();
         final List<String> tabCompletions = new ArrayList<>();
-        final ArgumentReader reader = ArgumentReader.newReader(argsCopy);
+        final ArgumentReader reader = ArgumentReader.newReader(sender, argsCopy);
         reader.next();
         final List<Object> previousArgs = new ArrayList<>();
         final List<String> childTabCompletions = this.getChildrenTabCompletions(

@@ -36,10 +36,11 @@ public class BooleanArgument extends Argument<Boolean> {
 
     public static BooleanArgument create() {
         return new BooleanArgument(reader -> {
-            final Boolean value = BooleanUtils.tryParseBoolean(reader.next());
+            final String next = reader.next();
+            final Boolean value = BooleanUtils.tryParseBoolean(next);
             if (value == null) {
                 reader.previous();
-                return ArgumentResult.failure("Invalid boolean");
+                return ArgumentResult.invalidArgument(next);
             }
             return ArgumentResult.success(value);
         });

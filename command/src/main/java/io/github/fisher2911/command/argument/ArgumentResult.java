@@ -25,9 +25,9 @@ import java.util.function.Consumer;
 public class ArgumentResult<T> {
 
     private final T result;
-    private final String error;
+    private final Error error;
 
-    private ArgumentResult(T result, String error) {
+    private ArgumentResult(T result, Error error) {
         this.result = result;
         this.error = error;
     }
@@ -36,8 +36,16 @@ public class ArgumentResult<T> {
         return new ArgumentResult<>(result, null);
     }
 
-    public static <T> ArgumentResult<T> failure(String error) {
+    public static <T> ArgumentResult<T> failure(Error error) {
         return new ArgumentResult<>(null, error);
+    }
+
+    public static <T> ArgumentResult<T> exception(Throwable throwable) {
+        return ArgumentResult.failure(new Error(Error.Type.EXCEPTION, throwable));
+    }
+
+    public static <T> ArgumentResult<T> invalidArgument(String message) {
+        return ArgumentResult.failure(new Error(Error.Type.INVALID_ARGUMENT, message));
     }
 
     public ArgumentResult<T> handleResult(Consumer<T> consumer) {
@@ -47,7 +55,7 @@ public class ArgumentResult<T> {
         return this;
     }
 
-    public ArgumentResult<T> handleFailure(Consumer<String> consumer) {
+    public ArgumentResult<T> handleFailure(Consumer<Error> consumer) {
         if (this.error != null) {
             consumer.accept(this.error);
         }
@@ -58,7 +66,7 @@ public class ArgumentResult<T> {
         return this.result;
     }
 
-    public @Nullable String getError() {
+    public @Nullable Error getError() {
         return this.error;
     }
 
@@ -68,5 +76,41 @@ public class ArgumentResult<T> {
 
     public boolean isFailure() {
         return this.error != null;
+    }
+
+    public static class Error {
+
+        private final Type type;
+        private final Object object;
+
+        public Error(Type type, Object object) {
+            this.type = type;
+            this.object = object;
+        }
+
+        public Type getType() {
+            return this.type;
+        }
+
+        public <T> T getObject() {
+            return (T) this.object;
+        }
+
+        public enum Type {
+
+            EXCEPTION(Throwable.class),
+            INVALID_ARGUMENT(String.class);
+
+            private final Class<?> clazz;
+
+            Type(Class<?> clazz) {
+                this.clazz = clazz;
+            }
+
+            public Class<?> getClazz() {
+                return this.clazz;
+            }
+        }
+
     }
 }

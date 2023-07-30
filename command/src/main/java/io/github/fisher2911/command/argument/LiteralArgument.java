@@ -42,7 +42,7 @@ public class LiteralArgument extends StringArgument {
                 return ArgumentResult.success(next);
             }
             reader.previous();
-            return ArgumentResult.failure("Expected " + match + " but got " + next);
+            return ArgumentResult.invalidArgument(next);
         }, match);
     }
 

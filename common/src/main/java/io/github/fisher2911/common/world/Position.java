@@ -42,8 +42,8 @@ public class Position {
         return new Position(world, x, y, z);
     }
 
-    public static Position fromBukkitLocation(UUID world, int x, int y, int z) {
-        return new Position(world, x, y, z);
+    public static Position fromBukkitLocation(Location location) {
+        return new Position(Objects.requireNonNull(location.getWorld()).getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public Location toBukkitLocation() {

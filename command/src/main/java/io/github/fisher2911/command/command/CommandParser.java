@@ -22,8 +22,8 @@ import io.github.fisher2911.command.anotation.Command;
 import io.github.fisher2911.command.anotation.ErrorHandler;
 import io.github.fisher2911.command.anotation.SubCommand;
 import io.github.fisher2911.command.argument.Argument;
+import io.github.fisher2911.command.error.CommandInvokeException;
 import io.github.fisher2911.command.error.CommandParameterNotFoundException;
-import io.github.fisher2911.command.error.CommandParseException;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -126,7 +126,7 @@ public class CommandParser {
                             }
                             method.invoke(commandObject, list.toArray());
                         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                            throw new CommandParseException(commandObject.getClass(), e);
+                            throw new CommandInvokeException(method, list, e);
                         }
                     }).errorHandler(currentBuilder.getErrorHandler());
         }
@@ -145,7 +145,7 @@ public class CommandParser {
                     }
                     method.invoke(commandObject, list.toArray());
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    throw new CommandParseException(commandObject.getClass(), e);
+                    throw new CommandInvokeException(method, list, e);
                 }
             });
         }

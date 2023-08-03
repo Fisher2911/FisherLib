@@ -48,6 +48,10 @@ public class ArgumentResult<T> {
         return ArgumentResult.failure(new Error(Error.Type.INVALID_ARGUMENT, message));
     }
 
+    public static <T> ArgumentResult<T> noPermission(String permission) {
+        return ArgumentResult.failure(new Error(Error.Type.NO_PERMISSION, permission));
+    }
+
     public ArgumentResult<T> handleResult(Consumer<T> consumer) {
         if (this.result != null) {
             consumer.accept(this.result);
@@ -99,7 +103,8 @@ public class ArgumentResult<T> {
         public enum Type {
 
             EXCEPTION(Throwable.class),
-            INVALID_ARGUMENT(String.class);
+            INVALID_ARGUMENT(String.class),
+            NO_PERMISSION(String.class);
 
             private final Class<?> clazz;
 

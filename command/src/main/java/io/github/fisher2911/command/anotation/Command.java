@@ -29,5 +29,5 @@ public @interface Command {
 
     String name();
 
-    String permission();
+    String permission() default "";
 }

@@ -58,6 +58,15 @@ public class BaseCommand {
     }
 
     public void execute(CommandSender sender, String[] args) {
+        if (!this.permission.equals("") && !sender.hasPermission(this.permission)) {
+            if (this.errorHandler == null) return;
+            this.errorHandler.accept(
+                    sender,
+                    ArgumentResult.noPermission(this.permission),
+                    args
+            );
+            return;
+        }
         final ArgumentReader reader = ArgumentReader.newReader(sender, args);
         final ArgumentResultData resultData = this.execute(reader);
         final BaseCommand command = resultData.command();
@@ -119,6 +128,9 @@ public class BaseCommand {
                 }
                 final ArgumentResultData resultData = new ArgumentResultData(parsed, child, result);
                 if (!reader.hasNext()) {
+                    if (!child.hasPermission(reader.getSender())) {
+                        return new ArgumentResultData(parsed, child, ArgumentResult.noPermission(child.permission));
+                    }
                     return resultData;
                 }
                 final ArgumentResultData childResult = child.executeChildren(
@@ -144,6 +156,10 @@ public class BaseCommand {
                 furthestError.command(),
                 furthestError.result()
         );
+    }
+
+    public boolean hasPermission(CommandSender sender) {
+        return this.permission.equals("") || sender.hasPermission(this.permission);
     }
 
     private final record ArgumentResultData(
@@ -179,6 +195,7 @@ public class BaseCommand {
         if (!reader.hasNext()) return null;
         final List<String> tabCompletions = new ArrayList<>();
         for (final BaseCommand baseCommand : this.children) {
+            if (!baseCommand.hasPermission(sender)) continue;
             final String next = reader.next();
             reader.previous();
             final ArgumentResult<?> argumentResult = baseCommand.getArgument().parse(reader);

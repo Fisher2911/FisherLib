@@ -11,9 +11,7 @@ want to use in your plugins.
 
 - [x] GUI Library
 - [X] Common Library
-- [ ] Command Library
-- [ ] Custom Item Library
-- [ ] Custom Block Library
+- [X] Command Library
 
 ### Installation
 

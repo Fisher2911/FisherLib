@@ -25,6 +25,7 @@ import io.github.fisher2911.common.metadata.Metadatable;
 import io.github.fisher2911.common.timer.Timeable;
 import io.github.fisher2911.common.util.Observable;
 import io.github.fisher2911.gui.event.GUIEvent;
+import io.github.fisher2911.gui.gui.conditional.ConditionalItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -39,18 +40,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "unchecked"})
-public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler, Timeable<GUI>, Metadatable {
+public class GUIItem extends Observable<ConditionalItemBuilder> implements ListenerHandler, Timeable<GUI>, Metadatable {
 
     private final JavaPlugin plugin;
     private final Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners;
-    private ItemBuilder itemBuilder;
+    private ConditionalItemBuilder itemBuilder;
     private final Metadata metadata;
     private @Nullable BiConsumer<GUIItem, GUI> timerConsumer;
     private GUISlot slot;
 
     private GUIItem(
             Map<Class<? extends GUIEvent<? extends InventoryEvent>>, Consumer<? extends GUIEvent<? extends InventoryEvent>>> listeners,
-            ItemBuilder itemBuilder,
+            ConditionalItemBuilder itemBuilder,
             Metadata metadata,
             @Nullable BiConsumer<GUIItem, GUI> timerConsumer
     ) {
@@ -123,21 +124,25 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
      * @return A copy of the {@link ItemBuilder} for this {@link GUIItem}.
      */
     public ItemBuilder copyItemBuilder() {
-        return this.itemBuilder.copy();
+        return this.getItemBuilder().copy();
     }
 
     /**
      * @return The {@link ItemBuilder} for this {@link GUIItem}.
      */
     public ItemBuilder getItemBuilder() {
-        return this.itemBuilder;
+        return this.itemBuilder.getItemBuilder(this.getGUI(), this);
     }
 
     /**
-     * @param itemBuilder The {@link ItemBuilder} to set for this {@link GUIItem}.
+     * @param itemBuilder The {@link ConditionalItemBuilder} to set for this {@link GUIItem}.
      */
-    public void setItemBuilder(ItemBuilder itemBuilder) {
+    public void setConditionalItemBuilder(ConditionalItemBuilder itemBuilder) {
         this.itemBuilder = itemBuilder;
+    }
+
+    public void setItemBuilder(ItemBuilder itemBuilder) {
+        this.itemBuilder = ConditionalItemBuilder.constant(itemBuilder);
     }
 
     @Override
@@ -202,22 +207,27 @@ public class GUIItem extends Observable<ItemBuilder> implements ListenerHandler,
 
     public static class Builder extends ListenerHandler.Builder<Builder> {
 
-        private final ItemBuilder itemBuilder;
+        private final ConditionalItemBuilder itemBuilder;
         private Metadata metadata = Metadata.mutableEmpty();
         private @Nullable BiConsumer<GUIItem, GUI> timerConsumer;
 
 
         private Builder(ItemBuilder itemBuilder) {
             super();
+            this.itemBuilder = ConditionalItemBuilder.constant(itemBuilder);
+        }
+
+        private Builder(ConditionalItemBuilder itemBuilder) {
+            super();
             this.itemBuilder = itemBuilder;
         }
 
         private Builder(Material material) {
-            this(ItemBuilder.from(new ItemStack(material)));
+            this((ItemBuilder) ItemBuilder.from(new ItemStack(material)));
         }
 
         private Builder(ItemStack itemStack) {
-            this(ItemBuilder.from(itemStack));
+            this((ItemBuilder) ItemBuilder.from(itemStack));
         }
 
         /**

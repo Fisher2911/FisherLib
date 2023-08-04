@@ -35,16 +35,11 @@ import java.util.Map;
 
 public class PatternSerializer implements TypeSerializer<Pattern> {
 
-    private static PatternSerializer instance;
-
-    public static PatternSerializer getInstance(
+    public static PatternSerializer createInstance(
             Map<String, PatternTypeSerializer<? extends Pattern>> serializers,
             GUIItemManager guiItemManager
     ) {
-        if (instance == null) {
-            instance = new PatternSerializer(serializers, guiItemManager);
-        }
-        return instance;
+        return new PatternSerializer(serializers, guiItemManager);
     }
 
     private final Map<String, PatternTypeSerializer<? extends Pattern>> serializers;

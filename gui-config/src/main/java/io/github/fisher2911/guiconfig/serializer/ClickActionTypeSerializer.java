@@ -39,23 +39,18 @@ import java.util.Map;
 
 public class ClickActionTypeSerializer implements TypeSerializer<GUIClickAction> {
 
-    private static ClickActionTypeSerializer instance;
-
-    public static ClickActionTypeSerializer getInstance(
+    public static ClickActionTypeSerializer create(
             Map<String, ActionTypeSerializer<?>> actionTypeSerializerMap,
             MessageHandler messageHandler,
             GUISupplier guiSupplier,
             GUIItemManager guiItemManager
     ) {
-        if (instance == null) {
-            instance = new ClickActionTypeSerializer(actionTypeSerializerMap, messageHandler, guiSupplier, guiItemManager);
-        }
-        return instance;
+           return new ClickActionTypeSerializer(actionTypeSerializerMap, messageHandler, guiSupplier, guiItemManager);
     }
 
     private final Map<String, ActionTypeSerializer<?>> actionTypeSerializerMap;
 
-    public ClickActionTypeSerializer(
+    private ClickActionTypeSerializer(
             Map<String, ActionTypeSerializer<?>> actionTypeSerializerMap,
             MessageHandler messageHandler,
             GUISupplier guiSupplier,

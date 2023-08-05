@@ -30,6 +30,7 @@ import java.util.List;
 public class OpenActionTypeSerializer implements ActionTypeSerializer<GUIOpenAction> {
 
     private static OpenActionTypeSerializer INSTANCE;
+    private static final String MENU_PATH = "menu";
 
     public static OpenActionTypeSerializer getInstance(GUISupplier guiSupplier) {
         if (INSTANCE == null) {
@@ -46,7 +47,8 @@ public class OpenActionTypeSerializer implements ActionTypeSerializer<GUIOpenAct
 
     @Override
     public @Nullable GUIOpenAction load(ConfigurationSection section, String path) {
-        return new GUIOpenAction(this.guiSupplier, section.getString(path));
+        final String menuId = section.getString(path + "." + MENU_PATH);
+        return new GUIOpenAction(this.guiSupplier, menuId);
     }
 
     @Override

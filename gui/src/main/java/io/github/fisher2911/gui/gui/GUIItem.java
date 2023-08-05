@@ -205,6 +205,10 @@ public class GUIItem extends Observable<ConditionalItemBuilder> implements Liste
         return new Builder(material);
     }
 
+    public static Builder builder(ConditionalItemBuilder itemBuilder) {
+        return new Builder(itemBuilder);
+    }
+
     public static class Builder extends ListenerHandler.Builder<Builder> {
 
         private final ConditionalItemBuilder itemBuilder;

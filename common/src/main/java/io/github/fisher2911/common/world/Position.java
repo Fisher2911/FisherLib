@@ -20,6 +20,7 @@ package io.github.fisher2911.common.world;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -88,6 +89,14 @@ public class Position {
 
     public Position divide(Position position) {
         return divide(position.x, position.y, position.z);
+    }
+
+    public Position getRelative(BlockFace blockFace) {
+        return this.add(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
+    }
+
+    public ChunkPosition toChunkPosition() {
+        return ChunkPosition.of(this.world, this.x >> 4, this.z >> 4);
     }
 
     public int x() {

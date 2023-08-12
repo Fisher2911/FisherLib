@@ -52,7 +52,7 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
     @Override
     public @Nullable ItemBuilder load(ConfigurationSection parent, String path) {
         final ConfigurationSection section = parent.getConfigurationSection(path);
-        if (section == null) throw new IllegalArgumentException("Section cannot be null: " + parent.getCurrentPath());
+        if (section == null) return null;
         final Material material = MaterialTypeSerializer.INSTANCE.load(section, MATERIAL_PATH);
         if (material == null) throw new IllegalArgumentException("Material cannot be null");
         final ItemBuilder builder = ItemBuilder.from(material)
@@ -76,7 +76,7 @@ public class ItemBuilderTypeSerializer implements TypeSerializer<ItemBuilder> {
     public @NotNull List<ItemBuilder> loadList(ConfigurationSection parent, String path) {
         final List<ItemBuilder> builders = new ArrayList<>();
         final ConfigurationSection section = parent.getConfigurationSection(path);
-        if (section == null) throw new IllegalArgumentException("Section cannot be null: " + parent.getCurrentPath() + "." + path);
+        if (section == null) return builders;
         for (final String key : section.getKeys(false)) {
             builders.add(load(section, key));
         }

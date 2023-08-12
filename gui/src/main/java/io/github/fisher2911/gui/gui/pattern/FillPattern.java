@@ -27,8 +27,10 @@ import io.github.fisher2911.gui.gui.PaginatedGUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * This pattern is used to fill a GUI with items.
@@ -37,13 +39,13 @@ public class FillPattern implements Pattern {
 
     private final MetadataKey<? extends FillPattern> key;
     private final Metadata metadata;
-    private final Collection<GUIItem> guiItems;
+    private final Supplier<Stream<GUIItem>> guiItems;
     private final Predicate<GUISlot> slotFillPredicate;
     private final Predicate<GUIItem> itemFillPredicate;
     private final int priority;
 
     protected FillPattern(
-            Collection<GUIItem> guiItems,
+            Supplier<Stream<GUIItem>> guiItems,
             Predicate<GUISlot> slotFillPredicate,
             Predicate<GUIItem> itemFillPredicate,
             MetadataKey<? extends FillPattern> key,
@@ -68,33 +70,34 @@ public class FillPattern implements Pattern {
             this.applyPaginated(paginatedGUI);
             return;
         }
-        int nextSlot = 0;
-        int guiPage = 0;
-        for (final GUIItem guiItem : this.guiItems) {
-            if (!this.itemFillPredicate.test(guiItem)) {
-                continue;
-            }
-            final ApplySlotResult result = this.applySlot(nextSlot, guiPage,  gui, guiItem);
-            nextSlot = result.nextSlot();
-            guiPage = result.guiPage();
-            if (nextSlot == -1 || guiPage == -1) break;
-        }
+        final AtomicInteger nextSlot = new AtomicInteger(0);
+        final AtomicInteger guiPage = new AtomicInteger(0);
+        this.guiItems.get().takeWhile(guiItem -> {
+            if (guiItem == null) return false;
+            if (!this.itemFillPredicate.test(guiItem)) return true;
+            final ApplySlotResult result = this.applySlot(nextSlot.get(), guiPage.get(),  gui, guiItem);
+            nextSlot.set(result.nextSlot());
+            guiPage.set(result.guiPage());
+            return nextSlot.get() != -1 && guiPage.get() != -1;
+        }).anyMatch(i -> false);
     }
 
     private void applyPaginated(PaginatedGUI gui) {
-        int nextSlot = 0;
         final GUI currentGUI = gui.getCurrentGUI();
-        for (final GUIItem guiItem : this.guiItems) {
+        final AtomicInteger nextSlot = new AtomicInteger(0);
+        this.guiItems.get().takeWhile(guiItem -> {
+            if (guiItem == null) return false;
             final GUI itemGUI = guiItem.getGUI();
             if (itemGUI != null && !currentGUI.equals(itemGUI)) {
-                continue;
+                return true;
             }
             if (!this.itemFillPredicate.test(guiItem)) {
-                continue;
+                return true;
             }
-            nextSlot = this.applySlot(nextSlot, 0, gui, guiItem).nextSlot;
-            if (nextSlot == -1) break;
-        }
+            nextSlot.set(this.applySlot(nextSlot.get(), 0, gui, guiItem).nextSlot);
+            if (nextSlot.get() == -1) return false;
+            return false;
+        }).anyMatch(i -> true);
     }
 
     private ApplySlotResult applySlot(int nextSlot, int guiPage, GUI gui, GUIItem guiItem) {

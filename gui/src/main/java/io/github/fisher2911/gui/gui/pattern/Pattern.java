@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * You can apply patterns to GUI's in order to distribute GUIItems in a specific way.
@@ -121,6 +123,20 @@ public interface Pattern extends Metadatable, Comparable<Pattern> {
      */
     static FillPattern fillPattern(
             Collection<GUIItem> guiItems,
+            Predicate<GUISlot> slotFillPredicate,
+            Predicate<GUIItem> itemFillPredicate,
+            int priority
+    ) {
+        return fillPattern(
+                guiItems::stream,
+                slotFillPredicate,
+                itemFillPredicate,
+                priority
+        );
+    }
+
+    static FillPattern fillPattern(
+            Supplier<Stream<GUIItem>> guiItems,
             Predicate<GUISlot> slotFillPredicate,
             Predicate<GUIItem> itemFillPredicate,
             int priority
